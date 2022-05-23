@@ -7,7 +7,7 @@
 #' @param data A dataframe made with `table_n_woningen`
 #' @param palette_function A function that takes a single integer argument to return a vector of colors
 #' @export
-plot_horizontal_barplot <- function(data,
+plot_horizontal_bars <- function(data,
                                     xvar = "group",
                                     yvar = "n",
 
@@ -16,6 +16,7 @@ plot_horizontal_barplot <- function(data,
                                     base_size = 14,
                                     label_size = 4,
                                     label_k = FALSE,
+                                    label_perc = FALSE,
                                     bar_width = NULL,
                                     title = "", ...){
 
@@ -56,11 +57,101 @@ plot_horizontal_barplot <- function(data,
       panel.grid.minor = element_blank()) +
     labs(title = title) +
     ylim(y_lim) +
-    geom_text(data=data, aes(label = format_n(Y, label_k)), hjust = -0.06, size = label_size)
+    geom_text(data=data, aes(label = format_n2(Y, label_k, label_perc)),
+              hjust = -0.06, size = label_size)
 
   p
 
 }
+
+
+
+
+#' Make a line plot with time on the X axis
+#' @description No group (see plot_grouped_time_plot)
+#' @export
+plot_value_by_time <- function(data,
+                           xvar = "time",
+                           yvar = "n",
+
+                           plot_type = c("stacked_bars","cumulative_lines"),
+
+                           palette_function,
+                           colors = NULL,
+                           base_size = 14,
+                           label_size = 4,
+                           point_size = 3,
+                           line_width = 1.2,
+                           label_bars = FALSE,
+                           ylab = "ylab",
+                           xlab = "xlab",
+                           title = "title"
+                           ){
+
+  plot_type <- match.arg(plot_type)
+
+  if(nrow(data) == 0){
+    return(NULL)
+  }
+
+  data$n <- data[[yvar]]
+  data$time <- data[[xvar]]
+
+  data <- dplyr::filter(data, !is.na(n), !is.na(time))
+
+  n_time <- length(unique(data$time))
+
+  colors <- generate_colors(1, palette_function, colors)
+
+  if(plot_type == "cumulative_lines"){
+
+    p <- data %>%
+      ggplot(aes(x = time, y = n_cumu)) +
+      geom_point(cex = point_size, colour = colors) +
+      geom_line(lwd = line_width, colour = colors) +
+      scale_x_continuous(breaks = my_breaks_pretty()) +
+      scale_y_continuous(breaks = my_breaks_pretty()) +
+      labs(y = ylab, x = xlab, title = title)
+
+  } else {
+
+    p <- data %>%
+      ggplot(aes(x=time, y=n)) +
+      geom_bar(stat="identity", position = position_stack(), colour = colors) +
+      scale_x_continuous(breaks = my_breaks_pretty()) +
+      scale_y_continuous(breaks = my_breaks_pretty()) +
+      labs(y = ylab, x = xlab, fill = "", title = title)
+
+    if(label_bars){
+
+      dlab <- data %>%
+        group_by(n) %>%
+        summarize(n = sum(n), .groups = "drop")
+
+      ymax <- max(dlab$n)
+
+      p <- p + geom_text(data = dlab,
+                         aes(label = n, x = time, y = n, fill = NULL, color = NULL),
+                         size = label_size,
+                         vjust = -1) +
+        ylim(c(NA, ymax + 0.05*ymax))
+
+    }
+
+  }
+
+  p <- p +
+    theme_minimal(base_size = base_size)
+  #theme(text = element_text(family = "customplotfont"))
+
+  p
+
+}
+
+
+
+
+
 
 
 #' Make a standard grouped time plot (lines or stacked bars)
@@ -161,79 +252,6 @@ plot_grouped_time_plot <- function(data,
 
 }
 
-
-#' Zonder group
-plot_time_plot <- function(data,
-                           palette_function,
-                           colors = NULL,
-                           base_size = 14,
-                           label_size = 4,
-                           point_size = 3,
-                           line_width = 1.2,
-                           label_bars = FALSE,
-                           ylab = "ylab",
-                           xlab = "xlab",
-                           title = "title",
-                           plot_type = c("stacked_bars","cumulative_lines")){
-
-  plot_type <- match.arg(plot_type)
-
-  data <- dplyr::filter(data, !is.na(n), !is.na(time))
-
-  if(nrow(data) == 0 || sum(data$n) == 0){
-    return(NULL)
-  }
-
-  data <- filter(data, time > 0)
-
-  n_time <- length(unique(data$time))
-
-  colors <- generate_colors(1, palette_function, colors)
-
-  if(plot_type == "cumulative_lines"){
-
-    p <- data %>%
-      ggplot(aes(x = time, y = n_cumu)) +
-      geom_point(cex = point_size, colour = colors) +
-      geom_line(lwd = line_width, colour = colors) +
-      scale_x_continuous(breaks = my_breaks_pretty()) +
-      scale_y_continuous(breaks = my_breaks_pretty()) +
-      labs(y = ylab, x = xlab, title = title)
-
-  } else {
-
-    p <- data %>%
-      ggplot(aes(x=time, y=n)) +
-      geom_bar(stat="identity", position = position_stack(), colour = colors) +
-      scale_x_continuous(breaks = my_breaks_pretty()) +
-      scale_y_continuous(breaks = my_breaks_pretty()) +
-      labs(y = ylab, x = xlab, fill = "", title = title)
-
-    if(label_bars){
-
-      dlab <- data %>%
-        group_by(n) %>%
-        summarize(n = sum(n), .groups = "drop")
-
-      ymax <- max(dlab$n)
-
-      p <- p + geom_text(data = dlab,
-                         aes(label = n, x = time, y = n, fill = NULL, color = NULL),
-                         size = label_size,
-                         vjust = -1) +
-        ylim(c(NA, ymax + 0.05*ymax))
-
-    }
-
-  }
-
-  p <- p +
-    theme_minimal(base_size = base_size)
-  #theme(text = element_text(family = "customplotfont"))
-
-  p
-
-}
 
 
 
