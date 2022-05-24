@@ -74,7 +74,7 @@ plot_value_by_time <- function(data,
                            xvar = "time",
                            yvar = "n",
 
-                           plot_type = c("stacked_bars","cumulative_lines"),
+                           plot_type = c("bars","lines"),
 
                            palette_function,
                            colors = NULL,
@@ -103,10 +103,10 @@ plot_value_by_time <- function(data,
 
   colors <- generate_colors(1, palette_function, colors)
 
-  if(plot_type == "cumulative_lines"){
+  if(plot_type == "line"){
 
     p <- data %>%
-      ggplot(aes(x = time, y = n_cumu)) +
+      ggplot(aes(x = time, y = n)) +
       geom_point(cex = point_size, colour = colors) +
       geom_line(lwd = line_width, colour = colors) +
       scale_x_continuous(breaks = my_breaks_pretty()) +
@@ -117,7 +117,9 @@ plot_value_by_time <- function(data,
 
     p <- data %>%
       ggplot(aes(x=time, y=n)) +
-      geom_bar(stat="identity", position = position_stack(), colour = colors) +
+      geom_bar(stat="identity", position = position_stack(),
+               fill = colors,
+               colour = colors) +
       scale_x_continuous(breaks = my_breaks_pretty()) +
       scale_y_continuous(breaks = my_breaks_pretty()) +
       labs(y = ylab, x = xlab, fill = "", title = title)
@@ -155,7 +157,14 @@ plot_value_by_time <- function(data,
 
 
 #' Make a standard grouped time plot (lines or stacked bars)
-plot_grouped_time_plot <- function(data,
+plot_grouped_value_by_time <- function(data,
+
+                                   xvar = "time",
+                                   yvar = "n",
+                                   group = "group",
+
+                                   plot_type = c("bars","lines"),
+
                                    palette_function,
                                    colors = NULL,
                                    base_size = 14,
@@ -165,23 +174,26 @@ plot_grouped_time_plot <- function(data,
                                    label_bars = FALSE,
                                    ylab = "ylab",
                                    xlab = "xlab",
+                                   grouplab = "",
                                    title = "title",
-                                   plot_type = c("stacked_bars","cumulative_lines")){
+                                   fill_na_group = "Onbekend"
+                                   ){
 
   plot_type <- match.arg(plot_type)
+
+  if(nrow(data) == 0){
+    return(NULL)
+  }
+
+  data$n <- data[[yvar]]
+  data$time <- data[[xvar]]
+  data$group <- data[[group]]
 
   data <- dplyr::filter(data, !is.na(n), !is.na(time))
 
   if(any(is.na(data$group))){
-    data <- data %>% mutate(group = replace_na(group, "Onbekend"))
+    data <- data %>% mutate(group = replace_na(group, fill_na_group))
   }
-
-
-  if(nrow(data) == 0 || sum(data$n) == 0){
-    return(NULL)
-  }
-
-  data <- filter(data, time > 0)
 
   n_time <- length(unique(data$time))
   n_group <- length(unique(data$group))
@@ -191,42 +203,42 @@ plot_grouped_time_plot <- function(data,
   if(n_time == 1){
 
     p <- data %>%
-      ggplot(aes(x=group, y=n_cumu, fill = group)) +
+      ggplot(aes(x = group, y = n, fill = group)) +
       geom_bar(stat = "identity") +
       scale_y_continuous(breaks = my_breaks_pretty()) +
       scale_fill_manual(values = colors) +
       theme(axis.text.x=element_blank()) +
-      labs(y = xlab, x = "", fill = "", title = title)
+      labs(y = xlab, x = "", fill = grouplab, title = title)
 
   } else {
 
-    if(plot_type == "cumulative_lines"){
+    if(plot_type == "lines"){
 
       p <- data %>%
-        ggplot(aes(x = time, y = n_cumu, color = group)) +
+        ggplot(aes(x = time, y = n, color = group)) +
         geom_point(cex = point_size) +
         geom_line(lwd = line_width) +
         scale_x_continuous(breaks = my_breaks_pretty()) +
         scale_y_continuous(breaks = my_breaks_pretty()) +
         scale_colour_manual(values = colors) +
-        labs(y = ylab, x = xlab, fill = "", title = title)
+        labs(y = ylab, x = xlab, fill = "", colour = grouplab, title = title)
 
     } else {
 
       p <- data %>%
-        ggplot(aes(x=time, y=n, fill = group, color = group)) +
+        ggplot(aes(x = time, y = n, fill = group, color = group)) +
         geom_bar(stat="identity", position = position_stack()) +
         scale_x_continuous(breaks = my_breaks_pretty()) +
         scale_y_continuous(breaks = my_breaks_pretty()) +
         scale_colour_manual(values = colors) +
         scale_fill_manual(values = colors) +
-        labs(y = ylab, x = xlab, fill = "", title = title) +
+        labs(y = ylab, x = xlab, fill = grouplab, title = title) +
         guides(color = "none")
 
       if(label_bars){
 
         dlab <- data %>%
-          group_by(n) %>%
+          group_by(time, n) %>%
           summarize(n = sum(n), .groups = "drop")
 
         ymax <- max(dlab$n)
@@ -261,7 +273,7 @@ plot_grouped_time_plot <- function(data,
 #' Make a standard horizontal barplot with group fill
 #' @param data A dataframe made with `table_n_woningen`
 #' @param palette_function A function that takes a single integer argument to return a vector of colors
-plot_grouped_horizontal_barplot <- function(data,
+plot_grouped_horizontal_bars <- function(data,
                                             group1 = "group",  # group to make bars
                                             group2 = "group2", # group within bars
                                             yvar = "n",

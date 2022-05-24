@@ -83,12 +83,13 @@ plot_horizontal_bars(plot_data,
 
 ```{r}
 plot_data <- gapminder %>% 
-  filter(country == "Netherlands")
+  filter(country == "Netherlands") %>%
+  mutate(pop = 1e-06* pop)
 
 plot_value_by_time(plot_data,
                    xvar = "year",
                    yvar = "pop",
-                   plot_type = "stacked_bars",
+                   plot_type = "bars",
                    palette_function = NULL,
                    colors = "red",
                    base_size = 14,
@@ -100,5 +101,75 @@ plot_value_by_time(plot_data,
                    xlab = "Jaar",
                    title = "Nederland")
 
+```
+
+```{r}
+plot_data <- gapminder %>% 
+  filter(country == "Netherlands") %>%
+  mutate(pop = 1e-06* pop)
+
+plot_value_by_time(plot_data,
+                   xvar = "year",
+                   yvar = "pop",
+                   plot_type = "lines",
+                   palette_function = NULL,
+                   colors = "red",
+                   base_size = 14,
+                   label_size = 4,
+                   point_size = 3,
+                   line_width = 1.2,
+                   label_bars = FALSE,
+                   ylab = "Populatie",
+                   xlab = "Jaar",
+                   title = "Nederland")
+
+```
+
+
+```{r}
+plot_data <- gapminder %>% 
+  filter(country %in% c("Netherlands","Belgium","Luxembourg","Denmark")) %>%
+  mutate(pop = 1e-06* pop)
+
+plot_grouped_value_by_time(plot_data,
+                   xvar = "year",
+                   yvar = "pop",
+                   group = "country",
+                   plot_type = "lines",
+                   palette_function = "viridis",
+                   colors = NULL,
+                   base_size = 14,
+                   label_size = 4,
+                   point_size = 3,
+                   line_width = 1.2,
+                   label_bars = FALSE,
+                   ylab = "Populatie",
+                   xlab = "Jaar",
+                   title = "West-Europa") +
+  ylim(c(0,20))
+```
+
+```{r}
+plot_data <- gapminder %>% 
+  filter(country %in% c("Netherlands","Belgium","Denmark")) %>%
+  mutate(pop = 1e-06* pop,
+         country = factor(country, levels = c("Denmark","Belgium","Netherlands")))
+
+plot_grouped_value_by_time(plot_data,
+                   xvar = "year",
+                   yvar = "pop",
+                   group = "country",
+                   plot_type = "bars",
+                   palette_function = "viridis",
+                   colors = NULL,
+                   base_size = 14,
+                   label_size = 4,
+                   point_size = 3,
+                   line_width = 1.2,
+                   label_bars = FALSE,  # TRUE werkt nog niet (?)
+                   ylab = "Populatie",
+                   xlab = "Jaar",
+                   grouplab = "Land",
+                   title = "West-Europa")
 ```
 
