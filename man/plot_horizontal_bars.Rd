@@ -8,6 +8,7 @@ plot_horizontal_bars(
   data,
   xvar = "group",
   yvar = "n",
+  reverse_order = FALSE,
   palette_function = NULL,
   colors = NULL,
   base_size = 14,
