@@ -5,6 +5,7 @@ Version: 0.1.0
 Author: Remko Duursma
 Maintainer: Remko Duursma <remko@shintolabs.nl>
 Description: Plot data like it's the WBM
+Depends: dplyr
 License:CC0
 Encoding: UTF-8
 LazyData: true

@@ -1,17 +1,25 @@
 
 
 
-
-
 #' Make a standard horizontal barplot
-#' @param data A dataframe made with `table_n_woningen`
+#' @param data A dataframe
+#' @param xvar Name of variable in data to determine bars
+#' @param yvar Name of variable in data for length of bars
 #' @param palette_function A function that takes a single integer argument to return a vector of colors
+#' @param colors If palette_function not provided, a vector of colors (must be at least nrow(data))
+#' @param base_size Font base size (title, axes)
+#' @param label_size Size of text labels next to bars
+#' @param label_k If TRUE, labels are divided by 1000
+#' @param label_perc If TRUE, % is shown in label
+#' @param bar_width Relative width of bars (1 = fills space completely)
+#' @param title Title above plot
+#' @param \dots Further arguments passed to `generate_colors`
 #' @export
 plot_horizontal_bars <- function(data,
                                     xvar = "group",
                                     yvar = "n",
 
-                                    palette_function,
+                                    palette_function = NULL,
                                     colors = NULL,
                                     base_size = 14,
                                     label_size = 4,
@@ -67,8 +75,21 @@ plot_horizontal_bars <- function(data,
 
 
 
-#' Make a line plot with time on the X axis
+#' Make a standard line plot with time on the X axis
 #' @description No group (see plot_grouped_time_plot)
+#' @param data A dataframe
+#' @param xvar Name of variable in data to determine bars
+#' @param yvar Name of variable in data for length of bars
+#' @param plot_type Either 'bars' or 'lines'
+#' @param palette_function A function that takes a single integer argument to return a vector of colors
+#' @param colors If palette_function not provided, a vector of colors (must be at least nrow(data))
+#' @param base_size Font base size (title, axes)
+#' @param label_size Size of text labels next to bars
+#' @param label_k If TRUE, labels are divided by 1000
+#' @param label_perc If TRUE, % is shown in label
+#' @param bar_width Relative width of bars (1 = fills space completely)
+#' @param title Title above plot
+#' @param \dots Further arguments passed to `generate_colors`
 #' @export
 plot_value_by_time <- function(data,
                            xvar = "time",
@@ -85,7 +106,7 @@ plot_value_by_time <- function(data,
                            label_bars = FALSE,
                            ylab = "ylab",
                            xlab = "xlab",
-                           title = "title"
+                           title = "title", ...
                            ){
 
   plot_type <- match.arg(plot_type)
@@ -101,7 +122,7 @@ plot_value_by_time <- function(data,
 
   n_time <- length(unique(data$time))
 
-  colors <- generate_colors(1, palette_function, colors)
+  colors <- generate_colors(1, palette_function, colors, ...)
 
   if(plot_type == "line"){
 
@@ -155,8 +176,26 @@ plot_value_by_time <- function(data,
 
 
 
-
 #' Make a standard grouped time plot (lines or stacked bars)
+#' @param data A dataframe
+#' @param xvar Name of variable in data for X-axis ("time")
+#' @param yvar Name of variable for Y-axis
+#' @param group Name of variable in data for groups
+#' @param plot_type Either 'bars' or 'lines'
+#' @param palette_function A function that takes a single integer argument to return a vector of colors
+#' @param colors If palette_function not provided, a vector of colors (must be at least nrow(data))
+#' @param base_size Font base size (title, axes)
+#' @param label_size Size of text labels next to bars
+#' @param label_k If TRUE, labels are divided by 1000
+#' @param label_perc If TRUE, % is shown in label
+#' @param bar_width Relative width of bars (1 = fills space completely)
+#' @param title Title above plot
+#' @param xlab X-axis label
+#' @param ylab Y-axis label
+#' @param grouplab group label (for legend title)
+#' @param fill_na_group Value to use for missing group values in data ("Onbekend")
+#' @param \dots Further arguments passed to `generate_colors`
+#' @export
 plot_grouped_value_by_time <- function(data,
 
                                    xvar = "time",
@@ -176,7 +215,8 @@ plot_grouped_value_by_time <- function(data,
                                    xlab = "xlab",
                                    grouplab = "",
                                    title = "title",
-                                   fill_na_group = "Onbekend"
+                                   fill_na_group = "Onbekend",
+                                   ...
                                    ){
 
   plot_type <- match.arg(plot_type)
@@ -189,16 +229,16 @@ plot_grouped_value_by_time <- function(data,
   data$time <- data[[xvar]]
   data$group <- data[[group]]
 
-  data <- dplyr::filter(data, !is.na(n), !is.na(time))
+  data <- dplyr::filter(data, !is.na(.data$n), !is.na(.data$time))
 
   if(any(is.na(data$group))){
-    data <- data %>% mutate(group = replace_na(group, fill_na_group))
+    data$group <- tidyr::replace_na(data$group, fill_na_group)
   }
 
   n_time <- length(unique(data$time))
   n_group <- length(unique(data$group))
 
-  colors <- generate_colors(n_group, palette_function, colors)
+  colors <- generate_colors(n_group, palette_function, colors, ...)
 
   if(n_time == 1){
 
@@ -237,17 +277,16 @@ plot_grouped_value_by_time <- function(data,
 
       if(label_bars){
 
-        dlab <- data %>%
-          group_by(time, n) %>%
-          summarize(n = sum(n), .groups = "drop")
+        dlab <- dplyr::group_by(data, time, n) %>%
+          dplyr::summarize(n = sum(n), .groups = "drop")
 
         ymax <- max(dlab$n)
 
-        p <- p + geom_text(data = dlab,
+        p <- p + ggplot2::geom_text(data = dlab,
                            aes(label = n, x = time, y = n, fill = NULL, color = NULL),
                            size = label_size,
                            vjust = -1) +
-          ylim(c(NA, ymax + 0.05*ymax))
+          ggplot2::ylim(c(NA, ymax + 0.05*ymax))
 
       }
 
