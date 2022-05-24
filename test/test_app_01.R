@@ -17,7 +17,14 @@ ui <- softui::simple_page(
 
   softui::fluid_row(
     column(6,
-      customPlotUI("plot")
+      plotWidgetUI("plot",
+
+                   header_ui = shintoshiny::select_input("sel_continent", NULL,
+                                           choices = unique(gapminder$continent),
+                                           selected = unique(gapminder$continent),
+                                           multiple = TRUE),
+                   footer_ui = tags$i("Wat meer informatie over deze plot")
+                   )
     )
   )
 
@@ -28,13 +35,21 @@ server <- function(input, output, session) {
 
   plot_data <- reactive({
     gapminder %>%
+      mutate(continent = as.character(continent)) %>%
       filter(year == 2007) %>%
       group_by(continent) %>%
       summarize(population = floor(1e-06 * sum(pop)), .groups = "drop")
   })
 
-  callModule(customPlot, "plot",
-             plot_data = plot_data,
+  plot_data_filtered <- reactive({
+
+    plot_data() %>%
+      filter(continent %in% input$sel_continent)
+
+  })
+
+  callModule(plotWidgetModule, "plot",
+             plot_data = plot_data_filtered,
              plot_type = reactive("plot_horizontal_bars"),
              settings = list(
                xvar = "continent",

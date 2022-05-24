@@ -200,16 +200,21 @@ validate_plot_settings <- function(settings){
 
 #----- UI function ------
 
-
-customPlotUI <- function(id){
+#' @param id Shiny input ID
+#' @param header_ui Further UI to be placed above the plot
+#' @param footer_ui Further UI to be placed below the plot
+#' @param \dots Further arguments to softui::tab_box
+plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 
   ns <- NS(id)
 
-  softui::tab_box( style = "margin-top: 10px;",
-        softui::tab_panel(title = icon("chart-bar"),
-                 plotOutput(ns("plot_main"))
+  softui::tab_box( style = "margin-top: 10px;", ...,
+        softui::tab_panel(title = bsicon("bar-chart-fill"),
+                          header_ui,
+                          plotOutput(ns("plot_main")),
+                          footer_ui
         ),
-        softui::tab_panel(title = icon("table"),
+        softui::tab_panel(title = bsicon("table"),
                           softui::fluid_row(
                  tags$div(style = "height: 400px;",
 
@@ -228,7 +233,7 @@ customPlotUI <- function(id){
 
 
 #----- Server function ------
-customPlot <- function(input, output, session,
+plotWidgetModule <- function(input, output, session,
                        plot_data = reactive(NULL),
                        plot_type = reactive("plot_horizontal_bars"),
                        settings = list(),
