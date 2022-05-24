@@ -60,6 +60,7 @@ server <- function(input, output, session) {
                base_size = 14,
                label_size = 6,
                label_k = FALSE,
+               label_hjust = -0.1,
                bar_width = 0.6,
                title = "Populatie (miljoenen)"
              )

@@ -26,6 +26,7 @@ plot_horizontal_bars <- function(data,
                                   label_size = 4,
                                   label_k = FALSE,
                                   label_perc = FALSE,
+                                  label_hjust = -0.06,
                                   bar_width = NULL,
                                   title = "", ...){
 
@@ -72,7 +73,7 @@ plot_horizontal_bars <- function(data,
     labs(title = title) +
     ylim(y_lim) +
     geom_text(data=data, aes(label = format_n2(Y, label_k, label_perc)),
-              hjust = -0.06, size = label_size)
+              hjust = label_hjust, size = label_size)
 
   p
 
