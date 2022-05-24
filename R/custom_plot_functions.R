@@ -16,20 +16,26 @@
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
 plot_horizontal_bars <- function(data,
-                                    xvar = "group",
-                                    yvar = "n",
+                                  xvar = "group",
+                                  yvar = "n",
 
-                                    palette_function = NULL,
-                                    colors = NULL,
-                                    base_size = 14,
-                                    label_size = 4,
-                                    label_k = FALSE,
-                                    label_perc = FALSE,
-                                    bar_width = NULL,
-                                    title = "", ...){
+                                  reverse_order = FALSE,
+                                  palette_function = NULL,
+                                  colors = NULL,
+                                  base_size = 14,
+                                  label_size = 4,
+                                  label_k = FALSE,
+                                  label_perc = FALSE,
+                                  bar_width = NULL,
+                                  title = "", ...){
 
   data$Y <- data[[yvar]]
   data$group <- data[[xvar]]
+
+
+  if(reverse_order){
+    data$group <- forcats::fct_rev(as.factor(data$group))
+  }
 
   if(nrow(data) == 0){
     return(NULL)

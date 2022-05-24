@@ -54,6 +54,7 @@ server <- function(input, output, session) {
              settings = list(
                xvar = "continent",
                yvar = "population",
+               reverse_order = FALSE,
                palette_function = "ocean.phase",
                colors = NULL,
                base_size = 14,
