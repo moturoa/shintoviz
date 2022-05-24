@@ -4,13 +4,12 @@ library(softui)
 library(shiny)
 
 library(pals)
-library(gapminder)
 library(ggplot2)
 library(scales)
 library(glue)
 library(dplyr)
 
-library(gapminder)
+library(gapminder) # example data
 
 devtools::load_all()
 
@@ -28,7 +27,20 @@ plot_config <- list(
       label_hjust = -0.1,
       bar_width = 0.6,
       title = "Populatie (miljoenen)"
-    )
+    ),
+  secondplot =  list(
+    xvar = "continent",
+    yvar = "population",
+    reverse_order = FALSE,
+    palette_function = "parula",
+    colors = NULL,
+    base_size = 14,
+    label_size = 6,
+    label_k = FALSE,
+    label_hjust = -0.1,
+    bar_width = 0.6,
+    title = "Populatie (miljoenen)"
+  )
 )
 
 

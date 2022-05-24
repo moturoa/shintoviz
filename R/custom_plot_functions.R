@@ -200,7 +200,6 @@ plot_value_by_time <- function(data,
 #' @param xlab X-axis label
 #' @param ylab Y-axis label
 #' @param grouplab group label (for legend title)
-#' @param fill_na_group Value to use for missing group values in data ("Onbekend")
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
 plot_grouped_value_by_time <- function(data,
@@ -222,7 +221,6 @@ plot_grouped_value_by_time <- function(data,
                                    xlab = "xlab",
                                    grouplab = "",
                                    title = "title",
-                                   fill_na_group = "Onbekend",
                                    ...
                                    ){
 
@@ -237,10 +235,6 @@ plot_grouped_value_by_time <- function(data,
   data$group <- data[[group]]
 
   data <- dplyr::filter(data, !is.na(.data$n), !is.na(.data$time))
-
-  if(any(is.na(data$group))){
-    data$group <- tidyr::replace_na(data$group, fill_na_group)
-  }
 
   n_time <- length(unique(data$time))
   n_group <- length(unique(data$group))
@@ -341,8 +335,10 @@ plot_grouped_horizontal_bars <- function(data,
   data$group2 <- data[[group2]]
   data$n <- data[[yvar]]
 
+  # TODO fill with na_value ?
   data <- filter(data, !is.na(group1))
 
+  # TODO te specifiek
   data$n_total <- ave(data$n, data$group1, FUN = sum)
 
   if(sort){

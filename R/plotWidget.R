@@ -2,6 +2,9 @@
 
 
 #---- Utils ------
+
+
+# TODO niet gebruikt maar de ordering en na_include moeten naar prepare_plot_data
 table_group_n_woningen <- function(data, column, order = NULL, na_include = TRUE){
 
   out <- data %>%
@@ -39,61 +42,6 @@ table_group_n_woningen <- function(data, column, order = NULL, na_include = TRUE
 
 
 
-table_group_time_n_woningen <- function(data, column, time_column, order = NULL, na_include = FALSE){
-
-  out <- data %>%
-    group_by(!!sym(column), !!sym(time_column)) %>%
-    summarize(n = sum(aantalwoningen), .groups = "drop") %>%   #! nog hardcoded
-    setNames(c("group","time","n")) %>%
-    group_by(group) %>%
-    arrange(time) %>%
-    mutate(n_cumu = cumsum(n)) %>%
-    ungroup
-
-
-  if(!is.null(order)){
-
-    validate_order(out$group, order)
-    out$group <- factor(out$group, levels = order)
-
-  }
-
-  out <- mutate(out, n = replace_na(n, 0))
-
-out
-}
-
-
-format_table_group_n <- function(x, settings = list(), ...){
-
-  x %>%
-    setNames(c(settings$group_label, "Aantal woningen")) %>%
-    add_column_percentages("Aantal woningen", "%")
-
-}
-
-format_table_time_n <- function(x, settings = list(), ...){
-
-  x %>%
-    setNames(c(settings$time_label, "Aantal woningen", "Aantal woningen totaal"))
-}
-
-
-format_table_group_time_n <- function(x, settings = list(), ...){
-
-  u_nms <- unique(x$group)
-
-  out <- x %>%
-    pivot_wider(values_from = n, names_from = group, values_fill = 0)
-
-
-  names(out)[1:2] <- c(settings$time_label, "Aantal woningen")
-
-  out
-    #add_row_percentages("Aantal woningen", "%")
-
-}
-
 
 
 validate_order <- function(group, order){
@@ -109,6 +57,7 @@ validate_order <- function(group, order){
 
 
 
+# TODO nog niet aangepast sinds WBM3.0
 validate_plot_settings <- function(settings){
 
   sett <- names(settings)
@@ -240,11 +189,12 @@ plotWidgetModule <- function(input, output, session,
                        table_format = function(x)x,
                        extra_ggplot = reactive(NULL),
                        y_min = NULL
-
                        ){
 
 
-  internal_plot_types <- c("plot_horizontal_bars","plot_value_by_time","plot_grouped_value_by_time")
+  internal_plot_types <- c("plot_horizontal_bars",
+                           "plot_value_by_time",
+                           "plot_grouped_value_by_time")
 
 
   # check settings, fill with default values
@@ -252,7 +202,7 @@ plotWidgetModule <- function(input, output, session,
   template <- settings$template
 
 
-  output$plot_main <- renderPlot({
+  output$plot_main <- shiny::renderPlot({
 
     if(!is.null(settings$custom_function)){
       plot_fn <- base::get(settings$custom_function$plot)
@@ -264,7 +214,7 @@ plotWidgetModule <- function(input, output, session,
       if(type %in% internal_plot_types){
         plot_fn <- utils::getFromNamespace(type, "shintoviz")
       } else {
-        stop(paste("plot_type not in ",paste(internal_plot_types, collapse= " ,")))
+        stop(paste("plot_type not in ", paste(internal_plot_types, collapse= " ,")))
       }
     }
 
@@ -302,7 +252,7 @@ plotWidgetModule <- function(input, output, session,
 
 
   #---- Table
-  output$tab_data <- renderTable({
+  output$tab_data <- shiny::renderTable({
 
       table_format(plot_data())
 
@@ -311,11 +261,10 @@ plotWidgetModule <- function(input, output, session,
 
 
   # make exportable
-  callModule(exportButton, "btn_download", data = plot_data)
+  shiny::callModule(exportButton, "btn_download", data = plot_data)
 
 
 }
 
 
-#table_group_time_n_woningen(wp, "woningtype", order = NULL, time_column = "opleverjaar", na_include = FALSE)
 

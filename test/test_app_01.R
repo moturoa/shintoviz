@@ -3,7 +3,6 @@ library(softui)
 library(shiny)
 
 library(pals)
-library(gapminder)
 library(ggplot2)
 library(scales)
 library(glue)
