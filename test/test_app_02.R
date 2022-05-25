@@ -24,7 +24,7 @@ plot_config <- list(
       base_size = 14,
       label_size = 6,
       label_k = FALSE,
-      label_hjust = -0.1,
+      label_hjust = -0.2,
       bar_width = 0.6,
       title = "Populatie (miljoenen)"
     ),
@@ -37,7 +37,7 @@ plot_config <- list(
     base_size = 14,
     label_size = 6,
     label_k = FALSE,
-    label_hjust = -0.1,
+    label_hjust = -0.2,
     bar_width = 0.6,
     title = "Populatie (miljoenen)"
   )
