@@ -185,7 +185,7 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 plotWidgetModule <- function(input, output, session,
                        plot_data = reactive(NULL),
                        plot_type = reactive("plot_horizontal_bars"),
-                       settings = list(),
+                       settings = reactive(list()),
                        table_format = function(x)x,
                        extra_ggplot = reactive(NULL),
                        y_min = NULL
@@ -197,15 +197,20 @@ plotWidgetModule <- function(input, output, session,
                            "plot_grouped_value_by_time")
 
 
-  # check settings, fill with default values
-  #settings <- validate_plot_settings(settings)
-  template <- settings$template
+
 
 
   output$plot_main <- shiny::renderPlot({
 
-    if(!is.null(settings$custom_function)){
-      plot_fn <- base::get(settings$custom_function$plot)
+    sett <- settings()
+
+    # check settings, fill with default values
+    #settings <- validate_plot_settings(settings)
+    template <- sett$template
+
+
+    if(!is.null(sett$custom_function)){
+      plot_fn <- base::get(sett$custom_function$plot)
 
     } else {
 
@@ -218,10 +223,10 @@ plotWidgetModule <- function(input, output, session,
       }
     }
 
-    settings$data <- plot_data()
+    sett$data <- plot_data()
 
     # Make the plot using the settings list
-    p <- do.call(plot_fn, settings)
+    p <- do.call(plot_fn, sett)
 
 
     # Extra adjustments

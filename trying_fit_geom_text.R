@@ -14,7 +14,7 @@ xlim <- c(0, max(tab$pop) + max(tab$label_width)*max(tab$pop))
 
 
 ggplot(tab, aes(x=continent, y=pop)) +
-  geom_bar(stat= "identity") +
+  geom_bar(stat= "identity")  +
   coord_flip() +
   geom_text(aes(label = label), size=5, hjust = - 0.05) +
   lims(y = xlim)

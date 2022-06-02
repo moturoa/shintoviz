@@ -22,7 +22,11 @@ ui <- softui::simple_page(
                                            choices = unique(gapminder$continent),
                                            selected = unique(gapminder$continent),
                                            multiple = TRUE),
-                   footer_ui = tags$i("Wat meer informatie over deze plot")
+                   footer_ui = tagList(
+                     numericInput("num_hjust", "Label hjust", value = -0.06),
+                     numericInput("num_labelsize", "Label size", value = 5),
+                     numericInput("num_barwidth", "Bar width", value = 0.6)
+                   )
                    )
     )
   )
@@ -50,18 +54,20 @@ server <- function(input, output, session) {
   callModule(plotWidgetModule, "plot",
              plot_data = plot_data_filtered,
              plot_type = reactive("plot_horizontal_bars"),
-             settings = list(
-               xvar = "continent",
-               yvar = "population",
-               reverse_order = FALSE,
-               palette_function = "ocean.phase",
-               colors = NULL,
-               base_size = 14,
-               label_size = 6,
-               label_k = FALSE,
-               label_hjust = -0.1,
-               bar_width = 0.6,
-               title = "Populatie (miljoenen)"
+             settings = reactive(
+               list(
+                 xvar = "continent",
+                 yvar = "population",
+                 reverse_order = FALSE,
+                 palette_function = "ocean.phase",
+                 colors = NULL,
+                 base_size = 14,
+                 label_size = input$num_labelsize,
+                 label_k = FALSE,
+                 label_hjust = input$num_hjust,
+                 bar_width = input$num_barwidth,
+                 title = "Populatie (miljoenen)"
+              )
              )
             )
 

@@ -32,7 +32,7 @@ plot_horizontal_bars <- function(data,
 
   data$Y <- data[[yvar]]
   data$group <- data[[xvar]]
-
+  data$label <- format_n2(data$Y, label_k, label_perc)
 
   if(reverse_order){
     data$group <- forcats::fct_rev(as.factor(data$group))
@@ -45,14 +45,14 @@ plot_horizontal_bars <- function(data,
   colors <- generate_colors(nrow(data), palette_function, colors, ...)
 
 
-  # Om genoeg ruimte te maken voor de bar labels, dit moet algemener (maar hoe...)
-  h_multiplier <- 20
-  y_max <- max(data$Y, na.rm = TRUE)
-  y_axis_max <- y_max / 0.65
-  u <- y_max /100 # unit
-  y_lim <- c(0, y_axis_max)
-  h_adj <- h_multiplier * u
-
+  # Om genoeg ruimte te maken voor de bar labels.
+  ymax <- max(data$Y)
+  ymin <- 0
+  m <- geom_text_measure_size(data$label, to = "npc", gp = gpar(cex = label_size/2))
+  i_max <- which.max(data$Y)
+  ch_w <- m[i_max,"width"]
+  ch_w <- ch_w - label_hjust*ch_w
+  y_lim <- c(ymin, ymax + (ymax-ymin)*ch_w)
 
   p <- ggplot(data, aes(x = group, y = Y, fill = group)) +
     geom_bar(stat = "identity", width = bar_width) +
@@ -72,7 +72,7 @@ plot_horizontal_bars <- function(data,
       panel.grid.minor = element_blank()) +
     labs(title = title) +
     ylim(y_lim) +
-    geom_text(data=data, aes(label = format_n2(Y, label_k, label_perc)),
+    geom_text(data=data, aes(label = label),
               hjust = label_hjust, size = label_size)
 
   p
