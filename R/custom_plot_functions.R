@@ -32,11 +32,7 @@ plot_horizontal_bars <- function(data,
                                   title = "", ...){
 
 
-  font_family <- if("customplotfont" %in% sysfonts::font_families()){
-    "customplotfont"
-  } else {
-    "sans"
-  }
+  font_family <- get_current_font_family()
 
   data$Y <- data[[yvar]]
   data$group <- data[[xvar]]
@@ -121,12 +117,15 @@ plot_value_by_time <- function(data,
                            point_size = 3,
                            line_width = 1.2,
                            label_bars = FALSE,
+                           label_k = FALSE,
+                           label_perc = FALSE,
                            ylab = "ylab",
                            xlab = "xlab",
                            title = "title", ...
                            ){
 
   plot_type <- match.arg(plot_type)
+  font_family <- get_current_font_family()
 
   if(nrow(data) == 0){
     return(NULL)
@@ -141,7 +140,7 @@ plot_value_by_time <- function(data,
 
   colors <- generate_colors(1, palette_function, colors, ...)
 
-  if(plot_type == "line"){
+  if(plot_type == "lines"){
 
     p <- data %>%
       ggplot(aes(x = time, y = n)) +
@@ -162,27 +161,25 @@ plot_value_by_time <- function(data,
       scale_y_continuous(breaks = my_breaks_pretty()) +
       labs(y = ylab, x = xlab, fill = "", title = title)
 
-    if(label_bars){
+  }
 
-      dlab <- data %>%
-        group_by(n) %>%
-        summarize(n = sum(n), .groups = "drop")
+  if(label_bars){
 
-      ymax <- max(dlab$n)
+    data$label <- format_n2(data$n, label_k, label_perc)
 
-      p <- p + geom_text(data = dlab,
-                         aes(label = n, x = time, y = n, fill = NULL, color = NULL),
-                         size = label_size,
-                         vjust = -1) +
-        ylim(c(NA, ymax + 0.05*ymax))
-
-    }
+    ymax <- max(data$n)
+    p <- p + geom_text(data = data,
+                       aes(label = label, x = time, y = n, fill = NULL, color = NULL),
+                       size = label_size,
+                       family = font_family,
+                       vjust = -1) +
+      ylim(c(NA, ymax + 0.05*ymax))
 
   }
 
   p <- p +
-    theme_minimal(base_size = base_size)
-  #theme(text = element_text(family = "customplotfont"))
+    theme_minimal(base_size = base_size) +
+    theme(text = element_text(family = font_family))
 
   p
 

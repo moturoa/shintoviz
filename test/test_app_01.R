@@ -21,19 +21,31 @@ ui <- softui::simple_page(
 
   softui::fluid_row(
     column(4,
-      plotWidgetUI("plot",
+      plotWidgetUI("plot1",
 
-                   header_ui = shintoshiny::select_input("sel_continent", NULL,
-                                           choices = unique(gapminder$continent),
-                                           selected = unique(gapminder$continent),
-                                           multiple = TRUE),
-                   footer_ui = tagList(
-                     numericInput("num_hjust", "Label hjust", value = -0.06),
-                     numericInput("num_labelsize", "Label size", value = 4),
-                     numericInput("num_barwidth", "Bar width", value = 0.62),
-                     numericInput("num_basesize", "Base size", value = 14)
-                   )
-                   )
+             header_ui = shintoshiny::select_input("sel_continent", NULL,
+                                     choices = unique(gapminder$continent),
+                                     selected = unique(gapminder$continent),
+                                     multiple = TRUE),
+             footer_ui = tagList(
+               numericInput("num_hjust", "Label hjust", value = -0.19),
+               numericInput("num_labelsize", "Label size", value = 4),
+               numericInput("num_barwidth", "Bar width", value = 0.62),
+               numericInput("num_basesize", "Base size", value = 14)
+             )
+          )
+    ),
+    column(4,
+
+           plotWidgetUI("plot2",
+
+              footer_ui = tagList(
+                numericInput("num_basesize2", "Base size", value = 14),
+                selectInput("sel_plot_type_2", "Type", choices = c("lines","bars")),
+                numericInput("num_pointsize", "Point size", value = 3)
+              )
+           )
+
     )
   )
 
@@ -57,7 +69,7 @@ server <- function(input, output, session) {
 
   })
 
-  callModule(plotWidgetModule, "plot",
+  callModule(plotWidgetModule, "plot1",
              plot_data = plot_data_filtered,
              plot_type = reactive("plot_horizontal_bars"),
              settings = reactive(
@@ -77,6 +89,37 @@ server <- function(input, output, session) {
               )
              )
             )
+
+
+
+  plot_data_2 <- reactive({
+    gapminder %>%
+      filter(country == "Netherlands") %>%
+      mutate(pop = round(1e-06* pop,1))
+  })
+
+  callModule(plotWidgetModule, "plot2",
+             plot_data = plot_data_2,
+             plot_type = reactive("plot_value_by_time"),
+             settings = reactive(
+               list(
+                 xvar = "year",
+                 yvar = "pop",
+                 plot_type = input$sel_plot_type_2,
+                 palette_function = NULL,
+                 colors = "#33B7A0",
+                 base_size = input$num_basesize2,
+                 label_size = 2.5,
+                 point_size = input$num_pointsize,
+                 line_width = 1.2,
+                 label_bars = TRUE,
+                 label_k = FALSE,
+                 ylab = "Populatie",
+                 xlab = "Jaar",
+                 title = "Nederland"
+               )
+             )
+  )
 
 
 }
