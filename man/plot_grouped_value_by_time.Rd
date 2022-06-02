@@ -21,7 +21,6 @@ plot_grouped_value_by_time(
   xlab = "xlab",
   grouplab = "",
   title = "title",
-  fill_na_group = "Onbekend",
   ...
 )
 }
@@ -51,8 +50,6 @@ plot_grouped_value_by_time(
 \item{grouplab}{group label (for legend title)}
 
 \item{title}{Title above plot}
-
-\item{fill_na_group}{Value to use for missing group values in data ("Onbekend")}
 
 \item{\dots}{Further arguments passed to `generate_colors`}
 

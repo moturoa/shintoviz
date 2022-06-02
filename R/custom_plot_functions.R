@@ -31,6 +31,13 @@ plot_horizontal_bars <- function(data,
 
                                   title = "", ...){
 
+
+  font_family <- if("customplotfont" %in% sysfonts::font_families()){
+    "customplotfont"
+  } else {
+    "sans"
+  }
+
   data$Y <- data[[yvar]]
   data$group <- data[[xvar]]
   data$label <- format_n2(data$Y, label_k, label_perc)
@@ -49,7 +56,8 @@ plot_horizontal_bars <- function(data,
   # Om genoeg ruimte te maken voor de bar labels.
   ymax <- max(data$Y)
   ymin <- 0
-  m <- geom_text_measure_size(data$label, to = "npc", gp = gpar(cex = label_size/2))
+  m <- geom_text_measure_size(data$label, to = "npc",
+                              gp = grid::gpar(cex = label_size/2))
   i_max <- which.max(data$Y)
   ch_w <- m[i_max,"width"]
   ch_w <- ch_w - label_hjust*ch_w
@@ -61,7 +69,7 @@ plot_horizontal_bars <- function(data,
     coord_flip() +
     theme_minimal() +
     scale_x_discrete(drop=FALSE) +
-    theme(  #text = element_text(family = "customplotfont"),
+    theme(  text = element_text(family = font_family),
       plot.title = element_text(size=base_size+4),
       panel.border = element_blank(),
       legend.position = "none",
@@ -74,6 +82,7 @@ plot_horizontal_bars <- function(data,
     labs(title = title) +
     ylim(y_lim) +
     geom_text(data=data, aes(label = label),
+              family = font_family,
               hjust = label_hjust, size = label_size)
 
   p

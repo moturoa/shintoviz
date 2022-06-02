@@ -43,7 +43,7 @@ table_group_n_woningen <- function(data, column, order = NULL, na_include = TRUE
 
 
 
-
+# TODO wordt nog niet gebruikt
 validate_order <- function(group, order){
   nms_mis <- setdiff(order, group)
   if(length(nms_mis)>0){
@@ -149,10 +149,13 @@ validate_plot_settings <- function(settings){
 
 #----- UI function ------
 
+#' Shiny UI function for plotWidget
 #' @param id Shiny input ID
 #' @param header_ui Further UI to be placed above the plot
 #' @param footer_ui Further UI to be placed below the plot
 #' @param \dots Further arguments to softui::tab_box
+#' @rdname plotWidget
+#' @export
 plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 
   ns <- NS(id)
@@ -182,6 +185,9 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 
 
 #----- Server function ------
+
+#' @rdname plotWidget
+#' @export
 plotWidgetModule <- function(input, output, session,
                        plot_data = reactive(NULL),
                        plot_type = reactive("plot_horizontal_bars"),

@@ -35,8 +35,8 @@ format_n <- function(n, label_k = FALSE){
 
 
 #https://stackoverflow.com/questions/55686910/how-can-i-access-dimensions-of-labels-plotted-by-geom-text-in-ggplot2
-geom_text_measure_size <- function(txt, gp = gpar(), to = "mm") {
-  if (is.grob(txt)) {
+geom_text_measure_size <- function(txt, gp = grid::gpar(), to = "mm") {
+  if (grid::is.grob(txt)) {
     grobs <- lapply(seq_along(txt$label), function(i) {
       g <- txt
       # Subset grob per label
@@ -46,15 +46,15 @@ geom_text_measure_size <- function(txt, gp = gpar(), to = "mm") {
       g
     })
   } else {
-    grobs <- lapply(txt, function(t) textGrob(t, gp = gp))
+    grobs <- lapply(txt, function(t) grid::textGrob(t, gp = gp))
   }
 
-  heights <- do.call(unit.c, lapply(grobs, grobHeight))
-  widths  <- do.call(unit.c, lapply(grobs, grobWidth))
+  heights <- do.call(grid::unit.c, lapply(grobs, grid::grobHeight))
+  widths  <- do.call(grid::unit.c, lapply(grobs, grid::grobWidth))
 
   cbind(
-    height = convertHeight(heights, to, valueOnly = TRUE),
-    width = convertWidth(widths,   to, valueOnly = TRUE)
+    height = grid::convertHeight(heights, to, valueOnly = TRUE),
+    width = grid::convertWidth(widths,   to, valueOnly = TRUE)
   )
 }
 

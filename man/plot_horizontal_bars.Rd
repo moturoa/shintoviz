@@ -11,11 +11,12 @@ plot_horizontal_bars(
   reverse_order = FALSE,
   palette_function = NULL,
   colors = NULL,
-  base_size = 14,
-  label_size = 4,
+  base_size = 15,
+  label_size = 5,
   label_k = FALSE,
   label_perc = FALSE,
-  bar_width = NULL,
+  label_hjust = -0.2,
+  bar_width = 0.6,
   title = "",
   ...
 )

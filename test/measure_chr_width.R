@@ -6,7 +6,7 @@ label <- c("label-one-that-might-overlap-another-label",
 
 #https://stackoverflow.com/questions/55686910/how-can-i-access-dimensions-of-labels-plotted-by-geom-text-in-ggplot2
 measure_size <- function(txt, gp = gpar(), to = "mm") {
-  if (is.grob(txt)) {
+  if (grid::is.grob(txt)) {
     grobs <- lapply(seq_along(txt$label), function(i) {
       g <- txt
       # Subset grob per label

@@ -10,7 +10,13 @@ library(dplyr)
 
 library(gapminder)
 
-devtools::load_all()
+#devtools::load_all()
+library(shintoviz)
+
+sysfonts::font_add_google("Playfair Display", "customplotfont")
+showtext::showtext_auto()
+
+
 
 ui <- softui::simple_page(
 
@@ -24,9 +30,9 @@ ui <- softui::simple_page(
                                            multiple = TRUE),
                    footer_ui = tagList(
                      numericInput("num_hjust", "Label hjust", value = -0.06),
-                     numericInput("num_labelsize", "Label size", value = 5),
+                     numericInput("num_labelsize", "Label size", value = 6),
                      numericInput("num_barwidth", "Bar width", value = 0.6),
-                     numericInput("num_basesize", "Base size", value = 14)
+                     numericInput("num_basesize", "Base size", value = 18)
                    )
                    )
     )
@@ -65,6 +71,7 @@ server <- function(input, output, session) {
                  base_size = input$num_basesize,
                  label_size = input$num_labelsize,
                  label_k = FALSE,
+                 label_perc = TRUE,
                  label_hjust = input$num_hjust,
                  bar_width = input$num_barwidth,
                  title = "Populatie (miljoenen)"
