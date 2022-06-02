@@ -10,18 +10,17 @@ library(dplyr)
 
 library(gapminder)
 
-#devtools::load_all()
-library(shintoviz)
+devtools::load_all()
+#library(shintoviz)
 
-sysfonts::font_add_google("Playfair Display", "customplotfont")
-showtext::showtext_auto()
 
+set_plotwidget_font("Maven Pro")
 
 
 ui <- softui::simple_page(
 
   softui::fluid_row(
-    column(6,
+    column(4,
       plotWidgetUI("plot",
 
                    header_ui = shintoshiny::select_input("sel_continent", NULL,
@@ -30,9 +29,9 @@ ui <- softui::simple_page(
                                            multiple = TRUE),
                    footer_ui = tagList(
                      numericInput("num_hjust", "Label hjust", value = -0.06),
-                     numericInput("num_labelsize", "Label size", value = 6),
-                     numericInput("num_barwidth", "Bar width", value = 0.6),
-                     numericInput("num_basesize", "Base size", value = 18)
+                     numericInput("num_labelsize", "Label size", value = 4),
+                     numericInput("num_barwidth", "Bar width", value = 0.62),
+                     numericInput("num_basesize", "Base size", value = 14)
                    )
                    )
     )
