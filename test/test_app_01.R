@@ -25,7 +25,8 @@ ui <- softui::simple_page(
                    footer_ui = tagList(
                      numericInput("num_hjust", "Label hjust", value = -0.06),
                      numericInput("num_labelsize", "Label size", value = 5),
-                     numericInput("num_barwidth", "Bar width", value = 0.6)
+                     numericInput("num_barwidth", "Bar width", value = 0.6),
+                     numericInput("num_basesize", "Base size", value = 14)
                    )
                    )
     )
@@ -61,7 +62,7 @@ server <- function(input, output, session) {
                  reverse_order = FALSE,
                  palette_function = "ocean.phase",
                  colors = NULL,
-                 base_size = 14,
+                 base_size = input$num_basesize,
                  label_size = input$num_labelsize,
                  label_k = FALSE,
                  label_hjust = input$num_hjust,
