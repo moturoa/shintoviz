@@ -1,69 +1,71 @@
 
-
+#' @importFrom softui action_button
 data_export_modal <- function(ns = NS(NULL),
-                              title = "Export data", 
+                              title = "Export data",
                               info_text = "Kies het gewenste formaat:",
                               formats = c("Excel","CSV","JSON")){
-  
-  modalDialog(
+
+  shiny:: modalDialog(
     easyClose = TRUE,
-    tags$h3(title),
-    tags$hr(),
-    
-    tags$p(info_text),
-    
+    shiny::tags$h3(title),
+    shiny::tags$hr(),
+
+    shiny::tags$p(info_text),
+
     if("Excel" %in% formats){
-      downloadButton(ns("btn_excel"), "Excel", icon = bsicon("file-earmark-excel-fill"),
+      shiny::downloadButton(ns("btn_excel"), "Excel", icon = bsicon("file-earmark-excel-fill"),
                      class = "bg-gradient-secondary")
     },
-    
+
     if("CSV" %in% formats){
-      downloadButton(ns("btn_csv"), "CSV", icon = bsicon("filetype-csv"),
-                     class = "bg-gradient-secondary")  
+      shiny::downloadButton(ns("btn_csv"), "CSV", icon = bsicon("filetype-csv"),
+                     class = "bg-gradient-secondary")
     },
-    
+
     if("JSON" %in% formats){
-      downloadButton(ns("btn_json"), "JSON", icon = bsicon("file-code-fill"),
-                     class = "bg-gradient-secondary")  
+      shiny::downloadButton(ns("btn_json"), "JSON", icon = bsicon("file-code-fill"),
+                     class = "bg-gradient-secondary")
     },
-    
-    
-    # ID van deze button maakt niet uit, 'close' gaat via JS (`data-dismiss`) 
-    footer = softui::action_button(ns("xyz"), "Sluiten", 
-                          icon = bsicon("x-lg"), 
+
+
+    # ID van deze button maakt niet uit, 'close' gaat via JS (`data-dismiss`)
+    footer = softui::action_button(ns("xyz"), "Sluiten",
+                          icon = bsicon("x-lg"),
                           status = "danger",
                           `data-bs-dismiss` = "modal")
   )
-  
+
 }
 
 
 
 exportButtonUI <- function(id, export_button_status = "secondary", label = "Export..."){
-  
+
   ns <- NS(id)
-  
+
   softui::action_button(ns("btn_export"), label, status = export_button_status)
-  
+
 }
 
-exportButton <- function(input, output, session, 
-                         data, 
+#' @importFrom writexl write_xlsx
+#' @importFrom jsonlite toJSON
+exportButton <- function(input, output, session,
+                         data,
                          formats = c("Excel", "CSV"),
                          filename_prefix = "data_download"){
-  
-  
-  observeEvent(input$btn_export, {
-    
-    showModal(
+
+
+  shiny::observeEvent(input$btn_export, {
+
+    shiny::showModal(
       # zie modal.R
-      data_export_modal(ns = session$ns, 
-                        formats = formats)  
+      data_export_modal(ns = session$ns,
+                        formats = formats)
     )
-    
+
   })
-  
-  output$btn_excel <- downloadHandler(
+
+  output$btn_excel <- shiny::downloadHandler(
     filename = function() {
       paste0(filename_prefix, "_", Sys.Date(), ".xlsx")
     },
@@ -71,8 +73,8 @@ exportButton <- function(input, output, session,
       writexl::write_xlsx(data(), file)
     }
   )
-  
-  output$btn_csv <- downloadHandler(
+
+  output$btn_csv <- shiny::downloadHandler(
     filename = function() {
       paste0(filename_prefix, "_", Sys.Date(), ".csv")
     },
@@ -80,8 +82,8 @@ exportButton <- function(input, output, session,
       write.csv(data(), file)
     }
   )
-  
-  output$btn_json <- downloadHandler(
+
+  output$btn_json <- shiny::downloadHandler(
     filename = function() {
       paste0(filename_prefix, "_", Sys.Date(), ".json")
     },
@@ -89,7 +91,7 @@ exportButton <- function(input, output, session,
       writeLines(jsonlite::toJSON(data(), pretty = TRUE), file)
     }
   )
-  
-  
+
+
 }
 

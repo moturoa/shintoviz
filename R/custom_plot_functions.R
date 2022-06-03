@@ -34,6 +34,7 @@
 #'                      label_k = FALSE,
 #'                      bar_width = 0.62,
 #'                      title = "Populatie (miljoenen)")
+#' @importFrom forcats fct_rev
 plot_horizontal_bars <- function(data,
                                   xvar = "group",
                                   yvar = "n",

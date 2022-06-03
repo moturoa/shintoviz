@@ -17,11 +17,9 @@ shiny modules for dashboarding ("plot widgets"), and functions to automate many 
 The `shintoviz` package can be used either to make static plots in any medium (a markdown document, a script, 
 or a shiny application), or to make opinionated plot widgets for inclusion in shinto applications.
 
+The first step - which is still under development - is to prepare the data for plotting. 
 
-The first step - which is outside of `shintoviz` - is to prepare the data for plotting. For a simple bar
-chart, data often need to be summarized in a single metric per group level. Write your own methods to make
-these tables for plotting. Take a close look at the examples to see what the data should look like for a given
-custom plot.
+For now, the user has to prepare the data beforehand. For a simple bar chart, data typically need to be summarized in a single metric per group level. Write your own methods to make these tables for plotting. Take a close look at the examples to see what the data should look like for a given custom plot.
 
 In the examples below I use the following example data:
 

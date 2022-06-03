@@ -64,3 +64,27 @@ plot_grouped_value_by_time(
 \description{
 Make a standard grouped time plot (lines or stacked bars)
 }
+\examples{
+library(gapminder)
+library(dplyr)
+plot_data <- gapminder \%>\%
+  filter(country \%in\% c("Netherlands","Belgium","Luxembourg","Denmark")) \%>\%
+  mutate(pop = 1e-06* pop)
+
+plot_grouped_value_by_time(plot_data,
+                           xvar = "year",
+                           yvar = "pop",
+                           group = "country",
+                           plot_type = "lines",
+                           palette_function = "viridis",
+                           colors = NULL,
+                           base_size = 14,
+                           label_size = 4,
+                           point_size = 3,
+                           line_width = 1.2,
+                           label_bars = FALSE,
+                           ylab = "Populatie",
+                           xlab = "Jaar",
+                           title = "West-Europa") +
+  ylim(c(0,20))
+}

@@ -43,7 +43,7 @@ plot_value_by_time(
 
 \item{label_k}{If TRUE, labels are divided by 1000}
 
-\item{label_perc}{If TRUE, % is shown in label}
+\item{label_perc}{If TRUE, percentage is shown in label}
 
 \item{title}{Title above plot}
 
@@ -53,4 +53,26 @@ plot_value_by_time(
 }
 \description{
 No group (see plot_grouped_time_plot)
+}
+\examples{
+library(gapminder)
+library(dplyr)
+plot_data <- gapminder \%>\%
+  filter(country == "Netherlands") \%>\%
+  mutate(pop = 1e-06* pop)
+
+plot_value_by_time(plot_data,
+                   xvar = "year",
+                   yvar = "pop",
+                   plot_type = "bars",
+                   palette_function = NULL,
+                   colors = "red",
+                   base_size = 14,
+                   label_size = 4,
+                   point_size = 3,
+                   line_width = 1.2,
+                   label_bars = FALSE,
+                   ylab = "Populatie",
+                   xlab = "Jaar",
+                   title = "Nederland")
 }
