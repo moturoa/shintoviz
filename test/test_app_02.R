@@ -13,6 +13,7 @@ library(gapminder) # example data
 
 devtools::load_all()
 
+set_plotwidget_font("Roboto")
 
 plot_config <- list(
   firstplot = list(

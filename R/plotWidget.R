@@ -43,17 +43,7 @@ table_group_n_woningen <- function(data, column, order = NULL, na_include = TRUE
 
 
 
-# TODO wordt nog niet gebruikt
-validate_order <- function(group, order){
-  nms_mis <- setdiff(order, group)
-  if(length(nms_mis)>0){
-    message(paste("Groups mentioned in customPlot not present in data:", paste(nms_mis,collapse=",")))
-  }
-  nms_x <- setdiff(group, order)
-  if(length(nms_x)>0){
-    message(paste("Groups in data not mentioned in customPlot:", paste(nms_x,collapse=",")))
-  }
-}
+
 
 
 

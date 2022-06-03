@@ -1,0 +1,50 @@
+---
+title: "prepare_plot_data test"
+output: 
+  html_document:
+    theme: flatly
+
+---
+
+# Test prepare plot data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(pals)
+library(gapminder)
+library(ggplot2)
+library(scales)
+library(glue)
+library(dplyr)
+devtools::load_all()
+
+```
+
+
+
+```{r}
+data <- gapminder %>% 
+  prepare_grouped_data(groupvar = "continent",
+                       groupfun = mean,
+                       yvar = "pop",
+                       sort = TRUE,
+                       reverse = TRUE,
+                       order = NULL,
+                       top_n = 5)
+
+data
+```
+
+```{r}
+gapminder %>% 
+  prepare_grouped_data(groupvar = "continent",
+                       groupfun = mean,
+                       yvar = "gdpPercap",
+                       sort = FALSE,
+                       order = c("Oceania","Africa","Americas","Europe","Asia"),
+                       reverse = FALSE,
+                       fill_na_group = "Onbekend",
+                       top_n = NULL)
+```
+
