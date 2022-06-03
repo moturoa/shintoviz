@@ -4,136 +4,6 @@
 #---- Utils ------
 
 
-# TODO niet gebruikt maar de ordering en na_include moeten naar prepare_plot_data
-table_group_n_woningen <- function(data, column, order = NULL, na_include = TRUE){
-
-  out <- data %>%
-    group_by(!!sym(column)) %>%
-    summarize(n = sum(aantalwoningen), .groups = "drop") %>%   #! nog hardcoded
-    setNames(c("group","n"))
-
-  if(na_include){
-
-    out$group[is.na(out$group)] <- "Onbekend"
-
-    if(!is.null(order) & !any(c("onbekend","Onbekend") %in% order)){
-      order <- c("Onbekend", order)
-    }
-
-  }
-
-  if(!is.null(order)){
-
-    validate_order(out$group, order)
-
-    mdat <- tibble(x = order) %>% setNames("group")
-    out <- left_join(mdat, out, by = "group")
-    out$group <- factor(out$group, levels = order)
-  }
-
-  out <- mutate(out, n = replace_na(n, 0))
-
-  class(out) <- c(class(out), "table_group_time_n")
-
-  out
-}
-
-
-
-
-
-
-
-
-
-
-# TODO nog niet aangepast sinds WBM3.0
-validate_plot_settings <- function(settings){
-
-  sett <- names(settings)
-
-  if("custom_function" %in% sett)return(settings)
-
-  template <- settings$template
-  stopifnot(!is.null(template))
-
-  fill_settings <- function(settings, default){
-    i_mis <- which(!names(default) %in% names(settings))
-
-    if(length(i_mis) > 0){
-      settings <- c(settings, default[i_mis])
-    }
-    settings
-  }
-
-  validate_required_settings <- function(settings, required){
-    if(!all(required %in% names(settings))){
-      stop(glue("Must provide {paste(required,collapse=', ')} in settings for customPlot"))
-    }
-  }
-
-
-  if(template == "horizontal_barplot"){
-
-    requi <- c("group","group_label")
-    validate_required_settings(settings, requi)
-
-    default <- list(
-      group_order = NULL,
-      palette_function = "parula",
-      colors = NULL,
-      filter = NULL,
-      label_bars = TRUE,
-      base_size = 14,
-      label_size = 4,
-      label_k = FALSE
-    )
-
-  } else if(template == "grouped_time_plot"){
-
-    requi <- c("group","group_label", "time_label", "time_column")
-    validate_required_settings(settings, requi)
-
-    default <- list(
-      group_order = NULL,
-      palette_function = "parula",
-      colors = NULL,
-      filter = NULL,
-      label_bars = FALSE,
-      base_size = 14,
-      label_size = 4,
-      label_k = FALSE,
-      point_size = 3,
-      line_width = 1.2
-    )
-
-  } else if(template == "time_plot"){
-
-    requi <- c("time_label", "time_column")
-    validate_required_settings(settings, requi)
-
-    default <- list(
-      palette_function = "parula",
-      colors = NULL,
-      filter = NULL,
-      label_bars = FALSE,
-      base_size = 14,
-      label_size = 4,
-      label_k = FALSE,
-      point_size = 3,
-      line_width = 1.2
-    )
-
-  } else NULL
-
-  settings <- fill_settings(settings, default)
-
-
-  return(settings)
-}
-
-
-
 
 
 
@@ -176,16 +46,59 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 
 #----- Server function ------
 
+#' @param input Shiny input (do not set)
+#' @param output Shiny output (do not set)
+#' @param session Shiny session (do not set)
+#' @param plot_data Reactive dataset used in plotting
+#' @param plot_type Reactive plotting function. Can be one of [internal_custom_plot_types()]
+#' @param settings Reactive list of parameters passed to the plotting function (and table function)
+#' @param table_format
+#' @param extra_ggplot A reactive (can be a list) of expressions to add to the ggplot object
 #' @rdname plotWidget
 #' @export
 plotWidgetModule <- function(input, output, session,
-                       plot_data = reactive(NULL),
+                       data = reactive(NULL),
                        plot_type = reactive("plot_horizontal_bars"),
                        settings = reactive(list()),
-                       table_format = function(x)x,
                        extra_ggplot = reactive(NULL),
                        y_min = NULL
                        ){
+
+
+  # Make data for plotting
+  plot_data <- reactive({
+
+    sett <- settings()
+
+    if(is.null(sett$table_prepare)){
+      data()
+    } else {
+      cfg <- sett$table_prepare
+      fun <- base::get(cfg$fun)
+      cfg$fun <- NULL
+      cfg$data <- data()
+      do.call(fun, cfg)
+    }
+
+  })
+
+  # Format table for showing
+  table_data <- reactive({
+
+    sett <- settings()
+
+    if(is.null(sett$table_format)){
+      plot_data()
+    } else {
+      cfg <- sett$table_format
+      fun <- base::get(cfg$fun)
+      cfg$fun <- NULL
+      cfg$data <- plot_data()
+      do.call(fun, cfg)
+    }
+
+  })
+
 
 
   output$plot_main <- shiny::renderPlot({
@@ -245,16 +158,17 @@ plotWidgetModule <- function(input, output, session,
 
 
   #---- Table
+
   output$tab_data <- shiny::renderTable({
 
-      table_format(plot_data())
+      table_data()
 
   } , digits = 0, align = "l")
 
 
 
   # make exportable
-  shiny::callModule(exportButton, "btn_download", data = plot_data)
+  shiny::callModule(exportButton, "btn_download", data = table_data)
 
 
 }

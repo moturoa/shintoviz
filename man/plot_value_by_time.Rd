@@ -47,7 +47,7 @@ plot_value_by_time(
 
 \item{title}{Title above plot}
 
-\item{\dots}{Further arguments passed to `generate_colors`}
+\item{\dots}{Further arguments passed to \code{generate_colors}}
 
 \item{bar_width}{Relative width of bars (1 = fills space completely)}
 }

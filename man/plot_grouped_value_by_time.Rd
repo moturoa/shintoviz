@@ -47,7 +47,7 @@ plot_grouped_value_by_time(
 
 \item{label_k}{If TRUE, labels are divided by 1000}
 
-\item{label_perc}{If TRUE, % is shown in label}
+\item{label_perc}{If TRUE, \% is shown in label}
 
 \item{ylab}{Y-axis label}
 
@@ -57,7 +57,7 @@ plot_grouped_value_by_time(
 
 \item{title}{Title above plot}
 
-\item{\dots}{Further arguments passed to `generate_colors`}
+\item{\dots}{Further arguments passed to \code{generate_colors}}
 
 \item{bar_width}{Relative width of bars (1 = fills space completely)}
 }

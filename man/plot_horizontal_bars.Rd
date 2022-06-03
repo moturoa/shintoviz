@@ -44,7 +44,7 @@ plot_horizontal_bars(
 
 \item{title}{Title above plot}
 
-\item{\dots}{Further arguments passed to `generate_colors`}
+\item{\dots}{Further arguments passed to \code{generate_colors}}
 }
 \description{
 Make a standard horizontal barplot

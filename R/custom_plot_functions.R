@@ -66,7 +66,7 @@ plot_horizontal_bars <- function(data,
     return(NULL)
   }
 
-  colors <- generate_colors(nrow(data), palette_function, colors, ...)
+  colors <- generate_colors(nrow(data), palette_function, colors)
 
 
   # Om genoeg ruimte te maken voor de bar labels.
@@ -179,7 +179,7 @@ plot_value_by_time <- function(data,
 
   n_time <- length(unique(data$time))
 
-  colors <- generate_colors(1, palette_function, colors, ...)
+  colors <- generate_colors(1, palette_function, colors)
 
   if(plot_type == "lines"){
 
@@ -314,7 +314,7 @@ plot_grouped_value_by_time <- function(data,
   n_time <- length(unique(data$time))
   n_group <- length(unique(data$group))
 
-  colors <- generate_colors(n_group, palette_function, colors, ...)
+  colors <- generate_colors(n_group, palette_function, colors)
 
   if(n_time == 1){
 
@@ -421,7 +421,7 @@ plot_grouped_horizontal_bars <- function(data,
                                             title = "",
                                             sort = TRUE,
                                             top_n = NA,
-                                            y_multiplier = 1.2){
+                                            y_multiplier = 1.2,...){
 
 
   data$group1 <- data[[group1]]

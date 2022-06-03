@@ -24,7 +24,7 @@ plot_grouped_horizontal_bars(
 )
 }
 \arguments{
-\item{data}{A dataframe made with `table_n_woningen`}
+\item{data}{A dataframe made with \code{table_n_woningen}}
 
 \item{palette_function}{A function that takes a single integer argument to return a vector of colors}
 }

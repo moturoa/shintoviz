@@ -16,6 +16,17 @@ prepare_grouped_data <- function(data,
                               fill_na_group = "Onbekend",
                               top_n = NULL){
 
+  # TODO
+  # if(na_include){
+  #
+  #   out$group[is.na(out$group)] <- "Onbekend"
+  #
+  #   if(!is.null(order) & !any(c("onbekend","Onbekend") %in% order)){
+  #     order <- c("Onbekend", order)
+  #   }
+  #
+  # }
+
   stopifnot(!is.null(yvar))
 
   # NA levels - fill.

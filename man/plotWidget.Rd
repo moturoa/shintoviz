@@ -27,6 +27,18 @@ plotWidgetModule(
 \item{footer_ui}{Further UI to be placed below the plot}
 
 \item{\dots}{Further arguments to softui::tab_box}
+
+\item{input}{Shiny input (do not set)}
+
+\item{output}{Shiny output (do not set)}
+
+\item{session}{Shiny session (do not set)}
+
+\item{plot_data}{Reactive dataset used in plotting}
+
+\item{plot_type}{Reactive plotting function. Can be one of \verb{?}}
+
+\item{extra_ggplot}{A reactive (can be a list) of expressions to add to the ggplot object}
 }
 \description{
 Shiny UI function for plotWidget

@@ -21,7 +21,7 @@ insert_plot_widgets(
 
 \item{session}{Shiny session object, no need to set (usually)}
 
-\item{\dots}{Further arguments passed to `plotWidgetUI`}
+\item{\dots}{Further arguments passed to \code{plotWidgetUI}}
 }
 \description{
 Insert plotWidget modules

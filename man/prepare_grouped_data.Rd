@@ -7,11 +7,11 @@
 prepare_grouped_data(
   data,
   groupvar = "group",
-  groupfun = sum,
   yvar = NULL,
+  groupfun = NULL,
   sort = FALSE,
-  order = NULL,
   reverse = FALSE,
+  order = NULL,
   fill_na_group = "Onbekend",
   top_n = NULL
 )

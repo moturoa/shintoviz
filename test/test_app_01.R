@@ -17,6 +17,21 @@ devtools::load_all()
 set_plotwidget_font("Maven Pro")
 
 
+my_plot_fun1 <- function(data, year){
+  gapminder %>%
+    mutate(continent = as.character(continent)) %>%
+    filter(year == !!year) %>%
+    group_by(continent) %>%
+    summarize(population = floor(1e-06 * sum(pop)), .groups = "drop")
+}
+
+my_table_format_fun1 <- function(data){
+  data$`%` <- round(100 * data[[2]] / sum(data[[2]]), 2)
+  data
+}
+
+
+
 ui <- softui::simple_page(
 
   softui::fluid_row(
@@ -29,6 +44,7 @@ ui <- softui::simple_page(
                                      multiple = TRUE),
 
              footer_ui = softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
+                  selectInput("num_year", "Kies jaar data", choices = unique(gapminder$year)),
                  numericInput("num_hjust", "Label hjust", value = -0.19),
                  numericInput("num_labelsize", "Label size", value = 4),
                  numericInput("num_barwidth", "Bar width", value = 0.62),
@@ -68,26 +84,29 @@ ui <- softui::simple_page(
 server <- function(input, output, session) {
 
 
-  plot_data <- reactive({
-    gapminder %>%
-      mutate(continent = as.character(continent)) %>%
-      filter(year == 2007) %>%
-      group_by(continent) %>%
-      summarize(population = floor(1e-06 * sum(pop)), .groups = "drop")
+  raw_data <- reactive({
+    gapminder
   })
 
-  plot_data_filtered <- reactive({
+  raw_data_filtered <- reactive({
 
-    plot_data() %>%
+    raw_data() %>%
       filter(continent %in% input$sel_continent)
 
   })
 
   callModule(plotWidgetModule, "plot1",
-             plot_data = plot_data_filtered,
+             data = raw_data_filtered,
              plot_type = reactive("plot_horizontal_bars"),
              settings = reactive(
                list(
+                 table_prepare = list(
+                   fun = "my_plot_fun1",
+                   year = input$num_year
+                 ),
+                 table_format = list(
+                   fun = "my_table_format_fun1"
+                 ),
                  xvar = "continent",
                  yvar = "population",
                  reverse_order = FALSE,
@@ -113,7 +132,7 @@ server <- function(input, output, session) {
   })
 
   callModule(plotWidgetModule, "plot2",
-             plot_data = plot_data_2,
+             data = plot_data_2,
              plot_type = reactive("plot_value_by_time"),
              settings = reactive(
                list(
@@ -144,7 +163,7 @@ server <- function(input, output, session) {
   })
 
   callModule(plotWidgetModule, "plot3",
-             plot_data = plot_data_3,
+             data = plot_data_3,
              plot_type = reactive("plot_grouped_value_by_time"),
              settings = reactive(
                list(
