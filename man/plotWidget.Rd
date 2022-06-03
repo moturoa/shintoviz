@@ -11,10 +11,9 @@ plotWidgetModule(
   input,
   output,
   session,
-  plot_data = reactive(NULL),
+  data = reactive(NULL),
   plot_type = reactive("plot_horizontal_bars"),
   settings = reactive(list()),
-  table_format = function(x) x,
   extra_ggplot = reactive(NULL),
   y_min = NULL
 )
@@ -34,11 +33,13 @@ plotWidgetModule(
 
 \item{session}{Shiny session (do not set)}
 
-\item{plot_data}{Reactive dataset used in plotting}
+\item{plot_type}{Reactive plotting function. Can be one of \code{\link[=internal_custom_plot_types]{internal_custom_plot_types()}}}
 
-\item{plot_type}{Reactive plotting function. Can be one of \verb{?}}
+\item{settings}{Reactive list of parameters passed to the plotting function (and table function)}
 
 \item{extra_ggplot}{A reactive (can be a list) of expressions to add to the ggplot object}
+
+\item{plot_data}{Reactive dataset used in plotting}
 }
 \description{
 Shiny UI function for plotWidget

@@ -1,6 +1,6 @@
 #' Set a Google font for plotWidget
 #' @description Call this once (typically in global.R)
-#' @param googlefont
+#' @param googlefont Name of the [Google font](https://fonts.google.com/)
 #' @export
 #' @importFrom sysfonts font_add_google
 #' @importFrom showtext showtext_auto

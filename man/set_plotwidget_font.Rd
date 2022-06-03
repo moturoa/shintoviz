@@ -6,6 +6,9 @@
 \usage{
 set_plotwidget_font(googlefont)
 }
+\arguments{
+\item{googlefont}{Name of the \href{https://fonts.google.com/}{Google font}}
+}
 \description{
 Call this once (typically in global.R)
 }

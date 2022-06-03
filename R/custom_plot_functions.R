@@ -401,107 +401,107 @@ plot_grouped_value_by_time <- function(data,
 
 
 
-
-# TODO combine some features with plot_horizontal_bars
-#' Make a standard horizontal barplot with group fill
-#' @param data A dataframe made with `table_n_woningen`
-#' @param palette_function A function that takes a single integer argument to return a vector of colors
-plot_grouped_horizontal_bars <- function(data,
-                                            group1 = "group",  # group to make bars
-                                            group2 = "group2", # group within bars
-                                            yvar = "n",
-                                            palette_function,
-                                            reverse_palette = FALSE,
-                                            colors = NULL,
-                                            base_size = 14,
-                                            label_size = 4,
-                                            label_k = FALSE,
-                                            bar_width = NULL,
-                                            ylab = "ylab",
-                                            title = "",
-                                            sort = TRUE,
-                                            top_n = NA,
-                                            y_multiplier = 1.2,...){
-
-
-  data$group1 <- data[[group1]]
-  data$group2 <- data[[group2]]
-  data$n <- data[[yvar]]
-
-  # TODO fill with na_value ?
-  data <- filter(data, !is.na(group1))
-
-  # TODO te specifiek
-  data$n_total <- ave(data$n, data$group1, FUN = sum)
-
-  if(sort){
-    data <- mutate(data, group1 = reorder(group1, n_total, max))
-  } else {
-    data <- mutate(data, group1 = as.factor(group1))
-  }
-
-  data_total <- group_by(data, group1) %>%
-    summarize(n = sum(n), .groups = "drop") %>%
-    mutate(group1 = factor(group1, levels = levels(data$group1)))
-
-  if(!is.na(top_n)){
-    top_n <- as.numeric(top_n)
-    n <- nlevels(data$group1)
-    top_n <- pmin(top_n,n)
-
-    i_l <- (n-top_n+1):n
-    toplevs <- levels(data$group1)[i_l]
-    data <- filter(data, group1 %in% toplevs)
-    data_total <- filter(data_total, group1 %in% toplevs)
-
-  }
-
-
-  if(nrow(data) == 0 || sum(data$n) == 0){
-    return(NULL)
-  }
-
-  g <- levels(data[[group2]])
-  colors <- generate_colors(length(g), palette_function, colors, reverse_palette)
-
-  # Om genoeg ruimte te maken voor de bar labels, dit moet algemener (maar hoe...)
-  y_max <- max(data$n, na.rm = TRUE)
-  y_lim <- c(0, y_max * y_multiplier)
-
-  if(label_k == "auto"){
-    label_k <- y_max > 5000
-  }
-
-
-  p <- ggplot(data, aes(x = group1, y = n, fill = group2)) +
-    geom_bar(stat = "identity", width = bar_width) +
-    scale_fill_manual(values = colors, drop = FALSE) +
-    coord_flip(clip = "off") +
-    theme_minimal() +
-    scale_x_discrete(drop=TRUE) +
-    theme(  #text = element_text(family = "customplotfont"),
-      plot.title = element_text(size=base_size+4),
-      panel.border = element_blank(),
-      # legend.position = c(0.4,0.2), #"bottom",
-      # legend.justification = "left",
-      # legend.direction = "vertical",
-      # legend.margin = margin(0),
-      legend.position = "top",
-      legend.direction = "horizontal",
-      legend.title = element_blank(),
-      axis.title.y = element_blank(),
-      axis.title.x = element_blank(),
-      axis.text.x = element_blank(),
-      axis.text.y = element_text(size = base_size),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank()) +
-    labs(title = title) +
-    ylim(y_lim) +
-    geom_text(data=data_total, aes(x=group1, label = format_n2(n,label_k,perc=FALSE), fill=NULL),
-              hjust = -0.06, size = label_size)
-
-  p
-
-}
+#'
+#' # TODO combine some features with plot_horizontal_bars
+#' #' Make a standard horizontal barplot with group fill
+#' #' @param data A dataframe made with `table_n_woningen`
+#' #' @param palette_function A function that takes a single integer argument to return a vector of colors
+#' plot_grouped_horizontal_bars <- function(data,
+#'                                             group1 = "group",  # group to make bars
+#'                                             group2 = "group2", # group within bars
+#'                                             yvar = "n",
+#'                                             palette_function,
+#'                                             reverse_palette = FALSE,
+#'                                             colors = NULL,
+#'                                             base_size = 14,
+#'                                             label_size = 4,
+#'                                             label_k = FALSE,
+#'                                             bar_width = NULL,
+#'                                             ylab = "ylab",
+#'                                             title = "",
+#'                                             sort = TRUE,
+#'                                             top_n = NA,
+#'                                             y_multiplier = 1.2,...){
+#'
+#'
+#'   data$group1 <- data[[group1]]
+#'   data$group2 <- data[[group2]]
+#'   data$n <- data[[yvar]]
+#'
+#'   # TODO fill with na_value ?
+#'   data <- filter(data, !is.na(group1))
+#'
+#'   # TODO te specifiek
+#'   data$n_total <- ave(data$n, data$group1, FUN = sum)
+#'
+#'   if(sort){
+#'     data <- mutate(data, group1 = reorder(group1, n_total, max))
+#'   } else {
+#'     data <- mutate(data, group1 = as.factor(group1))
+#'   }
+#'
+#'   data_total <- group_by(data, group1) %>%
+#'     summarize(n = sum(n), .groups = "drop") %>%
+#'     mutate(group1 = factor(group1, levels = levels(data$group1)))
+#'
+#'   if(!is.na(top_n)){
+#'     top_n <- as.numeric(top_n)
+#'     n <- nlevels(data$group1)
+#'     top_n <- pmin(top_n,n)
+#'
+#'     i_l <- (n-top_n+1):n
+#'     toplevs <- levels(data$group1)[i_l]
+#'     data <- filter(data, group1 %in% toplevs)
+#'     data_total <- filter(data_total, group1 %in% toplevs)
+#'
+#'   }
+#'
+#'
+#'   if(nrow(data) == 0 || sum(data$n) == 0){
+#'     return(NULL)
+#'   }
+#'
+#'   g <- levels(data[[group2]])
+#'   colors <- generate_colors(length(g), palette_function, colors, reverse_palette)
+#'
+#'   # Om genoeg ruimte te maken voor de bar labels, dit moet algemener (maar hoe...)
+#'   y_max <- max(data$n, na.rm = TRUE)
+#'   y_lim <- c(0, y_max * y_multiplier)
+#'
+#'   if(label_k == "auto"){
+#'     label_k <- y_max > 5000
+#'   }
+#'
+#'
+#'   p <- ggplot(data, aes(x = group1, y = n, fill = group2)) +
+#'     geom_bar(stat = "identity", width = bar_width) +
+#'     scale_fill_manual(values = colors, drop = FALSE) +
+#'     coord_flip(clip = "off") +
+#'     theme_minimal() +
+#'     scale_x_discrete(drop=TRUE) +
+#'     theme(  #text = element_text(family = "customplotfont"),
+#'       plot.title = element_text(size=base_size+4),
+#'       panel.border = element_blank(),
+#'       # legend.position = c(0.4,0.2), #"bottom",
+#'       # legend.justification = "left",
+#'       # legend.direction = "vertical",
+#'       # legend.margin = margin(0),
+#'       legend.position = "top",
+#'       legend.direction = "horizontal",
+#'       legend.title = element_blank(),
+#'       axis.title.y = element_blank(),
+#'       axis.title.x = element_blank(),
+#'       axis.text.x = element_blank(),
+#'       axis.text.y = element_text(size = base_size),
+#'       panel.grid.major = element_blank(),
+#'       panel.grid.minor = element_blank()) +
+#'     labs(title = title) +
+#'     ylim(y_lim) +
+#'     geom_text(data=data_total, aes(x=group1, label = format_n2(n,label_k,perc=FALSE), fill=NULL),
+#'               hjust = -0.06, size = label_size)
+#'
+#'   p
+#'
+#' }
 
 

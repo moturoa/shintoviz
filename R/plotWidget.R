@@ -52,7 +52,6 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 #' @param plot_data Reactive dataset used in plotting
 #' @param plot_type Reactive plotting function. Can be one of [internal_custom_plot_types()]
 #' @param settings Reactive list of parameters passed to the plotting function (and table function)
-#' @param table_format
 #' @param extra_ggplot A reactive (can be a list) of expressions to add to the ggplot object
 #' @rdname plotWidget
 #' @export
@@ -61,7 +60,7 @@ plotWidgetModule <- function(input, output, session,
                        plot_type = reactive("plot_horizontal_bars"),
                        settings = reactive(list()),
                        extra_ggplot = reactive(NULL),
-                       y_min = NULL
+                       y_min = NULL  # TODO reactive, built-in, in settings?
                        ){
 
 
