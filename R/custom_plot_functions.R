@@ -215,7 +215,7 @@ plot_grouped_value_by_time <- function(data,
                                    yvar = "n",
                                    group = "group",
 
-                                   plot_type = c("bars","lines"),
+                                   plot_type = c("stacked_bars","grouped_bars","lines"),
 
                                    palette_function,
                                    colors = NULL,
@@ -224,6 +224,9 @@ plot_grouped_value_by_time <- function(data,
                                    point_size = 3,
                                    line_width = 1.2,
                                    label_bars = FALSE,
+                                   label_k = FALSE,
+                                   label_perc = FALSE,
+
                                    ylab = "ylab",
                                    xlab = "xlab",
                                    grouplab = "",
@@ -232,6 +235,7 @@ plot_grouped_value_by_time <- function(data,
                                    ){
 
   plot_type <- match.arg(plot_type)
+  font_family <- get_current_font_family()
 
   if(nrow(data) == 0){
     return(NULL)
@@ -250,13 +254,13 @@ plot_grouped_value_by_time <- function(data,
 
   if(n_time == 1){
 
-    p <- data %>%
-      ggplot(aes(x = group, y = n, fill = group)) +
-      geom_bar(stat = "identity") +
-      scale_y_continuous(breaks = my_breaks_pretty()) +
-      scale_fill_manual(values = colors) +
-      theme(axis.text.x=element_blank()) +
-      labs(y = xlab, x = "", fill = grouplab, title = title)
+      p <- data %>%
+        ggplot(aes(x = group, y = n, fill = group)) +
+        geom_bar(stat = "identity") +
+        scale_y_continuous(breaks = my_breaks_pretty()) +
+        scale_fill_manual(values = colors) +
+        theme(axis.text.x=element_blank()) +
+        labs(y = xlab, x = "", fill = grouplab, title = title)
 
   } else {
 
@@ -273,9 +277,15 @@ plot_grouped_value_by_time <- function(data,
 
     } else {
 
+      pos <- if(plot_type == "grouped_bars"){
+        position_dodge()
+      } else {
+        position_stack()
+      }
+
       p <- data %>%
         ggplot(aes(x = time, y = n, fill = group, color = group)) +
-        geom_bar(stat="identity", position = position_stack()) +
+        geom_bar(stat="identity", position = pos) +
         scale_x_continuous(breaks = my_breaks_pretty()) +
         scale_y_continuous(breaks = my_breaks_pretty()) +
         scale_colour_manual(values = colors) +
@@ -283,29 +293,41 @@ plot_grouped_value_by_time <- function(data,
         labs(y = ylab, x = xlab, fill = grouplab, title = title) +
         guides(color = "none")
 
-      if(label_bars){
-
-        dlab <- dplyr::group_by(data, time, n) %>%
-          dplyr::summarize(n = sum(n), .groups = "drop")
-
-        ymax <- max(dlab$n)
-
-        p <- p + ggplot2::geom_text(data = dlab,
-                           aes(label = n, x = time, y = n, fill = NULL, color = NULL),
-                           size = label_size,
-                           vjust = -1) +
-          ggplot2::ylim(c(NA, ymax + 0.05*ymax))
-
-      }
-
     }
+
+  }
+
+  if(label_bars){
+
+
+    if(plot_type == "stacked_bars"){
+      # Stacked bars: label only the total (sum)
+      label_data <- dplyr::group_by(data, time) %>%
+        dplyr::summarize(n = sum(n), .groups = "drop")
+    } else {
+      # Else label everything
+      label_data <- data
+    }
+
+    label_data$label <- format_n2(label_data$n, label_k, label_perc)
+
+    ymax <- max(label_data$n)
+
+    suppressWarnings({
+      p <- p + ggplot2::geom_text(data = label_data,
+                                  aes(label = n, x = time, y = n, fill = NULL, color = NULL),
+                                  size = label_size,
+                                  family = font_family,
+                                  vjust = -1) +
+        ggplot2::ylim(c(NA, ymax + 0.05*ymax))
+    })
 
   }
 
 
   p <- p +
-    theme_minimal(base_size = base_size)
-  #theme(text = element_text(family = "customplotfont"))
+    theme_minimal(base_size = base_size) +
+    theme(text = element_text(family = font_family))
 
   p
 

@@ -28,21 +28,34 @@ ui <- softui::simple_page(
                                      selected = unique(gapminder$continent),
                                      multiple = TRUE),
              footer_ui = tagList(
-               numericInput("num_hjust", "Label hjust", value = -0.19),
-               numericInput("num_labelsize", "Label size", value = 4),
-               numericInput("num_barwidth", "Bar width", value = 0.62),
-               numericInput("num_basesize", "Base size", value = 14)
+               softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
+                 numericInput("num_hjust", "Label hjust", value = -0.19),
+                 numericInput("num_labelsize", "Label size", value = 4),
+                 numericInput("num_barwidth", "Bar width", value = 0.62),
+                 numericInput("num_basesize", "Base size", value = 14)
+               )
              )
-          )
+          ),
+
+
+      plotWidgetUI("plot2",
+
+                   footer_ui = tagList(
+                     numericInput("num_basesize2", "Base size", value = 14),
+                     selectInput("sel_plot_type_2", "Type",
+                                 choices = c("lines","bars")),
+                     numericInput("num_pointsize", "Point size", value = 3)
+                   )
+      )
     ),
     column(4,
 
-           plotWidgetUI("plot2",
+           plotWidgetUI("plot3",
 
               footer_ui = tagList(
-                numericInput("num_basesize2", "Base size", value = 14),
-                selectInput("sel_plot_type_2", "Type", choices = c("lines","bars")),
-                numericInput("num_pointsize", "Point size", value = 3)
+                numericInput("num_basesize_3", "Base size", value = 14),
+                selectInput("sel_plot_type_3", "Type", choices = c("lines","stacked_bars","grouped_bars")),
+                numericInput("num_pointsize_3", "Point size", value = 3)
               )
            )
 
@@ -117,6 +130,37 @@ server <- function(input, output, session) {
                  ylab = "Populatie",
                  xlab = "Jaar",
                  title = "Nederland"
+               )
+             )
+  )
+
+
+
+  plot_data_3 <- reactive({
+    gapminder %>%
+      filter(country %in% c("Netherlands","Belgium","Luxembourg","Denmark")) %>%
+      mutate(pop = 1e-06* pop)
+  })
+
+  callModule(plotWidgetModule, "plot3",
+             plot_data = plot_data_3,
+             plot_type = reactive("plot_grouped_value_by_time"),
+             settings = reactive(
+               list(
+                 xvar = "year",
+                 yvar = "pop",
+                 group = "country",
+                 plot_type = input$sel_plot_type_3,
+                 palette_function = "viridis",
+                 colors = NULL,
+                 base_size = input$num_basesize_3,
+                 label_size = 4,
+                 point_size = input$num_pointsize_3,
+                 line_width = 1.2,
+                 label_bars = input$sel_plot_type_3 == "stacked_bars",
+                 ylab = "Populatie",
+                 xlab = "Jaar",
+                 title = "West-Europa"
                )
              )
   )
