@@ -27,20 +27,20 @@ ui <- softui::simple_page(
                                      choices = unique(gapminder$continent),
                                      selected = unique(gapminder$continent),
                                      multiple = TRUE),
-             footer_ui = tagList(
-               softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
+             footer_ui = softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
                  numericInput("num_hjust", "Label hjust", value = -0.19),
                  numericInput("num_labelsize", "Label size", value = 4),
                  numericInput("num_barwidth", "Bar width", value = 0.62),
                  numericInput("num_basesize", "Base size", value = 14)
-               )
              )
-          ),
+          )
+    ),
+    column(4,
 
 
       plotWidgetUI("plot2",
 
-                   footer_ui = tagList(
+                   footer_ui = softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
                      numericInput("num_basesize2", "Base size", value = 14),
                      selectInput("sel_plot_type_2", "Type",
                                  choices = c("lines","bars")),
@@ -52,10 +52,10 @@ ui <- softui::simple_page(
 
            plotWidgetUI("plot3",
 
-              footer_ui = tagList(
-                numericInput("num_basesize_3", "Base size", value = 14),
-                selectInput("sel_plot_type_3", "Type", choices = c("lines","stacked_bars","grouped_bars")),
-                numericInput("num_pointsize_3", "Point size", value = 3)
+              footer_ui = softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
+                  numericInput("num_basesize_3", "Base size", value = 14),
+                  selectInput("sel_plot_type_3", "Type", choices = c("lines","stacked_bars","grouped_bars")),
+                  numericInput("num_pointsize_3", "Point size", value = 3)
               )
            )
 
