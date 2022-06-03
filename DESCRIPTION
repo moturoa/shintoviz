@@ -4,8 +4,9 @@ Title: Generic Data Viz for Shinto Applications
 Version: 0.1.0
 Author: Remko Duursma
 Maintainer: Remko Duursma <remko@shintolabs.nl>
-Description: Plot data like it's the WBM
+Description: Plot data like it's 2022
 Depends: dplyr
+Suggests: gapminder
 License: CC0
 Encoding: UTF-8
 LazyData: true

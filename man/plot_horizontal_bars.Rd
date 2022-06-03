@@ -38,7 +38,7 @@ plot_horizontal_bars(
 
 \item{label_k}{If TRUE, labels are divided by 1000}
 
-\item{label_perc}{If TRUE, % is shown in label}
+\item{label_perc}{If TRUE, percentage is shown in label}
 
 \item{bar_width}{Relative width of bars (1 = fills space completely)}
 
@@ -48,4 +48,24 @@ plot_horizontal_bars(
 }
 \description{
 Make a standard horizontal barplot
+}
+\examples{
+library(gapminder)
+library(dplyr)
+
+plot_data <- gapminder \%>\%
+  filter(year == 2007) \%>\%
+  group_by(continent) \%>\%
+  summarize(population = floor(1e-06 * sum(pop)), .groups = "drop")
+
+plot_horizontal_bars(plot_data,
+                     xvar = "continent",
+                     yvar = "population",
+                     palette_function = "ocean.phase",
+                     colors = NULL,
+                     base_size = 14,
+                     label_size = 4,
+                     label_k = FALSE,
+                     bar_width = 0.62,
+                     title = "Populatie (miljoenen)")
 }

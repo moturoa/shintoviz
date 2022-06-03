@@ -198,14 +198,6 @@ plotWidgetModule <- function(input, output, session,
                        ){
 
 
-  internal_plot_types <- c("plot_horizontal_bars",
-                           "plot_value_by_time",
-                           "plot_grouped_value_by_time")
-
-
-
-
-
   output$plot_main <- shiny::renderPlot({
 
     sett <- settings()
@@ -222,10 +214,10 @@ plotWidgetModule <- function(input, output, session,
 
       type <- plot_type()
 
-      if(type %in% internal_plot_types){
+      if(type %in% internal_custom_plot_types){
         plot_fn <- utils::getFromNamespace(type, "shintoviz")
       } else {
-        stop(paste("plot_type not in ", paste(internal_plot_types, collapse= " ,")))
+        stop(paste("plot_type not in ", paste(internal_custom_plot_types, collapse= " ,")))
       }
     }
 

@@ -9,7 +9,7 @@ plot_grouped_value_by_time(
   xvar = "time",
   yvar = "n",
   group = "group",
-  plot_type = c("bars", "lines"),
+  plot_type = c("stacked_bars", "grouped_bars", "lines"),
   palette_function,
   colors = NULL,
   base_size = 14,
@@ -17,6 +17,8 @@ plot_grouped_value_by_time(
   point_size = 3,
   line_width = 1.2,
   label_bars = FALSE,
+  label_k = FALSE,
+  label_perc = FALSE,
   ylab = "ylab",
   xlab = "xlab",
   grouplab = "",
@@ -43,6 +45,10 @@ plot_grouped_value_by_time(
 
 \item{label_size}{Size of text labels next to bars}
 
+\item{label_k}{If TRUE, labels are divided by 1000}
+
+\item{label_perc}{If TRUE, % is shown in label}
+
 \item{ylab}{Y-axis label}
 
 \item{xlab}{X-axis label}
@@ -52,10 +58,6 @@ plot_grouped_value_by_time(
 \item{title}{Title above plot}
 
 \item{\dots}{Further arguments passed to `generate_colors`}
-
-\item{label_k}{If TRUE, labels are divided by 1000}
-
-\item{label_perc}{If TRUE, % is shown in label}
 
 \item{bar_width}{Relative width of bars (1 = fills space completely)}
 }

@@ -10,11 +10,30 @@
 #' @param base_size Font base size (title, axes)
 #' @param label_size Size of text labels next to bars
 #' @param label_k If TRUE, labels are divided by 1000
-#' @param label_perc If TRUE, % is shown in label
+#' @param label_perc If TRUE, percentage is shown in label
 #' @param bar_width Relative width of bars (1 = fills space completely)
 #' @param title Title above plot
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
+#' @examples
+#' library(gapminder)
+#' library(dplyr)
+#'
+#' plot_data <- gapminder %>%
+#'   filter(year == 2007) %>%
+#'   group_by(continent) %>%
+#'   summarize(population = floor(1e-06 * sum(pop)), .groups = "drop")
+#'
+#' plot_horizontal_bars(plot_data,
+#'                      xvar = "continent",
+#'                      yvar = "population",
+#'                      palette_function = "ocean.phase",
+#'                      colors = NULL,
+#'                      base_size = 14,
+#'                      label_size = 4,
+#'                      label_k = FALSE,
+#'                      bar_width = 0.62,
+#'                      title = "Populatie (miljoenen)")
 plot_horizontal_bars <- function(data,
                                   xvar = "group",
                                   yvar = "n",
@@ -99,11 +118,32 @@ plot_horizontal_bars <- function(data,
 #' @param base_size Font base size (title, axes)
 #' @param label_size Size of text labels next to bars
 #' @param label_k If TRUE, labels are divided by 1000
-#' @param label_perc If TRUE, % is shown in label
+#' @param label_perc If TRUE, percentage is shown in label
 #' @param bar_width Relative width of bars (1 = fills space completely)
 #' @param title Title above plot
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
+#' @examples
+#' library(gapminder)
+#' library(dplyr)
+#' plot_data <- gapminder %>%
+#'   filter(country == "Netherlands") %>%
+#'   mutate(pop = 1e-06* pop)
+#'
+#' plot_value_by_time(plot_data,
+#'                    xvar = "year",
+#'                    yvar = "pop",
+#'                    plot_type = "bars",
+#'                    palette_function = NULL,
+#'                    colors = "red",
+#'                    base_size = 14,
+#'                    label_size = 4,
+#'                    point_size = 3,
+#'                    line_width = 1.2,
+#'                    label_bars = FALSE,
+#'                    ylab = "Populatie",
+#'                    xlab = "Jaar",
+#'                    title = "Nederland")
 plot_value_by_time <- function(data,
                            xvar = "time",
                            yvar = "n",
@@ -209,6 +249,29 @@ plot_value_by_time <- function(data,
 #' @param grouplab group label (for legend title)
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
+#' @examples
+#' library(gapminder)
+#' library(dplyr)
+#' plot_data <- gapminder %>%
+#'   filter(country %in% c("Netherlands","Belgium","Luxembourg","Denmark")) %>%
+#'   mutate(pop = 1e-06* pop)
+#'
+#' plot_grouped_value_by_time(plot_data,
+#'                            xvar = "year",
+#'                            yvar = "pop",
+#'                            group = "country",
+#'                            plot_type = "lines",
+#'                            palette_function = "viridis",
+#'                            colors = NULL,
+#'                            base_size = 14,
+#'                            label_size = 4,
+#'                            point_size = 3,
+#'                            line_width = 1.2,
+#'                            label_bars = FALSE,
+#'                            ylab = "Populatie",
+#'                            xlab = "Jaar",
+#'                            title = "West-Europa") +
+#'   ylim(c(0,20))
 plot_grouped_value_by_time <- function(data,
 
                                    xvar = "time",
@@ -338,7 +401,7 @@ plot_grouped_value_by_time <- function(data,
 
 
 
-
+# TODO combine some features with plot_horizontal_bars
 #' Make a standard horizontal barplot with group fill
 #' @param data A dataframe made with `table_n_woningen`
 #' @param palette_function A function that takes a single integer argument to return a vector of colors

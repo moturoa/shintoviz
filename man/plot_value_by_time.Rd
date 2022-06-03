@@ -16,6 +16,8 @@ plot_value_by_time(
   point_size = 3,
   line_width = 1.2,
   label_bars = FALSE,
+  label_k = FALSE,
+  label_perc = FALSE,
   ylab = "ylab",
   xlab = "xlab",
   title = "title",
@@ -39,13 +41,13 @@ plot_value_by_time(
 
 \item{label_size}{Size of text labels next to bars}
 
-\item{title}{Title above plot}
-
-\item{\dots}{Further arguments passed to `generate_colors`}
-
 \item{label_k}{If TRUE, labels are divided by 1000}
 
 \item{label_perc}{If TRUE, % is shown in label}
+
+\item{title}{Title above plot}
+
+\item{\dots}{Further arguments passed to `generate_colors`}
 
 \item{bar_width}{Relative width of bars (1 = fills space completely)}
 }
