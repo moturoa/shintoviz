@@ -27,6 +27,7 @@ ui <- softui::simple_page(
                                      choices = unique(gapminder$continent),
                                      selected = unique(gapminder$continent),
                                      multiple = TRUE),
+
              footer_ui = softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
                  numericInput("num_hjust", "Label hjust", value = -0.19),
                  numericInput("num_labelsize", "Label size", value = 4),
@@ -40,12 +41,12 @@ ui <- softui::simple_page(
 
       plotWidgetUI("plot2",
 
-                   footer_ui = softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
-                     numericInput("num_basesize2", "Base size", value = 14),
-                     selectInput("sel_plot_type_2", "Type",
-                                 choices = c("lines","bars")),
-                     numericInput("num_pointsize", "Point size", value = 3)
-                   )
+             footer_ui = softui::sub_box(collapsed = TRUE, title = "Settings", icon = bsicon("gear-fill"),
+               numericInput("num_basesize2", "Base size", value = 14),
+               selectInput("sel_plot_type_2", "Type",
+                           choices = c("lines","bars")),
+               numericInput("num_pointsize", "Point size", value = 3)
+             )
       )
     ),
     column(4,
