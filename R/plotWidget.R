@@ -53,8 +53,51 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 #' @param plot_type Reactive plotting function. Can be one of [internal_custom_plot_types()]
 #' @param settings Reactive list of parameters passed to the plotting function (and table function)
 #' @param extra_ggplot A reactive (can be a list) of expressions to add to the ggplot object
+#' @param y_min Y-axis minimum value (often 0). TODO include more axis options
 #' @rdname plotWidget
 #' @export
+#' @examples
+#' library(softui)
+#' library(gapminder) # example data
+#'
+#' # Set Google font
+#' set_plotwidget_font("Roboto")
+#'
+#'
+#' ui <- softui::simple_page(
+#'   plotWidgetUI("plot1", width = 4)
+#' )
+#'
+#' server <- function(input, output, session) {
+#'
+#'
+#'   raw_data <- reactive({
+#'     filter(gapminder, year == 2007) %>%
+#'       mutate(pop = floor(pop * 1e-06))
+#'   })
+#'
+#'   callModule(plotWidgetModule, "plot1",
+#'              data = raw_data,
+#'              plot_type = reactive("plot_horizontal_bars"),
+#'              settings = reactive(
+#'                list(
+#'                  table_prepare = list(
+#'                    fun = "prepare_grouped_data",
+#'                    groupvar = "continent",
+#'                    groupfun = sum,
+#'                    yvar = "pop"),
+#'                  xvar = "continent",
+#'                  yvar = "pop",
+#'                  palette_function = "parula",
+#'                  title = "World population"
+#'                )
+#'              )
+#'   )
+#'
+#'
+#' }
+#'
+#' shinyApp(ui, server)
 plotWidgetModule <- function(input, output, session,
                        data = reactive(NULL),
                        plot_type = reactive("plot_horizontal_bars"),

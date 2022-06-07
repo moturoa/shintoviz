@@ -27,6 +27,10 @@ prepare_grouped_data <- function(data,
   #
   # }
 
+  if(is.null(groupfun)){
+    stop("Provide a function used to summarize the groups into a single value (e.g. sum, mean, length)")
+  }
+
   stopifnot(!is.null(yvar))
 
   # NA levels - fill.

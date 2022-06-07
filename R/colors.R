@@ -14,6 +14,9 @@ generate_colors <- function(n, palette_function = NULL, colors = NULL, reverse_p
 
   } else {
 
+    if(is.null(palette_function)){
+      stop("Provide a palette_function (name of function in the pals package) or vector of colors")
+    }
     palfun <- base::get(palette_function)
     out <- palfun(n)
   }

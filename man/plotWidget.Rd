@@ -39,8 +39,53 @@ plotWidgetModule(
 
 \item{extra_ggplot}{A reactive (can be a list) of expressions to add to the ggplot object}
 
+\item{y_min}{Y-axis minimum value (often 0). TODO include more axis options}
+
 \item{plot_data}{Reactive dataset used in plotting}
 }
 \description{
 Shiny UI function for plotWidget
+}
+\examples{
+library(softui)
+library(gapminder) # example data
+
+# Set Google font
+set_plotwidget_font("Roboto")
+
+
+ui <- softui::simple_page(
+  plotWidgetUI("plot1", width = 4)
+)
+
+server <- function(input, output, session) {
+
+
+  raw_data <- reactive({
+    filter(gapminder, year == 2007) \%>\%
+      mutate(pop = floor(pop * 1e-06))
+  })
+
+  callModule(plotWidgetModule, "plot1",
+             data = raw_data,
+             plot_type = reactive("plot_horizontal_bars"),
+             settings = reactive(
+               list(
+                 table_prepare = list(
+                   fun = "prepare_grouped_data",
+                   groupvar = "continent",
+                   groupfun = sum,
+                   yvar = "pop"),
+                 xvar = "continent",
+                 yvar = "pop",
+                 palette_function = "parula",
+                 title = "World population"
+               )
+             )
+  )
+
+
+}
+
+shinyApp(ui, server)
 }
