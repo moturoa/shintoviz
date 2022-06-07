@@ -128,6 +128,9 @@ shinyApp(ui, server)
 ```
 
 
+3. The following step is to use a configuration file (or other list of settings) to automate
+inserting multiple plots that use the same raw dataset. See `test/test_app_02.R` for a working
+minimal example.
 
 
 
