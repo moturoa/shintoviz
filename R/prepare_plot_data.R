@@ -12,20 +12,22 @@ prepare_grouped_data <- function(data,
                               reverse = FALSE,
 
                               order = NULL,
+                              top_n = NULL,
 
-                              fill_na_group = "Onbekend",
-                              top_n = NULL){
+                              na_include = TRUE,
+                              fill_na_group = "Onbekend"
+                              ){
 
-  # TODO
-  # if(na_include){
-  #
-  #   out$group[is.na(out$group)] <- "Onbekend"
-  #
-  #   if(!is.null(order) & !any(c("onbekend","Onbekend") %in% order)){
-  #     order <- c("Onbekend", order)
-  #   }
-  #
-  # }
+
+  if(na_include){
+
+    data[[groupvar]][is.na(data[[groupvar]])] <- fill_na_group
+
+    if(!is.null(order) & !any(fill_na_group %in% order)){
+      order <- c(fill_na_group, order)
+    }
+
+  }
 
   if(is.null(groupfun)){
     stop("Provide a function used to summarize the groups into a single value (e.g. sum, mean, length)")
@@ -84,9 +86,8 @@ return(data)
 
 
 
+#----- Utils (not exported)
 
-
-# TODO wordt nog niet gebruikt
 validate_order <- function(group, order){
   nms_mis <- setdiff(order, group)
   if(length(nms_mis)>0){
