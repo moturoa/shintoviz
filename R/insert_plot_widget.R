@@ -20,7 +20,7 @@ insert_plot_widgets <- function(data = reactive(NULL), cfg, id,
     shiny::insertUI(selector = paste0("#",id), ui = ui, where = "beforeEnd",
                     session = session)
 
-    shiny::callModule(plotWidgetModule, id_module, plot_data = data, settings = reactive(el))
+    shiny::callModule(plotWidgetModule, id_module, data = data, settings = reactive(el))
 
   }
 
