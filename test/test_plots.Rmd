@@ -43,7 +43,7 @@ plot_data <- gapminder %>%
 plot_horizontal_bars(plot_data, 
                         xvar = "continent",
                         yvar = "population",
-                        palette_function = "ocean.phase",
+                        palette_function = "brewer.blues",
                         colors = NULL,
                         base_size = 14,
                         label_size = 4,

@@ -8,7 +8,6 @@ prepare_grouped_data(
   data,
   yvar = NULL,
   groupvar = "group",
-  groupvar2 = NULL,
   groupfun = NULL,
   sort = FALSE,
   reverse = FALSE,
@@ -24,8 +23,6 @@ prepare_grouped_data(
 \item{yvar}{Name of the variable to summarize. If groupfun=length, do not provide yvar.}
 
 \item{groupvar}{Grouping variable in dataframe (quoted)}
-
-\item{groupvar2}{A second grouping variable; not yet implemented.}
 
 \item{groupfun}{A function to apply to the groups (not quoted). If \code{length},
 do not provide a \code{yvar} argument as the rows will be counted for each group.}

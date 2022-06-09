@@ -4,7 +4,6 @@
 #' @param data A dataframe
 #' @param yvar Name of the variable to summarize. If groupfun=length, do not provide yvar.
 #' @param groupvar Grouping variable in dataframe (quoted)
-#' @param groupvar2 A second grouping variable; not yet implemented.
 #' @param groupfun A function to apply to the groups (not quoted). If `length`,
 #' do not provide a `yvar` argument as the rows will be counted for each group.
 #' @param sort If TRUE, sorts the factor levels (and the table) by the group value
@@ -48,7 +47,6 @@
 prepare_grouped_data <- function(data,
                               yvar = NULL,
                               groupvar = "group",
-                              groupvar2 = NULL,
 
                               groupfun = NULL,
                               sort = FALSE,
