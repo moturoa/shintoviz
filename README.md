@@ -134,6 +134,13 @@ minimal example.
 
 
 
+## Known issues
+
+- Labelling of bars is not very flexible or generic at the moment. Should have the option to
+provide a function to make labels (in addition to the built-in method via `format_n2`)
+- Axis ranges are not very flexible or generic, see argument `y_min` in `plotWidget`. 
+
+
 
 
 ## Contact
