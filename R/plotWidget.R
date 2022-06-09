@@ -13,7 +13,7 @@
 #' @param id Shiny input ID
 #' @param header_ui Further UI to be placed above the plot
 #' @param footer_ui Further UI to be placed below the plot
-#' @param \dots Further arguments to softui::tab_box
+#' @param \dots Further arguments to [softui::tab_box()]
 #' @rdname plotWidget
 #' @export
 plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
@@ -21,12 +21,12 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
   ns <- NS(id)
 
   softui::tab_box( style = "margin-top: 10px;", ...,
-        softui::tab_panel(title = bsicon("bar-chart-fill"),
+        softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
                           header_ui,
-                          plotOutput(ns("plot_main")),
+                          shiny::plotOutput(ns("plot_main")),
                           footer_ui
         ),
-        softui::tab_panel(title = bsicon("table"),
+        softui::tab_panel(title = softui::bsicon("table"),
                           softui::fluid_row(
                  tags$div(style = "height: 400px;",
 
@@ -49,12 +49,16 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 #' @param input Shiny input (do not set)
 #' @param output Shiny output (do not set)
 #' @param session Shiny session (do not set)
-#' @param plot_data Reactive dataset used in plotting
+#' @param data Reactive dataset used in plotting
 #' @param plot_type Reactive plotting function. Can be one of [internal_custom_plot_types()]
 #' @param settings Reactive list of parameters passed to the plotting function (and table function)
 #' @param extra_ggplot A reactive (can be a list) of expressions to add to the ggplot object
 #' @param y_min Y-axis minimum value (often 0). TODO include more axis options
 #' @rdname plotWidget
+#' @importFrom utils getFromNamespace
+#' @importFrom shiny plotOutput reactive renderPlot renderTable tableOutput callModule
+#' @importFrom softui bsicon tab_panel tab_box fluid_row
+#' @importFrom ggplot2 expand_limits
 #' @export
 #' @examples
 #' library(softui)
@@ -97,7 +101,7 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
 #'
 #' }
 #'
-#' shinyApp(ui, server)
+#' #shinyApp(ui, server)
 plotWidgetModule <- function(input, output, session,
                        data = reactive(NULL),
                        plot_type = reactive("plot_horizontal_bars"),
@@ -108,7 +112,7 @@ plotWidgetModule <- function(input, output, session,
 
 
   # Make data for plotting
-  plot_data <- reactive({
+  plot_data <- shiny::reactive({
 
     sett <- settings()
 
@@ -174,7 +178,7 @@ plotWidgetModule <- function(input, output, session,
 
     # Extra adjustments
     if(!is.null(y_min)){
-      p <- p + expand_limits(y = y_min)
+      p <- p + ggplot2::expand_limits(y = y_min)
     }
 
     if(!is.null(extra_ggplot())){

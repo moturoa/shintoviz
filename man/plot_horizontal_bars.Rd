@@ -28,6 +28,8 @@ plot_horizontal_bars(
 
 \item{yvar}{Name of variable in data for length of bars}
 
+\item{reverse_order}{Plot order of bars opposite to factor levels}
+
 \item{palette_function}{A function that takes a single integer argument to return a vector of colors}
 
 \item{colors}{If palette_function not provided, a vector of colors (must be at least nrow(data))}
@@ -39,6 +41,8 @@ plot_horizontal_bars(
 \item{label_k}{If TRUE, labels are divided by 1000}
 
 \item{label_perc}{If TRUE, percentage is shown in label}
+
+\item{label_hjust}{Space between bar label and bar (negative value = outside bar as the default)}
 
 \item{bar_width}{Relative width of bars (1 = fills space completely)}
 

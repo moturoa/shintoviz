@@ -1,4 +1,4 @@
-#' Formatter for 'n' label next to bars
+# Formatter for 'n' label next to bars
 format_n2 <- function(n, label_k = FALSE, label_perc = FALSE){
 
   p <- round(100 * n / sum(n),0)

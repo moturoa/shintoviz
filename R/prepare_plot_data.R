@@ -12,7 +12,11 @@
 #' @param top_n If not NULL, return only the top_n levels (see Example)
 #' @param na_include If TRUE, and the grouping variable has missing values, include them in the table
 #' @param fill_na_group If `na_include=TRUE`, use this label for missing vaues in the group
-#'
+#' @importFrom rlang sym
+#' @importFrom forcats fct_explicit_na
+#' @importFrom tibble tibble
+#' @importFrom dplyr arrange count group_by summarize
+#' @importFrom stats setNames reorder
 #' @export
 #' @examples
 #' if(require(gapminder)){
@@ -88,12 +92,12 @@ prepare_grouped_data <- function(data,
   if(!is.null(yvar)){
     data <- dplyr::group_by(data, !!rlang::sym(groupvar)) %>%
       dplyr::summarize(y = groupfun(!!rlang::sym(yvar)), .groups = "drop") %>%
-      setNames(c(groupvar,yvar))
+      stats::setNames(c(groupvar,yvar))
   } else {
 
     # Count rows (no yvar needed)
-    data <- dplyr::count(data, !!sym(groupvar)) %>%
-      setNames(c(groupvar,"n"))
+    data <- dplyr::count(data, !!rlang::sym(groupvar)) %>%
+      stats::setNames(c(groupvar,"n"))
 
     yvar <- "n"
 
@@ -101,7 +105,7 @@ prepare_grouped_data <- function(data,
 
   # Sort bars in order of value, or simply make a factor (this will give alphabetic ordering)
   if(sort){
-    data[[groupvar]] <- reorder(data[[groupvar]], data[[yvar]], max, decreasing = reverse)
+    data[[groupvar]] <- stats::reorder(data[[groupvar]], data[[yvar]], max, decreasing = reverse)
   } else {
     data[[groupvar]] <- as.factor(data[[groupvar]])
   }
@@ -112,8 +116,8 @@ prepare_grouped_data <- function(data,
   if(!is.null(order)){
 
     validate_order(data[[groupvar]], order)
-    mdat <- tibble(x = order) %>% setNames(groupvar)
-    data <- left_join(mdat, data, by = groupvar)
+    mdat <- tibble::tibble(x = order) %>% stats::setNames(groupvar)
+    data <- dplyr::left_join(mdat, data, by = groupvar)
     data[[groupvar]] <- factor(data[[groupvar]], levels = order)
   }
 
@@ -125,14 +129,14 @@ prepare_grouped_data <- function(data,
 
     i_l <- 1:top_n
     toplevs <- levels(data[[groupvar]])[i_l]
-    data <- droplevels(dplyr::filter(data, !!sym(groupvar) %in% toplevs))
+    data <- droplevels(dplyr::filter(data, !!rlang::sym(groupvar) %in% toplevs))
 
   }
 
   # Sort table to the levels of the group factor.
   # Has no effect on e.g. ggplot2 because there the factor levels are used.
   # It is useful to have the table in the same order as the factor levels though.
-  data <- arrange(data, !!sym(groupvar))
+  data <- dplyr::arrange(data, !!rlang::sym(groupvar))
 
 
 return(data)

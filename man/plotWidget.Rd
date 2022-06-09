@@ -25,13 +25,15 @@ plotWidgetModule(
 
 \item{footer_ui}{Further UI to be placed below the plot}
 
-\item{\dots}{Further arguments to softui::tab_box}
+\item{\dots}{Further arguments to \code{\link[softui:tabbox]{softui::tab_box()}}}
 
 \item{input}{Shiny input (do not set)}
 
 \item{output}{Shiny output (do not set)}
 
 \item{session}{Shiny session (do not set)}
+
+\item{data}{Reactive dataset used in plotting}
 
 \item{plot_type}{Reactive plotting function. Can be one of \code{\link[=internal_custom_plot_types]{internal_custom_plot_types()}}}
 
@@ -40,8 +42,6 @@ plotWidgetModule(
 \item{extra_ggplot}{A reactive (can be a list) of expressions to add to the ggplot object}
 
 \item{y_min}{Y-axis minimum value (often 0). TODO include more axis options}
-
-\item{plot_data}{Reactive dataset used in plotting}
 }
 \description{
 Shiny UI function for plotWidget
@@ -87,5 +87,5 @@ server <- function(input, output, session) {
 
 }
 
-shinyApp(ui, server)
+#shinyApp(ui, server)
 }

@@ -5,10 +5,10 @@
 \title{Insert plotWidget modules}
 \usage{
 insert_plot_widgets(
-  data = reactive(NULL),
+  data = shiny::reactive(NULL),
   cfg,
   id,
-  session = getDefaultReactiveDomain(),
+  session = shiny::getDefaultReactiveDomain(),
   ...
 )
 }

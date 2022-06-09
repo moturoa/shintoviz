@@ -15,6 +15,7 @@ plot_value_by_time(
   label_size = 4,
   point_size = 3,
   line_width = 1.2,
+  bar_width = 0.6,
   label_bars = FALSE,
   label_k = FALSE,
   label_perc = FALSE,
@@ -41,15 +42,23 @@ plot_value_by_time(
 
 \item{label_size}{Size of text labels next to bars}
 
+\item{point_size}{Size of points plotted on line}
+
+\item{line_width}{Line width if plot_type = "lines"}
+
+\item{bar_width}{Relative width of bars (1 = fills space completely)}
+
 \item{label_k}{If TRUE, labels are divided by 1000}
 
 \item{label_perc}{If TRUE, percentage is shown in label}
 
+\item{ylab}{Y-axis label}
+
+\item{xlab}{X-axis label}
+
 \item{title}{Title above plot}
 
 \item{\dots}{Further arguments passed to \code{generate_colors}}
-
-\item{bar_width}{Relative width of bars (1 = fills space completely)}
 }
 \description{
 No group (see plot_grouped_time_plot)

@@ -12,6 +12,8 @@
 #' @param label_k If TRUE, labels are divided by 1000
 #' @param label_perc If TRUE, percentage is shown in label
 #' @param bar_width Relative width of bars (1 = fills space completely)
+#' @param reverse_order Plot order of bars opposite to factor levels
+#' @param label_hjust Space between bar label and bar (negative value = outside bar as the default)
 #' @param title Title above plot
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
@@ -35,6 +37,10 @@
 #'                      bar_width = 0.62,
 #'                      title = "Populatie (miljoenen)")
 #' @importFrom forcats fct_rev
+#' @importFrom ggplot2 ggplot aes geom_bar geom_line geom_point scale_fill_manual
+#' @importFrom ggplot2 theme scale_x_discrete scale_y_continuous position_stack position_dodge
+#' @importFrom ggplot2 geom_text ylim labs theme_minimal coord_flip element_text element_blank
+#' @importFrom grid gpar
 plot_horizontal_bars <- function(data,
                                   xvar = "group",
                                   yvar = "n",
@@ -79,25 +85,25 @@ plot_horizontal_bars <- function(data,
   ch_w <- ch_w - label_hjust*ch_w
   y_lim <- c(ymin, ymax + (ymax-ymin)*ch_w)
 
-  p <- ggplot(data, aes(x = group, y = Y, fill = group)) +
-    geom_bar(stat = "identity", width = bar_width) +
-    scale_fill_manual(values = colors, drop = FALSE) +
-    coord_flip() +
-    theme_minimal() +
-    scale_x_discrete(drop=FALSE) +
-    theme(  text = element_text(family = font_family),
-      plot.title = element_text(size=base_size+4),
-      panel.border = element_blank(),
+  p <- ggplot2::ggplot(data, aes(x = group, y = Y, fill = group)) +
+    ggplot2::geom_bar(stat = "identity", width = bar_width) +
+    ggplot2::scale_fill_manual(values = colors, drop = FALSE) +
+    ggplot2::coord_flip() +
+    ggplot2::theme_minimal() +
+    ggplot2::scale_x_discrete(drop=FALSE) +
+    ggplot2::theme(  text = ggplot2::element_text(family = font_family),
+      plot.title = ggplot2::element_text(size=base_size+4),
+      panel.border = ggplot2::element_blank(),
       legend.position = "none",
-      axis.title.y = element_blank(),
-      axis.title.x = element_blank(),
-      axis.text.x = element_blank(),
-      axis.text.y = element_text(size = base_size),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank()) +
-    labs(title = title) +
-    ylim(y_lim) +
-    geom_text(data=data, aes(label = label),
+      axis.title.y = ggplot2::element_blank(),
+      axis.title.x = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_text(size = base_size),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank()) +
+    ggplot2::labs(title = title) +
+    ggplot2::ylim(y_lim) +
+    ggplot2::geom_text(data=data, ggplot2::aes(label = label),
               family = font_family,
               hjust = label_hjust, size = label_size)
 
@@ -120,7 +126,11 @@ plot_horizontal_bars <- function(data,
 #' @param label_size Size of text labels next to bars
 #' @param label_k If TRUE, labels are divided by 1000
 #' @param label_perc If TRUE, percentage is shown in label
+#' @param point_size Size of points plotted on line
+#' @param line_width Line width if plot_type = "lines"
 #' @param bar_width Relative width of bars (1 = fills space completely)
+#' @param xlab X-axis label
+#' @param ylab Y-axis label
 #' @param title Title above plot
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
@@ -157,6 +167,7 @@ plot_value_by_time <- function(data,
                            label_size = 4,
                            point_size = 3,
                            line_width = 1.2,
+                           bar_width = 0.6,
                            label_bars = FALSE,
                            label_k = FALSE,
                            label_perc = FALSE,
@@ -184,23 +195,23 @@ plot_value_by_time <- function(data,
   if(plot_type == "lines"){
 
     p <- data %>%
-      ggplot(aes(x = time, y = n)) +
-      geom_point(cex = point_size, colour = colors) +
-      geom_line(lwd = line_width, colour = colors) +
-      scale_x_continuous(breaks = my_breaks_pretty()) +
-      scale_y_continuous(breaks = my_breaks_pretty()) +
-      labs(y = ylab, x = xlab, title = title)
+      ggplot2::ggplot(ggplot2::aes(x = time, y = n)) +
+      ggplot2::geom_point(cex = point_size, colour = colors) +
+      ggplot2::geom_line(lwd = line_width, colour = colors) +
+      ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
+      ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
+      ggplot2::labs(y = ylab, x = xlab, title = title)
 
   } else {
 
     p <- data %>%
-      ggplot(aes(x=time, y=n)) +
-      geom_bar(stat="identity", position = position_stack(),
-               fill = colors,
+      ggplot2::ggplot(aes(x=time, y=n)) +
+      ggplot2::geom_bar(stat="identity", position = ggplot2::position_stack(),
+               fill = colors, width = bar_width,
                colour = colors) +
-      scale_x_continuous(breaks = my_breaks_pretty()) +
-      scale_y_continuous(breaks = my_breaks_pretty()) +
-      labs(y = ylab, x = xlab, fill = "", title = title)
+      ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
+      ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
+      ggplot2::labs(y = ylab, x = xlab, fill = "", title = title)
 
   }
 
@@ -209,18 +220,18 @@ plot_value_by_time <- function(data,
     data$label <- format_n2(data$n, label_k, label_perc)
 
     ymax <- max(data$n)
-    p <- p + geom_text(data = data,
-                       aes(label = label, x = time, y = n, fill = NULL, color = NULL),
-                       size = label_size,
-                       family = font_family,
-                       vjust = -1) +
-      ylim(c(NA, ymax + 0.05*ymax))
+    p <- p + ggplot2::geom_text(data = data,
+                                ggplot2::aes(label = label, x = time, y = n, fill = NULL, color = NULL),
+                                size = label_size,
+                                family = font_family,
+                                vjust = -1) +
+      ggplot2::ylim(c(NA, ymax + 0.05*ymax))
 
   }
 
   p <- p +
-    theme_minimal(base_size = base_size) +
-    theme(text = element_text(family = font_family))
+    ggplot2::theme_minimal(base_size = base_size) +
+    ggplot2::theme(text = ggplot2::element_text(family = font_family))
 
   p
 
@@ -241,6 +252,9 @@ plot_value_by_time <- function(data,
 #' @param colors If palette_function not provided, a vector of colors (must be at least nrow(data))
 #' @param base_size Font base size (title, axes)
 #' @param label_size Size of text labels next to bars
+#' @param point_size Size of points plotted on line
+#' @param line_width Width of line (if plot_type = "lines")
+#' @param label_bars TRUE/FALSE, label the bars or not.
 #' @param label_k If TRUE, labels are divided by 1000
 #' @param label_perc If TRUE, % is shown in label
 #' @param bar_width Relative width of bars (1 = fills space completely)
@@ -250,6 +264,7 @@ plot_value_by_time <- function(data,
 #' @param grouplab group label (for legend title)
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
+#' @importFrom ggplot2 guides
 #' @examples
 #' library(gapminder)
 #' library(dplyr)
@@ -287,6 +302,7 @@ plot_grouped_value_by_time <- function(data,
                                    label_size = 4,
                                    point_size = 3,
                                    line_width = 1.2,
+                                   bar_width = 0.6,
                                    label_bars = FALSE,
                                    label_k = FALSE,
                                    label_perc = FALSE,
@@ -319,43 +335,43 @@ plot_grouped_value_by_time <- function(data,
   if(n_time == 1){
 
       p <- data %>%
-        ggplot(aes(x = group, y = n, fill = group)) +
-        geom_bar(stat = "identity") +
-        scale_y_continuous(breaks = my_breaks_pretty()) +
-        scale_fill_manual(values = colors) +
-        theme(axis.text.x=element_blank()) +
-        labs(y = xlab, x = "", fill = grouplab, title = title)
+        ggplot2::ggplot(ggplot2::aes(x = group, y = n, fill = group)) +
+        ggplot2::geom_bar(stat = "identity") +
+        ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
+        ggplot2::scale_fill_manual(values = colors) +
+        ggplot2::theme(axis.text.x=element_blank()) +
+        ggplot2::labs(y = xlab, x = "", fill = grouplab, title = title)
 
   } else {
 
     if(plot_type == "lines"){
 
       p <- data %>%
-        ggplot(aes(x = time, y = n, color = group)) +
-        geom_point(cex = point_size) +
-        geom_line(lwd = line_width) +
-        scale_x_continuous(breaks = my_breaks_pretty()) +
-        scale_y_continuous(breaks = my_breaks_pretty()) +
-        scale_colour_manual(values = colors) +
-        labs(y = ylab, x = xlab, fill = "", colour = grouplab, title = title)
+        ggplot2::ggplot(aes(x = time, y = n, color = group)) +
+        ggplot2::geom_point(cex = point_size) +
+        ggplot2::geom_line(lwd = line_width) +
+        ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
+        ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
+        ggplot2::scale_colour_manual(values = colors) +
+        ggplot2::labs(y = ylab, x = xlab, fill = "", colour = grouplab, title = title)
 
     } else {
 
       pos <- if(plot_type == "grouped_bars"){
-        position_dodge()
+        ggplot2::position_dodge()
       } else {
-        position_stack()
+        ggplot2::position_stack()
       }
 
       p <- data %>%
-        ggplot(aes(x = time, y = n, fill = group, color = group)) +
-        geom_bar(stat="identity", position = pos) +
-        scale_x_continuous(breaks = my_breaks_pretty()) +
-        scale_y_continuous(breaks = my_breaks_pretty()) +
-        scale_colour_manual(values = colors) +
-        scale_fill_manual(values = colors) +
-        labs(y = ylab, x = xlab, fill = grouplab, title = title) +
-        guides(color = "none")
+        ggplot2::ggplot(aes(x = time, y = n, fill = group, color = group)) +
+        ggplot2::geom_bar(stat="identity", position = pos, width = bar_width) +
+        ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
+        ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
+        ggplot2::scale_colour_manual(values = colors) +
+        ggplot2::scale_fill_manual(values = colors) +
+        ggplot2::labs(y = ylab, x = xlab, fill = grouplab, title = title) +
+        ggplot2::guides(color = "none")
 
     }
 
@@ -379,7 +395,7 @@ plot_grouped_value_by_time <- function(data,
 
     suppressWarnings({
       p <- p + ggplot2::geom_text(data = label_data,
-                                  aes(label = n, x = time, y = n, fill = NULL, color = NULL),
+                                  ggplot2::aes(label = n, x = time, y = n, fill = NULL, color = NULL),
                                   size = label_size,
                                   family = font_family,
                                   vjust = -1) +
@@ -390,8 +406,8 @@ plot_grouped_value_by_time <- function(data,
 
 
   p <- p +
-    theme_minimal(base_size = base_size) +
-    theme(text = element_text(family = font_family))
+    ggplot2::theme_minimal(base_size = base_size) +
+    ggplot2::theme(text = element_text(family = font_family))
 
   p
 

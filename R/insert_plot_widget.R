@@ -6,10 +6,11 @@
 #' @param session Shiny session object, no need to set (usually)
 #' @param \dots Further arguments passed to `plotWidgetUI`
 #' @importFrom uuid UUIDgenerate
-#' @importFrom shiny insertUI
+#' @importFrom shiny insertUI getDefaultReactiveDomain
 #' @export
-insert_plot_widgets <- function(data = reactive(NULL), cfg, id,
-                                session = getDefaultReactiveDomain(),
+insert_plot_widgets <- function(data = shiny::reactive(NULL),
+                                cfg, id,
+                                session = shiny::getDefaultReactiveDomain(),
                                 ...){
 
   for(el in cfg){

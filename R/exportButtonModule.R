@@ -1,16 +1,15 @@
 
 #' @importFrom softui action_button
-data_export_modal <- function(ns = NS(NULL),
+#' @importFrom shiny downloadButton tags modalDialog NS
+#' @importFrom utils write.csv
+data_export_modal <- function(ns = shiny::NS(NULL),
                               title = "Export data",
                               info_text = "Kies het gewenste formaat:",
                               formats = c("Excel","CSV","JSON")){
 
-  shiny:: modalDialog(
-    easyClose = TRUE,
-    shiny::tags$h3(title),
-    shiny::tags$hr(),
-
-    shiny::tags$p(info_text),
+  softui::modal(title = title, icon = bsicon("cloud-download"),confirm_button = FALSE, close_button = TRUE,
+                close_txt = "Sluiten",
+                shiny::tags$p(info_text),
 
     if("Excel" %in% formats){
       shiny::downloadButton(ns("btn_excel"), "Excel", icon = bsicon("file-earmark-excel-fill"),
@@ -25,14 +24,8 @@ data_export_modal <- function(ns = NS(NULL),
     if("JSON" %in% formats){
       shiny::downloadButton(ns("btn_json"), "JSON", icon = bsicon("file-code-fill"),
                      class = "bg-gradient-secondary")
-    },
+    }
 
-
-    # ID van deze button maakt niet uit, 'close' gaat via JS (`data-dismiss`)
-    footer = softui::action_button(ns("xyz"), "Sluiten",
-                          icon = bsicon("x-lg"),
-                          status = "danger",
-                          `data-bs-dismiss` = "modal")
   )
 
 }
@@ -49,6 +42,7 @@ exportButtonUI <- function(id, export_button_status = "secondary", label = "Expo
 
 #' @importFrom writexl write_xlsx
 #' @importFrom jsonlite toJSON
+#' @importFrom shiny showModal observeEvent downloadHandler
 exportButton <- function(input, output, session,
                          data,
                          formats = c("Excel", "CSV"),
@@ -79,7 +73,7 @@ exportButton <- function(input, output, session,
       paste0(filename_prefix, "_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      write.csv(data(), file)
+      utils::write.csv(data(), file)
     }
   )
 
