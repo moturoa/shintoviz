@@ -15,8 +15,11 @@ devtools::load_all()
 
 set_plotwidget_font("Roboto")
 
+
+# yaml::read_yaml
+
 plot_config <- list(
-  firstplot = list(
+  list(
       xvar = "continent",
       yvar = "population",
       reverse_order = FALSE,
@@ -29,7 +32,7 @@ plot_config <- list(
       bar_width = 0.6,
       title = "Populatie (miljoenen)"
     ),
-  secondplot =  list(
+  list(
     xvar = "continent",
     yvar = "population",
     reverse_order = FALSE,

@@ -6,20 +6,74 @@
 \usage{
 prepare_grouped_data(
   data,
-  groupvar = "group",
   yvar = NULL,
+  groupvar = "group",
+  groupvar2 = NULL,
   groupfun = NULL,
   sort = FALSE,
   reverse = FALSE,
   order = NULL,
-  fill_na_group = "Onbekend",
-  top_n = NULL
+  top_n = NULL,
+  na_include = TRUE,
+  fill_na_group = "Onbekend"
 )
 }
 \arguments{
 \item{data}{A dataframe}
+
+\item{yvar}{Name of the variable to summarize. If groupfun=length, do not provide yvar.}
+
+\item{groupvar}{Grouping variable in dataframe (quoted)}
+
+\item{groupvar2}{A second grouping variable; not yet implemented.}
+
+\item{groupfun}{A function to apply to the groups (not quoted). If \code{length},
+do not provide a \code{yvar} argument as the rows will be counted for each group.}
+
+\item{sort}{If TRUE, sorts the factor levels (and the table) by the group value}
+
+\item{reverse}{If TRUE, and sort = TRUE, reverses the sort.}
+
+\item{order}{Optionally a character vector of the desired ordering of the factor levels}
+
+\item{top_n}{If not NULL, return only the top_n levels (see Example)}
+
+\item{na_include}{If TRUE, and the grouping variable has missing values, include them in the table}
+
+\item{fill_na_group}{If \code{na_include=TRUE}, use this label for missing vaues in the group}
 }
 \description{
 Further adjust a table prepared for plotting: change the order of
 plotting, sort the levels (by their value), show only the first n values, etc.
+}
+\examples{
+if(require(gapminder)){
+
+gap_data <- dplyr::bind_rows(
+     gapminder,
+     data.frame(continent = NA_character_, pop = 100e06)
+)
+prepare_grouped_data(gap_data,
+                     groupvar = "continent",
+                     yvar = "pop",
+                     groupfun = sum,
+                     fill_na_group = "Uncharted")
+
+
+prepare_grouped_data(gapminder, groupvar = "continent", groupfun = length)
+
+prepare_grouped_data(gapminder, groupvar = "continent", groupfun = length,
+reverse = TRUE, sort = TRUE)
+
+
+# Top 10 countries by population in 2007
+gapminder \%>\%
+  filter(year == 2007) \%>\%
+  prepare_grouped_data(groupvar = "country",
+                       groupfun = sum,
+                       yvar = "pop",
+                       sort = TRUE,
+                       reverse = TRUE,
+                       top_n = 10)
+}
 }
