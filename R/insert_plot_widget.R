@@ -13,7 +13,7 @@ insert_plot_widgets <- function(data = shiny::reactive(NULL),
                                 session = shiny::getDefaultReactiveDomain(),
                                 ...){
 
-  for(el in cfg){
+  lapply(cfg, function(el){
 
     id_module <- uuid::UUIDgenerate()
     ui <- plotWidgetUI(session$ns(id_module), ...)
@@ -23,7 +23,7 @@ insert_plot_widgets <- function(data = shiny::reactive(NULL),
 
     shiny::callModule(plotWidgetModule, id_module, data = data, settings = reactive(el))
 
-  }
+  })
 
 }
 

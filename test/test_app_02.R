@@ -30,12 +30,12 @@ plot_config <- list(
       label_k = FALSE,
       label_hjust = -0.2,
       bar_width = 0.6,
-      title = "Populatie (miljoenen)"
+      title = "Title here"
     ),
   list(
     xvar = "continent",
     yvar = "population",
-    reverse_order = FALSE,
+    reverse_order = TRUE,
     palette_function = "parula",
     colors = NULL,
     base_size = 14,

@@ -5,7 +5,13 @@
 \alias{plotWidgetModule}
 \title{Shiny UI function for plotWidget}
 \usage{
-plotWidgetUI(id, header_ui = NULL, footer_ui = NULL, ...)
+plotWidgetUI(
+  id,
+  header_ui = NULL,
+  footer_ui = NULL,
+  ui_container = c("tab_box", "tabset_panel"),
+  ...
+)
 
 plotWidgetModule(
   input,

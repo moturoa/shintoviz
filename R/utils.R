@@ -1,15 +1,14 @@
 # Formatter for 'n' label next to bars
-format_n2 <- function(n, label_k = FALSE, label_perc = FALSE){
-
-  p <- round(100 * n / sum(n),0)
+format_n2 <- function(n, label_k = FALSE, label_perc = FALSE, digits = 1){
 
   if(label_k){
     out <- paste0(round(n/1000,1), "k")
   } else {
-    out <- n
+    out <- round(n, digits)
   }
 
   if(label_perc){
+    p <- round(100 * n / sum(n),0)
     out <- paste0(out, "(",p,"%)")
   }
 

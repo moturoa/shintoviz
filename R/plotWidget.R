@@ -16,11 +16,22 @@
 #' @param \dots Further arguments to [softui::tab_box()]
 #' @rdname plotWidget
 #' @export
-plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL, ...){
+plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
+                         ui_container = c("tab_box","tabset_panel"),
+                         ...){
 
   ns <- NS(id)
 
-  softui::tab_box( style = "margin-top: 10px;", ...,
+  ui_container <- match.arg(ui_container)
+
+  ui_fun <- if(ui_container == "tab_box"){
+    softui::tab_box
+  } else {
+    softui::tabset_panel
+  }
+
+
+  ui_fun( style = "margin-top: 10px;", ...,
         softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
                           header_ui,
                           shiny::plotOutput(ns("plot_main")),
@@ -110,6 +121,10 @@ plotWidgetModule <- function(input, output, session,
                        y_min = NULL  # TODO reactive, built-in, in settings?
                        ){
 
+  # observe({
+  #   print(session$ns("THISMODULE"))
+  #   print(settings())
+  # })
 
   # Make data for plotting
   plot_data <- shiny::reactive({
@@ -213,7 +228,7 @@ plotWidgetModule <- function(input, output, session,
 
       table_data()
 
-  } , digits = 0, align = "l")
+  } , digits = 1, align = "l")
 
 
 

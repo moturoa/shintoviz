@@ -88,6 +88,10 @@ prepare_grouped_data <- function(data,
     stop("Provide a function used to summarize the groups into a single value (e.g. sum, mean, length)")
   }
 
+  if(is.character(groupfun)){
+    groupfun <- base::get(groupfun)
+  }
+
   # Summarize a variable
   if(!is.null(yvar)){
     data <- dplyr::group_by(data, !!rlang::sym(groupvar)) %>%
