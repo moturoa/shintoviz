@@ -54,7 +54,7 @@ prepare_grouped_data <- function(data,
 
                               groupfun = NULL,
                               sort = FALSE,
-                              reverse = FALSE,
+                              reverse = TRUE,
 
                               order = NULL,
                               top_n = NULL,

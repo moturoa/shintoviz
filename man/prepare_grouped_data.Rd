@@ -10,7 +10,7 @@ prepare_grouped_data(
   groupvar = "group",
   groupfun = NULL,
   sort = FALSE,
-  reverse = FALSE,
+  reverse = TRUE,
   order = NULL,
   top_n = NULL,
   na_include = TRUE,
