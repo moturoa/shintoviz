@@ -161,7 +161,11 @@ plotWidgetModule <- function(input, output, session,
 
     } else {
 
-      type <- plot_type()
+      if("plot_type" %in% names(settings)){
+        type <- settings[["plot_type"]]
+      } else {
+        type <- plot_type()
+      }
 
       if(type %in% internal_custom_plot_types){
         plot_fn <- utils::getFromNamespace(type, "shintoviz")
