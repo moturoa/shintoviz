@@ -189,6 +189,13 @@ plotWidgetModule <- function(input, output, session,
       }
     }
 
+
+    # no xvar needed when groupvar present in table_prepare argument
+    if(!is.null(sett$table_prepare$groupvar) & is.null(sett$xvar)){
+      sett$xvar <- sett$table_prepare$groupvar
+    }
+
+
     sett$data <- plot_data()
 
     # Make the plot using the settings list

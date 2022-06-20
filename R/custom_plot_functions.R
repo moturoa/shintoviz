@@ -62,6 +62,7 @@ plot_horizontal_bars <- function(data,
 
   data$Y <- data[[yvar]]
   data$group <- data[[xvar]]
+
   data$label <- format_n2(data$Y, label_k, label_perc)
 
   if(reverse_order){
