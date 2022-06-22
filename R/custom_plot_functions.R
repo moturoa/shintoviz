@@ -199,8 +199,6 @@ plot_value_by_time <- function(data,
       ggplot2::ggplot(ggplot2::aes(x = time, y = n)) +
       ggplot2::geom_point(cex = point_size, colour = colors) +
       ggplot2::geom_line(lwd = line_width, colour = colors) +
-      ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
-      ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
       ggplot2::labs(y = ylab, x = xlab, title = title)
 
   } else {
@@ -210,11 +208,23 @@ plot_value_by_time <- function(data,
       ggplot2::geom_bar(stat="identity", position = ggplot2::position_stack(),
                fill = colors, width = bar_width,
                colour = colors) +
-      ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
-      ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
       ggplot2::labs(y = ylab, x = xlab, fill = "", title = title)
 
   }
+
+  # X axis
+  if(!inherits(data$time, "Date")){
+    p <- p +
+      ggplot2::scale_x_continuous(breaks = my_breaks_pretty())
+  } else {
+    # some duplication here; might change the defaults for the x axis
+    p <- p +
+      scale_x_date(labels = date_format("%d/%m/'%y"))
+
+  }
+
+  # Y axis
+  p <- p + ggplot2::scale_y_continuous(breaks = my_breaks_pretty())
 
   if(label_bars){
 

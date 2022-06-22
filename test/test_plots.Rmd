@@ -149,6 +149,34 @@ plot_grouped_value_by_time(plot_data,
   ylim(c(0,20))
 ```
 
+
+```{r}
+data <- tibble(
+  Datum = seq.Date(as.Date("2020-3-1"), as.Date("2020-3-10"),by="1 day"),
+  n_signalen = sample(5:10,10,replace=TRUE)
+)
+
+Sys.setlocale(locale = "Dutch")
+
+shintoviz::plot_value_by_time(data,
+                              xvar = "Datum",
+                              yvar = "n_signalen",
+                              plot_type = "lines",
+                              palette_function = NULL,
+                              colors = "#324F7D",
+                              base_size = 14,
+                              label_size = 4,
+                              point_size = 3,
+                              line_width = 1.2,
+                              label_bars = FALSE,
+                              ylab = "Aantal signalen (per dag)",
+                              xlab = "Datum",
+                              title = "")
+```
+
+
+
+
 ```{r}
 plot_data <- gapminder %>% 
   filter(country %in% c("Netherlands","Belgium","Denmark")) %>%
