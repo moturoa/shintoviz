@@ -8,7 +8,7 @@ plot_value_by_time(
   data,
   xvar = "time",
   yvar = "n",
-  plot_type = c("bars", "lines"),
+  sub_type = c("bars", "lines"),
   palette_function,
   colors = NULL,
   base_size = 14,
@@ -32,7 +32,7 @@ plot_value_by_time(
 
 \item{yvar}{Name of variable in data for length of bars}
 
-\item{plot_type}{Either 'bars' or 'lines'}
+\item{sub_type}{Either 'bars' or 'lines'}
 
 \item{palette_function}{A function that takes a single integer argument to return a vector of colors}
 
@@ -44,7 +44,7 @@ plot_value_by_time(
 
 \item{point_size}{Size of points plotted on line}
 
-\item{line_width}{Line width if plot_type = "lines"}
+\item{line_width}{Line width if sub_type = "lines"}
 
 \item{bar_width}{Relative width of bars (1 = fills space completely)}
 
@@ -73,7 +73,7 @@ plot_data <- gapminder \%>\%
 plot_value_by_time(plot_data,
                    xvar = "year",
                    yvar = "pop",
-                   plot_type = "bars",
+                   sub_type = "bars",
                    palette_function = NULL,
                    colors = "red",
                    base_size = 14,

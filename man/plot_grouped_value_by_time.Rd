@@ -9,7 +9,7 @@ plot_grouped_value_by_time(
   xvar = "time",
   yvar = "n",
   group = "group",
-  plot_type = c("stacked_bars", "grouped_bars", "lines"),
+  sub_type = c("stacked_bars", "grouped_bars", "lines"),
   palette_function,
   colors = NULL,
   base_size = 14,
@@ -36,7 +36,7 @@ plot_grouped_value_by_time(
 
 \item{group}{Name of variable in data for groups}
 
-\item{plot_type}{Either 'bars' or 'lines'}
+\item{sub_type}{Either 'bars' or 'lines'}
 
 \item{palette_function}{A function that takes a single integer argument to return a vector of colors}
 
@@ -48,7 +48,7 @@ plot_grouped_value_by_time(
 
 \item{point_size}{Size of points plotted on line}
 
-\item{line_width}{Width of line (if plot_type = "lines")}
+\item{line_width}{Width of line (if sub_type = "lines")}
 
 \item{bar_width}{Relative width of bars (1 = fills space completely)}
 
@@ -82,7 +82,7 @@ plot_grouped_value_by_time(plot_data,
                            xvar = "year",
                            yvar = "pop",
                            group = "country",
-                           plot_type = "lines",
+                           sub_type = "lines",
                            palette_function = "viridis",
                            colors = NULL,
                            base_size = 14,

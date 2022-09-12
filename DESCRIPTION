@@ -1,7 +1,7 @@
 Package: shintoviz
 Type: Package
 Title: Generic Data Viz for Shinto Applications
-Version: 0.1.6
+Version: 0.1.7
 Author: Remko Duursma
 Maintainer: Remko Duursma <remko@shintolabs.nl>
 Description: Standardized plotting methods, shiny plot widgets for 
@@ -11,7 +11,7 @@ Suggests: gapminder
 License: CC0
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Imports: sysfonts, showtext, uuid, forcats, writexl, 
     rlang, tibble, shiny, softui, jsonlite
 Roxygen: list(markdown = TRUE)

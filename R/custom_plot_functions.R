@@ -120,7 +120,7 @@ plot_horizontal_bars <- function(data,
 #' @param data A dataframe
 #' @param xvar Name of variable in data to determine bars
 #' @param yvar Name of variable in data for length of bars
-#' @param plot_type Either 'bars' or 'lines'
+#' @param sub_type Either 'bars' or 'lines'
 #' @param palette_function A function that takes a single integer argument to return a vector of colors
 #' @param colors If palette_function not provided, a vector of colors (must be at least nrow(data))
 #' @param base_size Font base size (title, axes)
@@ -128,7 +128,7 @@ plot_horizontal_bars <- function(data,
 #' @param label_k If TRUE, labels are divided by 1000
 #' @param label_perc If TRUE, percentage is shown in label
 #' @param point_size Size of points plotted on line
-#' @param line_width Line width if plot_type = "lines"
+#' @param line_width Line width if sub_type = "lines"
 #' @param bar_width Relative width of bars (1 = fills space completely)
 #' @param xlab X-axis label
 #' @param ylab Y-axis label
@@ -145,7 +145,7 @@ plot_horizontal_bars <- function(data,
 #' plot_value_by_time(plot_data,
 #'                    xvar = "year",
 #'                    yvar = "pop",
-#'                    plot_type = "bars",
+#'                    sub_type = "bars",
 #'                    palette_function = NULL,
 #'                    colors = "red",
 #'                    base_size = 14,
@@ -160,7 +160,7 @@ plot_value_by_time <- function(data,
                            xvar = "time",
                            yvar = "n",
 
-                           plot_type = c("bars","lines"),
+                           sub_type = c("bars","lines"),
 
                            palette_function,
                            colors = NULL,
@@ -177,7 +177,7 @@ plot_value_by_time <- function(data,
                            title = "title", ...
                            ){
 
-  plot_type <- match.arg(plot_type)
+  sub_type <- match.arg(sub_type)
   font_family <- get_current_font_family()
 
   if(nrow(data) == 0){
@@ -193,7 +193,7 @@ plot_value_by_time <- function(data,
 
   colors <- generate_colors(1, palette_function, colors)
 
-  if(plot_type == "lines"){
+  if(sub_type == "lines"){
 
     p <- data %>%
       ggplot2::ggplot(ggplot2::aes(x = time, y = n)) +
@@ -258,13 +258,13 @@ plot_value_by_time <- function(data,
 #' @param xvar Name of variable in data for X-axis ("time")
 #' @param yvar Name of variable for Y-axis
 #' @param group Name of variable in data for groups
-#' @param plot_type Either 'bars' or 'lines'
+#' @param sub_type Either 'bars' or 'lines'
 #' @param palette_function A function that takes a single integer argument to return a vector of colors
 #' @param colors If palette_function not provided, a vector of colors (must be at least nrow(data))
 #' @param base_size Font base size (title, axes)
 #' @param label_size Size of text labels next to bars
 #' @param point_size Size of points plotted on line
-#' @param line_width Width of line (if plot_type = "lines")
+#' @param line_width Width of line (if sub_type = "lines")
 #' @param label_bars TRUE/FALSE, label the bars or not.
 #' @param label_k If TRUE, labels are divided by 1000
 #' @param label_perc If TRUE, % is shown in label
@@ -287,7 +287,7 @@ plot_value_by_time <- function(data,
 #'                            xvar = "year",
 #'                            yvar = "pop",
 #'                            group = "country",
-#'                            plot_type = "lines",
+#'                            sub_type = "lines",
 #'                            palette_function = "viridis",
 #'                            colors = NULL,
 #'                            base_size = 14,
@@ -305,7 +305,7 @@ plot_grouped_value_by_time <- function(data,
                                    yvar = "n",
                                    group = "group",
 
-                                   plot_type = c("stacked_bars","grouped_bars","lines"),
+                                   sub_type = c("stacked_bars","grouped_bars","lines"),
 
                                    palette_function,
                                    colors = NULL,
@@ -325,7 +325,7 @@ plot_grouped_value_by_time <- function(data,
                                    ...
                                    ){
 
-  plot_type <- match.arg(plot_type)
+  sub_type <- match.arg(sub_type)
   font_family <- get_current_font_family()
 
   if(nrow(data) == 0){
@@ -355,7 +355,7 @@ plot_grouped_value_by_time <- function(data,
 
   } else {
 
-    if(plot_type == "lines"){
+    if(sub_type == "lines"){
 
       p <- data %>%
         ggplot2::ggplot(aes(x = time, y = n, color = group)) +
@@ -368,7 +368,7 @@ plot_grouped_value_by_time <- function(data,
 
     } else {
 
-      pos <- if(plot_type == "grouped_bars"){
+      pos <- if(sub_type == "grouped_bars"){
         ggplot2::position_dodge()
       } else {
         ggplot2::position_stack()
@@ -391,7 +391,7 @@ plot_grouped_value_by_time <- function(data,
   if(label_bars){
 
 
-    if(plot_type == "stacked_bars"){
+    if(sub_type == "stacked_bars"){
       # Stacked bars: label only the total (sum)
       label_data <- dplyr::group_by(data, time) %>%
         dplyr::summarize(n = sum(n), .groups = "drop")
