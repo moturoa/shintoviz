@@ -176,8 +176,8 @@ plotWidgetModule <- function(input, output, session,
 
     } else {
 
-      if("plot_type" %in% names(settings)){
-        type <- settings[["plot_type"]]
+      if("plot_type" %in% names(settings())){
+        type <- settings()[["plot_type"]] 
       } else {
         type <- plot_type()
       }
@@ -187,8 +187,7 @@ plotWidgetModule <- function(input, output, session,
       } else {
         stop(paste("plot_type not in ", paste(internal_custom_plot_types, collapse= " ,")))
       }
-    }
-
+    } 
 
     # no xvar needed when groupvar present in table_prepare argument
     if(!is.null(sett$table_prepare$groupvar) & is.null(sett$xvar)){
