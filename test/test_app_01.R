@@ -138,7 +138,7 @@ server <- function(input, output, session) {
                list(
                  xvar = "year",
                  yvar = "pop",
-                 plot_type = input$sel_plot_type_2,
+                 sub_type = input$sel_plot_type_2,
                  palette_function = NULL,
                  colors = "#33B7A0",
                  base_size = input$num_basesize2,
@@ -170,7 +170,7 @@ server <- function(input, output, session) {
                  xvar = "year",
                  yvar = "pop",
                  group = "country",
-                 plot_type = input$sel_plot_type_3,
+                 sub_type = input$sel_plot_type_3,
                  palette_function = "viridis",
                  colors = NULL,
                  base_size = input$num_basesize_3,

@@ -53,10 +53,9 @@ plot_horizontal_bars <- function(data,
                                   label_k = FALSE,
                                   label_perc = FALSE,
                                   label_hjust = -0.2,
-                                  bar_width = 0.6,
-
+                                  bar_width = 0.6, 
                                   title = "", ...){
-
+ 
 
   font_family <- get_current_font_family()
 
@@ -425,6 +424,78 @@ plot_grouped_value_by_time <- function(data,
 }
 
 
+
+#' Make a standard piechart
+#' @param data A dataframe
+#' @param xvar Name of variable in data for X-axis ("time")
+#' @param yvar Name of variable for Y-axis
+#' @param group Name of variable in data for groups
+#' @param sub_type Either 'bars' or 'lines'
+#' @param palette_function A function that takes a single integer argument to return a vector of colors
+#' @param colors If palette_function not provided, a vector of colors (must be at least nrow(data))
+#' @param base_size Font base size (title, axes)
+#' @param label_size Size of text labels next to bars
+#' @param point_size Size of points plotted on line
+#' @param line_width Width of line (if sub_type = "lines")
+#' @param label_bars TRUE/FALSE, label the bars or not.
+#' @param label_k If TRUE, labels are divided by 1000
+#' @param label_perc If TRUE, % is shown in label
+#' @param bar_width Relative width of bars (1 = fills space completely)
+#' @param title Title above plot
+#' @param xlab X-axis label
+#' @param ylab Y-axis label
+#' @param grouplab group label (for legend title)
+#' @param \dots Further arguments passed to `generate_colors`
+#' @export
+#' @importFrom ggplot2 guides 
+#'
+plot_pie_chart <- function(data, 
+                           xvar = "group",
+                           yvar = "n",
+                             
+                           palette_function,
+                           colors = NULL,
+                           base_size = 14,
+                           label_size = 4,
+                           point_size = 3,
+                           line_width = 1.2,
+                           bar_width = 0.6,
+                           label_bars = FALSE,
+                           label_k = FALSE,
+                           label_perc = FALSE,
+                            
+                           grouplab = "",
+                           legend.position = "left",
+                           title = "title",
+                           ... ){
+    
+  
+  n_group <- length(unique(data[[xvar]]))
+  
+  colors <- generate_colors(n_group, palette_function, colors)
+ 
+  data <- aggregate(data[[ yvar]], by=list(key=data[[ xvar]]), FUN=sum)
+  names(data) <- c('group', yvar)
+  
+  
+  totalY <- sum(data[[yvar]])
+  data$yvar_perc <- data[[yvar]] / totalY * 100
+  
+  
+  # Basic piechart
+  p <- ggplot(data, aes(x="", y=yvar_perc, fill=group)) +
+    geom_bar(stat="identity", width=1) +
+    coord_polar("y", start=0) +
+    scale_fill_manual(values = colors, name = "") +  
+    theme_void() +
+    ggplot2::labs(x = "", y = "",title = title) +  
+    theme(legend.position = legend.position, 
+          legend.text = element_text(size=16),
+          legend.title = element_blank(),
+          plot.title = element_text(hjust = 0.5),
+          plot.caption = element_text(hjust = 0.5)) 
+  p
+}
 
 
 

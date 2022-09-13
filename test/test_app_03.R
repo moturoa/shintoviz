@@ -18,7 +18,20 @@ set_plotwidget_font("Roboto")
 
 # yaml::read_yaml
 
-plot_config <- list(
+plot_config_left <- list(
+  list(
+    xvar = "continent",
+    yvar = "population",
+    reverse_order = FALSE,
+    palette_function = "ocean.phase",
+    colors = NULL,
+    base_size = 14,
+    label_size = 6,
+    label_k = FALSE,
+    label_hjust = -0.2,
+    bar_width = 0.6,
+    title = "Title here"
+  ),
   list(
       xvar = "continent",
       yvar = "population",
@@ -30,11 +43,58 @@ plot_config <- list(
       label_k = FALSE,
       label_hjust = -0.2,
       bar_width = 0.6,
-      title = "Title here"
-    ),
+      title = "Ordered"
+    )  
+ )
+plot_config_mid <- list(
+  list(
+    plot_type="plot_value_by_time",
+    xvar = "year",
+    yvar = "population", 
+    palette_function = "parula",
+    title = "ddt"
+  ),
+  list(
+    plot_type="plot_grouped_value_by_time",
+    xvar = "year",
+    sub_type='lines',
+    yvar = "population", 
+    group = "continent", 
+    palette_function = "parula",
+    title = "ddt1"
+  ),
+  list(
+    plot_type="plot_grouped_value_by_time",
+    xvar = "year",
+    sub_type='stacked_bars',
+    yvar = "population", 
+    group = "continent", 
+    palette_function = "parula",
+    title = "ddt2"
+  ),
+  list(
+    plot_type="plot_pie_chart",
+    xvar = "continent", 
+    yvar = "population",   
+    palette_function = "parula",
+    title = "pie"
+  ),
+  list(
+    plot_type="plot_pie_chart",
+    xvar = "continent", 
+    yvar = "population",   
+    palette_function = "parula",
+    title = "pie2"
+  )
+)
+
+plot_config_right <- list(
+  
   list(
     xvar = "continent",
-    yvar = "population",
+    yvar = "pop",
+    groupnow=T,
+    select=c('pop', 'continent'),
     reverse_order = TRUE,
     palette_function = "parula",
     colors = NULL,
@@ -45,43 +105,67 @@ plot_config <- list(
     bar_width = 0.6,
     title = "Populatie (miljoenen)"
   )
-  ,
-  list(
-    plot_type="plot_value_by_time",
-    xvar = "continent",
-    yvar = "year", 
-    group="continent",
-    palette_function = "parula",
-    title = "ddt"
-  )
 )
 
-
-
+ 
 
 ui <- softui::simple_page(
 
   softui::fluid_row(
-    tags$div(id = "plot_placeholder")
-  )
+    column(4,
+      tags$div(id = "plot_placeholder_left")
+    ),
+    column(4,
+           tags$div(id = "plot_placeholder_mid")
+    ), 
+    column(4,
+           tags$div(id = "plot_placeholder_right")
+           )
+  ) 
 
 )
 
 server <- function(input, output, session) {
+ 
+  
+  my_table_format_fun1 <- function(data){
+    data$`%` <- round(100 * data[[2]] / sum(data[[2]]), 2)
+    data
+  }
 
-
-  plot_data <- reactive({
+  plot_data <- reactive({ 
+    gapminder %>%
+      mutate(  continent = as.character(continent)) %>% 
+      group_by(continent, year) %>%
+      summarize(population = floor(1e-06 * sum(pop)), .groups = "drop") %>% 
+      mutate(time=year)
+  }) 
+  
+  plot_data2 <- reactive({
     gapminder %>%
       mutate(continent = as.character(continent)) %>%
       filter(year == 2007) %>%
       group_by(continent) %>%
       summarize(population = floor(1e-06 * sum(pop)), .groups = "drop")
   })
-
+  plot_data3 <- reactive({ 
+    gapminder %>%
+      mutate(continent = as.character(continent)) %>%
+      filter(year == 2007)  
+  })
+  insert_plot_widgets(data = plot_data2,
+                      cfg = plot_config_left,
+                      id = "plot_placeholder_left",
+                      width = 12)
   insert_plot_widgets(data = plot_data,
-                      cfg = plot_config,
-                      id = "plot_placeholder",
-                      width = 4)
+                      cfg = plot_config_mid,
+                      id = "plot_placeholder_mid",
+                      width = 12)
+  insert_plot_widgets(data = plot_data3,
+                      cfg = plot_config_right,
+                      id = "plot_placeholder_right",
+                      width = 12)
+  
 
 
 }

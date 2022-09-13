@@ -118,8 +118,10 @@ plotWidgetModule <- function(input, output, session,
                        plot_type = reactive("plot_horizontal_bars"),
                        settings = reactive(list()),
                        extra_ggplot = reactive(NULL),
-                       y_min = NULL  # TODO reactive, built-in, in settings?
+                       y_min = NULL 
                        ){
+  
+ 
 
   # observe({
   #   print(session$ns("THISMODULE"))
@@ -132,14 +134,21 @@ plotWidgetModule <- function(input, output, session,
     sett <- settings()
 
     if(is.null(sett$table_prepare)){
-      data()
+      data <- data()
     } else {
       cfg <- sett$table_prepare
       fun <- base::get(cfg$fun)
       cfg$fun <- NULL
       cfg$data <- data()
-      do.call(fun, cfg)
+      data <- do.call(fun, cfg)
     }
+    
+    if(!is.null(sett$groupnow) & nrow(data) > 0){
+      data <- aggregate(data[[sett$yvar]], by=list(key=data[[sett$xvar]]), FUN=sum)
+      names(data) <- c(sett$xvar,sett$yvar)
+    } 
+    data
+    
 
   })
 
@@ -149,14 +158,15 @@ plotWidgetModule <- function(input, output, session,
     sett <- settings()
 
     if(is.null(sett$table_format)){
-      plot_data()
+      x <- plot_data()
     } else {
       cfg <- sett$table_format
       fun <- base::get(cfg$fun)
       cfg$fun <- NULL
       cfg$data <- plot_data()
-      do.call(fun, cfg)
+      x <- do.call(fun, cfg)
     }
+     
 
   })
 
@@ -179,7 +189,7 @@ plotWidgetModule <- function(input, output, session,
       if("plot_type" %in% names(settings())){
         type <- settings()[["plot_type"]] 
       } else {
-        type <- plot_type()
+        type <- plot_type() 
       }
 
       if(type %in% internal_custom_plot_types){
