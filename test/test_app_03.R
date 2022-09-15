@@ -89,7 +89,7 @@ plot_config_mid <- list(
 )
 
 
-
+# source() before runApp!
 milion_label_format <- function(x,...){
   paste0(round(x * 10E-6,  1)," M.")
 }
@@ -119,6 +119,21 @@ plot_config_right <- list(
     label_size = 6,
     label_hjust = -0.2,
     bar_width = 0.6
+  ),
+
+  list(
+    title = "Pie extra",
+    plot_type="plot_pie_chart",
+
+    table_prepare = list(
+      fun = "prepare_grouped_data",
+      yvar = "pop",
+      groupvar = "continent",
+      groupfun = "sum"
+    ),
+
+    palette_function = "parula"
+
   )
 )
 
@@ -170,14 +185,14 @@ server <- function(input, output, session) {
       filter(year == 2007)
   })
 
-  # insert_plot_widgets(data = plot_data2,
-  #                     cfg = plot_config_left,
-  #                     id = "plot_placeholder_left",
-  #                     width = 12)
-  # insert_plot_widgets(data = plot_data,
-  #                     cfg = plot_config_mid,
-  #                     id = "plot_placeholder_mid",
-  #                     width = 12)
+  insert_plot_widgets(data = plot_data2,
+                      cfg = plot_config_left,
+                      id = "plot_placeholder_left",
+                      width = 12)
+  insert_plot_widgets(data = plot_data,
+                      cfg = plot_config_mid,
+                      id = "plot_placeholder_mid",
+                      width = 12)
   insert_plot_widgets(data = plot_data3,
                       cfg = plot_config_right,
                       id = "plot_placeholder_right",

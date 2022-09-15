@@ -15,6 +15,7 @@ plot_pie_chart(
   point_size = 3,
   line_width = 1.2,
   bar_width = 0.6,
+  label_function = NULL,
   label_bars = FALSE,
   label_k = FALSE,
   label_perc = FALSE,

@@ -166,6 +166,9 @@ plotWidgetModule <- function(input, output, session,
       names(data) <- c(sett$xvar,sett$yvar)
     }
 
+    # Make labels
+
+
     data
 
 

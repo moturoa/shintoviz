@@ -62,13 +62,9 @@ plot_horizontal_bars <- function(data,
   data$Y <- data[[yvar]]
   data$group <- data[[xvar]]
 
-  if(is.null(label_function)){
-    label_function <- format_n2
-  } else {
-    label_function <- base::get(label_function)
-  }
-
-  data$label <- label_function(data$Y, label_k, label_perc)
+  data$label <- make_value_label(values = data$Y, label_function = label_function,
+                                 label_k = label_k,
+                                 label_perc = label_perc)
 
   if(reverse_order){
     data$group <- forcats::fct_rev(as.factor(data$group))
@@ -174,6 +170,7 @@ plot_value_by_time <- function(data,
                            point_size = 3,
                            line_width = 1.2,
                            bar_width = 0.6,
+                           label_function = NULL,
                            label_bars = FALSE,
                            label_k = FALSE,
                            label_perc = FALSE,
@@ -233,7 +230,10 @@ plot_value_by_time <- function(data,
 
   if(label_bars){
 
-    data$label <- format_n2(data$n, label_k, label_perc)
+    data$label <- make_value_label(values = data$n,
+                                   label_function = label_function,
+                                   label_k = label_k,
+                                   label_perc = label_perc)
 
     ymax <- max(data$n)
     p <- p + ggplot2::geom_text(data = data,
@@ -319,6 +319,7 @@ plot_grouped_value_by_time <- function(data,
                                    point_size = 3,
                                    line_width = 1.2,
                                    bar_width = 0.6,
+                                   label_function = NULL,
                                    label_bars = FALSE,
                                    label_k = FALSE,
                                    label_perc = FALSE,
@@ -405,7 +406,10 @@ plot_grouped_value_by_time <- function(data,
       label_data <- data
     }
 
-    label_data$label <- format_n2(label_data$n, label_k, label_perc)
+    label_data$label <- make_value_label(values = label_data$n,
+                                   label_function = label_function,
+                                   label_k = label_k,
+                                   label_perc = label_perc)
 
     ymax <- max(label_data$n)
 
@@ -466,6 +470,7 @@ plot_pie_chart <- function(data,
                            point_size = 3,
                            line_width = 1.2,
                            bar_width = 0.6,
+                           label_function = NULL,
                            label_bars = FALSE,
                            label_k = FALSE,
                            label_perc = FALSE,
@@ -480,10 +485,11 @@ plot_pie_chart <- function(data,
 
   colors <- generate_colors(n_group, palette_function, colors)
 
-  data <- aggregate(data[[ yvar]], by=list(key=data[[ xvar]]), FUN=sum)
-  names(data) <- c('group', yvar)
-
-
+  # # TODO not needed as prepare_grouped_data aggregates for us
+  # data <- aggregate(data[[ yvar]], by=list(key=data[[ xvar]]), FUN=sum)
+  # names(data) <- c('group', yvar)
+  #
+browser()
   totalY <- sum(data[[yvar]])
   data$yvar_perc <- data[[yvar]] / totalY * 100
 
