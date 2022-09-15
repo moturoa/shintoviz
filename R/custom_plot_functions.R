@@ -53,9 +53,8 @@ plot_horizontal_bars <- function(data,
                                   label_k = FALSE,
                                   label_perc = FALSE,
                                   label_hjust = -0.2,
-                                  bar_width = 0.6, 
+                                  bar_width = 0.6,
                                   title = "", ...){
- 
 
   font_family <- get_current_font_family()
 
@@ -447,12 +446,12 @@ plot_grouped_value_by_time <- function(data,
 #' @param grouplab group label (for legend title)
 #' @param \dots Further arguments passed to `generate_colors`
 #' @export
-#' @importFrom ggplot2 guides 
+#' @importFrom ggplot2 guides
 #'
-plot_pie_chart <- function(data, 
+plot_pie_chart <- function(data,
                            xvar = "group",
                            yvar = "n",
-                             
+
                            palette_function,
                            colors = NULL,
                            base_size = 14,
@@ -463,37 +462,37 @@ plot_pie_chart <- function(data,
                            label_bars = FALSE,
                            label_k = FALSE,
                            label_perc = FALSE,
-                            
+
                            grouplab = "",
                            legend.position = "left",
                            title = "title",
                            ... ){
-    
-  
+
+
   n_group <- length(unique(data[[xvar]]))
-  
+
   colors <- generate_colors(n_group, palette_function, colors)
- 
+
   data <- aggregate(data[[ yvar]], by=list(key=data[[ xvar]]), FUN=sum)
   names(data) <- c('group', yvar)
-  
-  
+
+
   totalY <- sum(data[[yvar]])
   data$yvar_perc <- data[[yvar]] / totalY * 100
-  
-  
+
+
   # Basic piechart
   p <- ggplot(data, aes(x="", y=yvar_perc, fill=group)) +
     geom_bar(stat="identity", width=1) +
     coord_polar("y", start=0) +
-    scale_fill_manual(values = colors, name = "") +  
+    scale_fill_manual(values = colors, name = "") +
     theme_void() +
-    ggplot2::labs(x = "", y = "",title = title) +  
-    theme(legend.position = legend.position, 
+    ggplot2::labs(x = "", y = "",title = title) +
+    theme(legend.position = legend.position,
           legend.text = element_text(size=16),
           legend.title = element_blank(),
           plot.title = element_text(hjust = 0.5),
-          plot.caption = element_text(hjust = 0.5)) 
+          plot.caption = element_text(hjust = 0.5))
   p
 }
 

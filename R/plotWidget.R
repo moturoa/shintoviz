@@ -34,7 +34,7 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
   ui_fun( style = "margin-top: 10px;", ...,
         softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
                           header_ui,
-                          shiny::plotOutput(ns("plot_main")),
+                          shiny::plotOutput(ns("plot_main"), height = "400px"),
                           footer_ui
         ),
         softui::tab_panel(title = softui::bsicon("table"),
@@ -47,6 +47,16 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                           exportButtonUI(ns("btn_download"))
                         )
                   )
+        ),
+        softui::tab_panel(title = softui::bsicon("gear-fill"),
+            softui::fluid_row(
+              tags$div(style = "height: 400px;",
+
+
+
+
+              )
+            )
         )
     )
 
@@ -118,10 +128,10 @@ plotWidgetModule <- function(input, output, session,
                        plot_type = reactive("plot_horizontal_bars"),
                        settings = reactive(list()),
                        extra_ggplot = reactive(NULL),
-                       y_min = NULL 
+                       y_min = NULL
                        ){
-  
- 
+
+
 
   # observe({
   #   print(session$ns("THISMODULE"))
@@ -139,16 +149,25 @@ plotWidgetModule <- function(input, output, session,
       cfg <- sett$table_prepare
       fun <- base::get(cfg$fun)
       cfg$fun <- NULL
+
+      yv <- sett$table_prepare$yvar
+      if(is.null(yv) && sett$table_prepare$groupfun != "length"){
+        stop("table_prepare needs 'yvar' setting (the variable name to be summarized)")
+      }
+      cfg$yvar <- yv
+
       cfg$data <- data()
       data <- do.call(fun, cfg)
     }
-    
+
+    # TODO remove (but used in WBM3-Zaanstad!)
     if(!is.null(sett$groupnow) & nrow(data) > 0){
       data <- aggregate(data[[sett$yvar]], by=list(key=data[[sett$xvar]]), FUN=sum)
       names(data) <- c(sett$xvar,sett$yvar)
-    } 
+    }
+
     data
-    
+
 
   })
 
@@ -166,8 +185,8 @@ plotWidgetModule <- function(input, output, session,
       cfg$data <- plot_data()
       x <- do.call(fun, cfg)
     }
-     
 
+    x
   })
 
 
@@ -187,9 +206,9 @@ plotWidgetModule <- function(input, output, session,
     } else {
 
       if("plot_type" %in% names(settings())){
-        type <- settings()[["plot_type"]] 
+        type <- settings()[["plot_type"]]
       } else {
-        type <- plot_type() 
+        type <- plot_type()
       }
 
       if(type %in% internal_custom_plot_types){
@@ -197,14 +216,19 @@ plotWidgetModule <- function(input, output, session,
       } else {
         stop(paste("plot_type not in ", paste(internal_custom_plot_types, collapse= " ,")))
       }
-    } 
+    }
 
     # no xvar needed when groupvar present in table_prepare argument
     if(!is.null(sett$table_prepare$groupvar) & is.null(sett$xvar)){
       sett$xvar <- sett$table_prepare$groupvar
     }
 
+    # if yvar set in table_group_prepare, set it in main list
+    if(!is.null(sett$table_prepare$yvar)){
+      sett$yvar <- sett$table_prepare$yvar
+    }
 
+    # Read plot data
     sett$data <- plot_data()
 
     # Make the plot using the settings list
@@ -212,6 +236,7 @@ plotWidgetModule <- function(input, output, session,
 
 
     # Extra adjustments
+    # TODO why is this here?
     if(!is.null(y_min)){
       p <- p + ggplot2::expand_limits(y = y_min)
     }
