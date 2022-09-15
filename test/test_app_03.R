@@ -88,6 +88,12 @@ plot_config_mid <- list(
   )
 )
 
+
+
+milion_label_format <- function(x,...){
+  paste0(round(x * 10E-6,  1)," M.")
+}
+
 plot_config_right <- list(
 
   list(
@@ -104,13 +110,13 @@ plot_config_right <- list(
       reverse = TRUE
     ),
 
-    #select=c('pop', 'continent'),
     reverse_order = TRUE,
     palette_function = "parula",
     colors = NULL,
     base_size = 14,
+
+    label_function = "milion_label_format",
     label_size = 6,
-    label_k = FALSE,
     label_hjust = -0.2,
     bar_width = 0.6
   )

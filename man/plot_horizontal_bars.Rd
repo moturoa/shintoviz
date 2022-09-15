@@ -12,6 +12,7 @@ plot_horizontal_bars(
   palette_function = NULL,
   colors = NULL,
   base_size = 15,
+  label_function = NULL,
   label_size = 5,
   label_k = FALSE,
   label_perc = FALSE,

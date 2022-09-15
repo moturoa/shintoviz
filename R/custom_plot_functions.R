@@ -49,6 +49,7 @@ plot_horizontal_bars <- function(data,
                                   palette_function = NULL,
                                   colors = NULL,
                                   base_size = 15,
+                                  label_function = NULL,
                                   label_size = 5,
                                   label_k = FALSE,
                                   label_perc = FALSE,
@@ -61,7 +62,13 @@ plot_horizontal_bars <- function(data,
   data$Y <- data[[yvar]]
   data$group <- data[[xvar]]
 
-  data$label <- format_n2(data$Y, label_k, label_perc)
+  if(is.null(label_function)){
+    label_function <- format_n2
+  } else {
+    label_function <- base::get(label_function)
+  }
+
+  data$label <- label_function(data$Y, label_k, label_perc)
 
   if(reverse_order){
     data$group <- forcats::fct_rev(as.factor(data$group))
