@@ -13,11 +13,13 @@
 #' @param id Shiny input ID
 #' @param header_ui Further UI to be placed above the plot
 #' @param footer_ui Further UI to be placed below the plot
+#' @param tab_settings If TRUE, adds a settings tab (unused at the moment)
 #' @param \dots Further arguments to [softui::tab_box()]
 #' @rdname plotWidget
 #' @export
 plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          ui_container = c("tab_box","tabset_panel"),
+                         tab_settings = FALSE,
                          ...){
 
   ns <- NS(id)
@@ -48,16 +50,18 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                         )
                   )
         ),
-        softui::tab_panel(title = softui::bsicon("gear-fill"),
-            softui::fluid_row(
-              tags$div(style = "height: 400px;",
+        if(tab_settings){
+          softui::tab_panel(title = softui::bsicon("gear-fill"),
+                            softui::fluid_row(
+                              tags$div(style = "height: 400px;",
 
+                                  tags$p("Settings will be placed here")
 
+                              )
+                            )
+          )
+        }
 
-
-              )
-            )
-        )
     )
 
 
@@ -143,31 +147,30 @@ plotWidgetModule <- function(input, output, session,
 
     sett <- settings()
 
-    if(is.null(sett$table_prepare)){
+    if(is.null(sett$filter_function)){
       data <- data()
     } else {
+      fun <- base::get(sett$filter_function)
+      data <- fun(data())
+    }
+
+
+    if(!is.null(sett$table_prepare)){
+
       cfg <- sett$table_prepare
       fun <- base::get(cfg$fun)
       cfg$fun <- NULL
 
       yv <- sett$table_prepare$yvar
-      if(is.null(yv) && sett$table_prepare$groupfun != "length"){
+
+      if(is.null(yv) && !is.null(sett$table_prepare$groupfun) && sett$table_prepare$groupfun != "length"){
         stop("table_prepare needs 'yvar' setting (the variable name to be summarized)")
       }
       cfg$yvar <- yv
 
-      cfg$data <- data()
+      cfg$data <- data
       data <- do.call(fun, cfg)
     }
-
-    # TODO remove (but used in WBM3-Zaanstad!)
-    if(!is.null(sett$groupnow) & nrow(data) > 0){
-      data <- aggregate(data[[sett$yvar]], by=list(key=data[[sett$xvar]]), FUN=sum)
-      names(data) <- c(sett$xvar,sett$yvar)
-    }
-
-    # Make labels
-
 
     data
 

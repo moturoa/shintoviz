@@ -11,16 +11,10 @@ plot_pie_chart(
   palette_function,
   colors = NULL,
   base_size = 14,
-  label_size = 4,
-  point_size = 3,
-  line_width = 1.2,
-  bar_width = 0.6,
-  label_function = NULL,
-  label_bars = FALSE,
-  label_k = FALSE,
-  label_perc = FALSE,
-  grouplab = "",
   legend.position = "left",
+  label_function = NULL,
+  label_size = 4,
+  label_hjust = 1.65,
   title = "title",
   ...
 )
@@ -40,20 +34,6 @@ plot_pie_chart(
 
 \item{label_size}{Size of text labels next to bars}
 
-\item{point_size}{Size of points plotted on line}
-
-\item{line_width}{Width of line (if sub_type = "lines")}
-
-\item{bar_width}{Relative width of bars (1 = fills space completely)}
-
-\item{label_bars}{TRUE/FALSE, label the bars or not.}
-
-\item{label_k}{If TRUE, labels are divided by 1000}
-
-\item{label_perc}{If TRUE, \% is shown in label}
-
-\item{grouplab}{group label (for legend title)}
-
 \item{title}{Title above plot}
 
 \item{\dots}{Further arguments passed to \code{generate_colors}}
@@ -62,9 +42,23 @@ plot_pie_chart(
 
 \item{sub_type}{Either 'bars' or 'lines'}
 
+\item{point_size}{Size of points plotted on line}
+
+\item{line_width}{Width of line (if sub_type = "lines")}
+
+\item{label_bars}{TRUE/FALSE, label the bars or not.}
+
+\item{label_k}{If TRUE, labels are divided by 1000}
+
+\item{label_perc}{If TRUE, \% is shown in label}
+
+\item{bar_width}{Relative width of bars (1 = fills space completely)}
+
 \item{xlab}{X-axis label}
 
 \item{ylab}{Y-axis label}
+
+\item{grouplab}{group label (for legend title)}
 }
 \description{
 Make a standard piechart
