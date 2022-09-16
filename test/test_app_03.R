@@ -19,6 +19,7 @@ set_plotwidget_font("Open Sans")
 
 plot_config_left <- list(
   list(
+    title = "Title here",
     xvar = "continent",
     yvar = "population",
     reverse_order = FALSE,
@@ -29,7 +30,12 @@ plot_config_left <- list(
     label_k = FALSE,
     label_hjust = -0.2,
     bar_width = 0.6,
-    title = "Title here"
+    interactive = list(
+      plot_type = c("Cirkeldiagram" = "plot_pie_chart",
+        "Staafdiagram" = "plot_horizontal_bars"
+                    )
+    )
+
   ),
   list(
       title = "Ordered",
@@ -187,14 +193,14 @@ server <- function(input, output, session) {
                       cfg = plot_config_left,
                       id = "plot_placeholder_left",
                       width = 12)
-  insert_plot_widgets(data = plot_data,
-                      cfg = plot_config_mid,
-                      id = "plot_placeholder_mid",
-                      width = 12)
-  insert_plot_widgets(data = plot_data3,
-                      cfg = plot_config_right,
-                      id = "plot_placeholder_right",
-                      width = 12)
+  # insert_plot_widgets(data = plot_data,
+  #                     cfg = plot_config_mid,
+  #                     id = "plot_placeholder_mid",
+  #                     width = 12)
+  # insert_plot_widgets(data = plot_data3,
+  #                     cfg = plot_config_right,
+  #                     id = "plot_placeholder_right",
+  #                     width = 12)
 
 
 

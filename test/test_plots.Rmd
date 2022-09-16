@@ -229,3 +229,27 @@ plot_pie_chart(plot_data,
 
 ```
 
+
+```{r}
+# Idem, data is al geaggregeerd
+plot_data <-  gapminder %>%
+      mutate(continent = as.character(continent)) %>%
+      filter(year == 2007) %>%
+      group_by(continent) %>%
+      summarize(population = floor(1e-06 * sum(pop)), .groups = "drop")
+
+
+plot_pie_chart(plot_data, 
+               xvar = "continent", 
+               yvar = "population",
+               palette_function = "parula",
+               base_size = 14,
+               label_function = NULL,
+               label_size = 4,
+               label_hjust = 1.65,
+               title = "Pie chart")
+
+
+```
+
+

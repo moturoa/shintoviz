@@ -10,7 +10,7 @@ plotWidgetUI(
   header_ui = NULL,
   footer_ui = NULL,
   ui_container = c("tab_box", "tabset_panel"),
-  tab_settings = FALSE,
+  interactive = NULL,
   ...
 )
 
@@ -31,8 +31,6 @@ plotWidgetModule(
 \item{header_ui}{Further UI to be placed above the plot}
 
 \item{footer_ui}{Further UI to be placed below the plot}
-
-\item{tab_settings}{If TRUE, adds a settings tab (unused at the moment)}
 
 \item{\dots}{Further arguments to \code{\link[softui:tabbox]{softui::tab_box()}}}
 

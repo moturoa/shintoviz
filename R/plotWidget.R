@@ -13,13 +13,12 @@
 #' @param id Shiny input ID
 #' @param header_ui Further UI to be placed above the plot
 #' @param footer_ui Further UI to be placed below the plot
-#' @param tab_settings If TRUE, adds a settings tab (unused at the moment)
 #' @param \dots Further arguments to [softui::tab_box()]
 #' @rdname plotWidget
 #' @export
 plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          ui_container = c("tab_box","tabset_panel"),
-                         tab_settings = FALSE,
+                         interactive = NULL,
                          ...){
 
   ns <- NS(id)
@@ -31,7 +30,6 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
   } else {
     softui::tabset_panel
   }
-
 
   ui_fun( style = "margin-top: 10px;", ...,
         softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
@@ -50,12 +48,17 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                         )
                   )
         ),
-        if(tab_settings){
+        if(!is.null(interactive)){
           softui::tab_panel(title = softui::bsicon("gear-fill"),
                             softui::fluid_row(
                               tags$div(style = "height: 400px;",
 
-                                  tags$p("Settings will be placed here")
+                                  if(!is.null(interactive$plot_type)){
+
+                                    radioButtons(ns("rad_plot_type"), NULL,
+                                                 choices = interactive$plot_type)
+
+                                  }
 
                               )
                             )
@@ -211,10 +214,19 @@ plotWidgetModule <- function(input, output, session,
 
     } else {
 
+      # Read plot type from settings; or from direct reactive argument
       if("plot_type" %in% names(settings())){
         type <- settings()[["plot_type"]]
       } else {
         type <- plot_type()
+      }
+
+      # OR: read from interactive setting
+      if(!is.null(settings()$interactive$plot_type)){
+        if(!is.null(input$rad_plot_type)){
+          type <- input$rad_plot_type
+        }
+
       }
 
       if(type %in% internal_custom_plot_types){

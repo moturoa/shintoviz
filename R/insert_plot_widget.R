@@ -16,7 +16,8 @@ insert_plot_widgets <- function(data = shiny::reactive(NULL),
   lapply(cfg, function(el){
 
     id_module <- uuid::UUIDgenerate()
-    ui <- plotWidgetUI(session$ns(id_module), ...)
+
+    ui <- plotWidgetUI(session$ns(id_module), interactive = el$interactive, ...)
 
     shiny::insertUI(selector = paste0("#",id), ui = ui, where = "beforeEnd",
                     session = session)

@@ -489,13 +489,6 @@ plot_pie_chart <- function(data,
                                  label_function = label_function,
                                  label_perc = FALSE), "%")
 
-  data <- data %>%
-    mutate(
-      csum = rev(cumsum(rev(yvar_perc))),
-      pos = yvar_perc/2 + lead(csum, 1),
-      pos = if_else(is.na(pos), yvar_perc/2, pos)
-    )
-
 
   # Basic piechart
   p <- ggplot(data, aes(x="", y = yvar_perc, fill = group)) +
@@ -504,10 +497,6 @@ plot_pie_chart <- function(data,
     scale_fill_manual(values = colors, name = "") +
     theme_void() +
     ggplot2::labs(x = "", y = "",title = title) +
-    # ggrepel::geom_label_repel(data = data,
-    #                  aes(y = pos, label = label),
-    #                  size = 4.5, nudge_x = 1, show.legend = FALSE,
-    #                  color = "white") +
     geom_text(aes(x = label_hjust, label = label),
               position = position_stack(vjust=0.5), size = label_size,
               family = font_family) +
