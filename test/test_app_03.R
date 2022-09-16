@@ -13,8 +13,7 @@ library(gapminder) # example data
 
 devtools::load_all()
 
-set_plotwidget_font("Roboto")
-
+set_plotwidget_font("Open Sans")
 
 # yaml::read_yaml
 
@@ -33,19 +32,20 @@ plot_config_left <- list(
     title = "Title here"
   ),
   list(
+      title = "Ordered",
       xvar = "continent",
       yvar = "population",
-      reverse_order = FALSE,
+      reverse_order = TRUE,
       palette_function = "ocean.phase",
       colors = NULL,
       base_size = 14,
       label_size = 6,
       label_k = FALSE,
       label_hjust = -0.2,
-      bar_width = 0.6,
-      title = "Ordered"
+      bar_width = 0.6
     )
  )
+
 plot_config_mid <- list(
   list(
     plot_type="plot_value_by_time",
@@ -73,18 +73,16 @@ plot_config_mid <- list(
     title = "ddt2"
   ),
   list(
+    title = "pie",
     plot_type="plot_pie_chart",
-    xvar = "continent",
-    yvar = "population",
-    palette_function = "parula",
-    title = "pie"
-  ),
-  list(
-    plot_type="plot_pie_chart",
-    xvar = "continent",
-    yvar = "population",
-    palette_function = "parula",
-    title = "pie2"
+    table_prepare = list(
+      fun = "prepare_grouped_data",
+      yvar = "population",
+      groupvar = "continent",
+      groupfun = "sum"
+    ),
+    palette_function = "parula"
+
   )
 )
 
@@ -116,7 +114,7 @@ plot_config_right <- list(
     base_size = 14,
 
     label_function = "milion_label_format",
-    label_size = 6,
+    label_size = 3,
     label_hjust = -0.2,
     bar_width = 0.6
   ),

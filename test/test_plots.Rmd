@@ -19,6 +19,7 @@ library(glue)
 library(dplyr)
 devtools::load_all()
 
+set_plotwidget_font("Open Sans")
 ```
 
 # Test data
@@ -89,10 +90,11 @@ plot_data <- gapminder %>%
 plot_value_by_time(plot_data,
                    xvar = "year",
                    yvar = "pop",
-                   plot_type = "bars",
+                   sub_type = "bars",
                    palette_function = NULL,
                    colors = "red",
                    base_size = 14,
+                   bar_width = 2,
                    label_size = 4,
                    point_size = 3,
                    line_width = 1.2,
@@ -111,7 +113,7 @@ plot_data <- gapminder %>%
 plot_value_by_time(plot_data,
                    xvar = "year",
                    yvar = "pop",
-                   plot_type = "lines",
+                   sub_type = "lines",
                    palette_function = NULL,
                    colors = "red",
                    base_size = 14,
@@ -135,7 +137,7 @@ plot_grouped_value_by_time(plot_data,
                    xvar = "year",
                    yvar = "pop",
                    group = "country",
-                   plot_type = "lines",
+                   sub_type = "lines",
                    palette_function = "viridis",
                    colors = NULL,
                    base_size = 14,
@@ -161,7 +163,7 @@ Sys.setlocale(locale = "Dutch")
 shintoviz::plot_value_by_time(data,
                               xvar = "Datum",
                               yvar = "n_signalen",
-                              plot_type = "lines",
+                              sub_type = "lines",
                               palette_function = NULL,
                               colors = "#324F7D",
                               base_size = 14,
@@ -191,6 +193,7 @@ plot_grouped_value_by_time(plot_data,
                    palette_function = "viridis",
                    colors = NULL,
                    base_size = 14,
+                   bar_width = 2,
                    label_size = 4,
                    point_size = 3,
                    line_width = 1.2,
@@ -199,5 +202,30 @@ plot_grouped_value_by_time(plot_data,
                    xlab = "Jaar",
                    grouplab = "Land",
                    title = "West-Europa")
+```
+
+
+
+
+```{r}
+
+plot_data <- filter(gapminder, year == 2007) %>%
+  prepare_grouped_data("pop",
+                       groupvar = "continent",
+                       groupfun = "sum",
+                       sort = TRUE)
+
+
+plot_pie_chart(plot_data, 
+               xvar = "continent", 
+               yvar = "pop",
+               palette_function = "parula",
+               base_size = 14,
+               label_function = NULL,
+               label_size = 4,
+               label_hjust = 1.65,
+               title = "Pie chart")
+
+
 ```
 

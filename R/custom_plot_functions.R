@@ -466,45 +466,56 @@ plot_pie_chart <- function(data,
                            palette_function,
                            colors = NULL,
                            base_size = 14,
-                           label_size = 4,
-                           point_size = 3,
-                           line_width = 1.2,
-                           bar_width = 0.6,
-                           label_function = NULL,
-                           label_bars = FALSE,
-                           label_k = FALSE,
-                           label_perc = FALSE,
 
-                           grouplab = "",
                            legend.position = "left",
+
+                           label_function = NULL,
+                           label_size = 4,
+                           label_hjust = 1.65,
                            title = "title",
                            ... ){
 
+  font_family <- get_current_font_family()
 
   n_group <- length(unique(data[[xvar]]))
 
   colors <- generate_colors(n_group, palette_function, colors)
 
-  # # TODO not needed as prepare_grouped_data aggregates for us
-  # data <- aggregate(data[[ yvar]], by=list(key=data[[ xvar]]), FUN=sum)
-  # names(data) <- c('group', yvar)
-  #
-browser()
   totalY <- sum(data[[yvar]])
   data$yvar_perc <- data[[yvar]] / totalY * 100
 
+  data$group <- data[[xvar]]
+  data$label <- paste0(make_value_label(values = data$yvar_perc,
+                                 label_function = label_function,
+                                 label_perc = FALSE), "%")
+
+  data <- data %>%
+    mutate(
+      csum = rev(cumsum(rev(yvar_perc))),
+      pos = yvar_perc/2 + lead(csum, 1),
+      pos = if_else(is.na(pos), yvar_perc/2, pos)
+    )
+
 
   # Basic piechart
-  p <- ggplot(data, aes(x="", y=yvar_perc, fill=group)) +
+  p <- ggplot(data, aes(x="", y = yvar_perc, fill = group)) +
     geom_bar(stat="identity", width=1) +
     coord_polar("y", start=0) +
     scale_fill_manual(values = colors, name = "") +
     theme_void() +
     ggplot2::labs(x = "", y = "",title = title) +
-    theme(legend.position = legend.position,
-          legend.text = element_text(size=16),
+    # ggrepel::geom_label_repel(data = data,
+    #                  aes(y = pos, label = label),
+    #                  size = 4.5, nudge_x = 1, show.legend = FALSE,
+    #                  color = "white") +
+    geom_text(aes(x = label_hjust, label = label),
+              position = position_stack(vjust=0.5), size = label_size,
+              family = font_family) +
+    theme(text = ggplot2::element_text(family = font_family),
+          legend.position = legend.position,
+          legend.text = element_text(size=base_size+2),
           legend.title = element_blank(),
-          plot.title = element_text(hjust = 0.5),
+          plot.title = ggplot2::element_text(size=base_size+4),
           plot.caption = element_text(hjust = 0.5))
   p
 }
