@@ -63,7 +63,6 @@ prepare_grouped_data <- function(data,
                               fill_na_group = "Onbekend"
                               ){
 
-
   # Deal with missing group levels
   if(na_include){
 
@@ -71,7 +70,7 @@ prepare_grouped_data <- function(data,
 
       # is already a factor
       if(is.factor(data[[groupvar]])){
-        data[[groupvar]] <- forcats::fct_explicit_na(fill_na_group)
+        data[[groupvar]] <- forcats::fct_explicit_na(data[[groupvar]], fill_na_group)
       } else {
         data[[groupvar]][is.na(data[[groupvar]])] <- fill_na_group
       }

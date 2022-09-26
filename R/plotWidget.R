@@ -148,6 +148,7 @@ plotWidgetModule <- function(input, output, session,
   # Make data for plotting
   plot_data <- shiny::reactive({
 
+    req(data())
     sett <- settings()
 
     if(is.null(sett$filter_function)){
