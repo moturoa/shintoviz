@@ -75,8 +75,8 @@ plot_horizontal_bars <- function(data,
     return(NULL)
   }
 
+  # TODO palette reverse? shintomap kan dat wel
   colors <- generate_colors(nrow(data), palette_function, colors)
-
 
   # Om genoeg ruimte te maken voor de bar labels.
   ymax <- max(data$Y)
@@ -189,6 +189,12 @@ plot_value_by_time <- function(data,
 
   data$n <- data[[yvar]]
   data$time <- data[[xvar]]
+
+  # TODO dit is voor de situatie dat de boel uit prepare_grouped_data komt,
+  # met time als factor. dat kan dus niet..
+  if(!inherits(data$time, "Date")){
+    data$time <- as.integer(as.character(data$time))
+  }
 
   data <- dplyr::filter(data, !is.na(n), !is.na(time))
 
