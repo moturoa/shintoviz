@@ -56,7 +56,9 @@ plot_horizontal_bars <- function(data,
                                   label_perc = FALSE,
                                   label_hjust = -0.2,
                                   bar_width = 0.6,
-                                  title = "", ...){
+                                  title = "",
+                                  subtitle = "",
+                                  ...){
 
   font_family <- get_current_font_family()
 
@@ -104,7 +106,7 @@ plot_horizontal_bars <- function(data,
       axis.text.y = ggplot2::element_text(size = base_size),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank()) +
-    ggplot2::labs(title = title) +
+    ggplot2::labs(title = title, subtitle = subtitle) +
     ggplot2::ylim(y_lim) +
     ggplot2::geom_text(data=data, ggplot2::aes(label = label),
               family = font_family,
@@ -177,7 +179,9 @@ plot_value_by_time <- function(data,
                            label_perc = FALSE,
                            ylab = "ylab",
                            xlab = "xlab",
-                           title = "title", ...
+                           title = "",
+                           subtitle = "",
+                           ...
                            ){
 
   sub_type <- match.arg(sub_type)
@@ -217,7 +221,8 @@ plot_value_by_time <- function(data,
       ggplot2::geom_bar(stat="identity", position = ggplot2::position_stack(),
                fill = colors, width = bar_width,
                colour = colors) +
-      ggplot2::labs(y = ylab, x = xlab, fill = "", title = title)
+      ggplot2::labs(y = ylab, x = xlab, fill = "", title = title,
+                    subtitle = subtitle)
 
   }
 
@@ -334,7 +339,8 @@ plot_grouped_value_by_time <- function(data,
                                    ylab = "ylab",
                                    xlab = "xlab",
                                    grouplab = "",
-                                   title = "title",
+                                   title = "",
+                                   subtitle = "",
                                    ...
                                    ){
 
@@ -377,7 +383,7 @@ plot_grouped_value_by_time <- function(data,
         ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_colour_manual(values = colors) +
-        ggplot2::labs(y = ylab, x = xlab, fill = "", colour = grouplab, title = title)
+        ggplot2::labs(y = ylab, x = xlab, fill = "", colour = grouplab, title = title, subtitle = subtitle)
 
     } else {
 
@@ -394,7 +400,7 @@ plot_grouped_value_by_time <- function(data,
         ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_colour_manual(values = colors) +
         ggplot2::scale_fill_manual(values = colors) +
-        ggplot2::labs(y = ylab, x = xlab, fill = grouplab, title = title) +
+        ggplot2::labs(y = ylab, x = xlab, fill = grouplab, title = title, subtitle = subtitle) +
         ggplot2::guides(color = "none")
 
     }
@@ -620,5 +626,32 @@ plot_pie_chart <- function(data,
 #'   p
 #'
 #' }
+
+
+
+
+plot_distribution_by_group <- function(data,
+                                       xvar = "",
+                                       group = "",
+                                       base_size = 15,
+                                       ylab = "",
+                                       xlab = "",
+                                       n_bins = 20){
+
+
+
+  data$X <- data[[xvar]]
+  data$group <- data[[group]]
+
+  ggplot(data, aes(x = X, fill = group)) +
+    geom_histogram(bins = n_bins) +
+    theme_minimal(base_size = base_size) +
+    facet_wrap(~group, nrow = 2, ncol = 1) +
+    ylab(ylab) + xlab(xlab)
+
+
+}
+
+
 
 

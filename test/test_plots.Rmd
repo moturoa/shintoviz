@@ -19,7 +19,7 @@ library(glue)
 library(dplyr)
 devtools::load_all()
 
-set_plotwidget_font("Open Sans")
+#set_plotwidget_font("Open Sans")
 ```
 
 # Test data
@@ -247,9 +247,23 @@ plot_pie_chart(plot_data,
                label_function = NULL,
                label_size = 4,
                label_hjust = 1.65,
-               title = "Pie chart")
+               title = "Population by continent in 2007")
 
 
+```
+
+
+
+
+
+# Histogram by group
+
+```{r}
+
+  plotdata <- mtcars
+  plotdata$section <-  ifelse(plotdata$cyl < 8, "one","two")
+  
+  
 ```
 
 

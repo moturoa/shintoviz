@@ -19,6 +19,7 @@ plot_horizontal_bars(
   label_hjust = -0.2,
   bar_width = 0.6,
   title = "",
+  subtitle = "",
   ...
 )
 }

@@ -22,7 +22,8 @@ plot_value_by_time(
   label_perc = FALSE,
   ylab = "ylab",
   xlab = "xlab",
-  title = "title",
+  title = "",
+  subtitle = "",
   ...
 )
 }

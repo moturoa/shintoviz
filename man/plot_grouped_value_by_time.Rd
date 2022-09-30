@@ -24,7 +24,8 @@ plot_grouped_value_by_time(
   ylab = "ylab",
   xlab = "xlab",
   grouplab = "",
-  title = "title",
+  title = "",
+  subtitle = "",
   ...
 )
 }
