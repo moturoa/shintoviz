@@ -36,115 +36,38 @@ plot_config_left <- list(
                     )
     )
 
-  ),
-  list(
-      title = "Ordered",
-      xvar = "continent",
-      yvar = "population",
-      reverse_order = TRUE,
-      palette_function = "ocean.phase",
-      colors = NULL,
-      base_size = 14,
-      label_size = 6,
-      label_k = FALSE,
-      label_hjust = -0.2,
-      bar_width = 0.6
-    )
- )
+  ) 
+)
 
 plot_config_mid <- list(
   list(
-    plot_type="plot_value_by_time",
-    xvar = "year",
-    yvar = "population",
-    palette_function = "parula",
-    title = "ddt"
-  ),
-  list(
-    plot_type="plot_grouped_value_by_time",
-    xvar = "year",
-    sub_type='lines',
-    yvar = "population",
-    group = "continent",
-    palette_function = "parula",
-    title = "ddt1"
-  ),
-  list(
-    plot_type="plot_grouped_value_by_time",
-    xvar = "year",
-    sub_type='stacked_bars',
-    yvar = "population",
-    group = "continent",
-    palette_function = "parula",
-    title = "ddt2"
-  ),
-  list(
-    title = "pie",
-    plot_type="plot_pie_chart",
-    table_prepare = list(
-      fun = "prepare_grouped_data",
-      yvar = "population",
-      groupvar = "continent",
-      groupfun = "sum"
-    ),
-    palette_function = "parula"
-
-  )
-)
-
-
-# source() before runApp!
-milion_label_format <- function(x,...){
-  paste0(round(x * 10E-6,  1)," M.")
-}
-
-plot_config_right <- list(
-
-  list(
-    title = "Populatie (miljoenen)",
-    plot_type = "plot_horizontal_bars",
-
-    table_prepare = list(
-      fun = "prepare_grouped_data",
-      yvar = "pop",
-      groupvar = "continent",
-      groupfun = "sum",
-      top_n = 10,
-      sort = TRUE,
-      reverse = TRUE
-    ),
-
+    title = "new", 
+    xvar = "time",
+    sub_type= "lines",
+    yvar = "population", 
+    group=  "continent",
     reverse_order = TRUE,
-    palette_function = "parula",
+    palette_function = "ocean.phase", 
     colors = NULL,
     base_size = 14,
-
-    label_function = "milion_label_format",
-    label_size = 3,
+    label_size = 6,
+    label_k = FALSE,
     label_hjust = -0.2,
-    bar_width = 0.6
-  ),
-
-  list(
-    title = "Pie extra",
-    plot_type="plot_pie_chart",
-
-    table_prepare = list(
-      fun = "prepare_grouped_data",
-      yvar = "pop",
-      groupvar = "continent",
-      groupfun = "sum"
-    ),
-
-    palette_function = "parula"
-
+    bar_width = 4,
+    plot_type = "plot_grouped_value_by_time",
+    interactive = list(
+      
+      sub_type = c("Lijn" = "lines",
+                   "Staaf" = "grouped_bars",
+                   "Stapeling" = "stacked_bars"
+      )
+    )
   )
-)
-
-
+ )
+  
 
 ui <- softui::simple_page(
-
+   
   softui::fluid_row(
     column(4,
       tags$div(id = "plot_placeholder_left")
@@ -160,13 +83,7 @@ ui <- softui::simple_page(
 )
 
 server <- function(input, output, session) {
-
-
-  my_table_format_fun1 <- function(data){
-    data$`%` <- round(100 * data[[2]] / sum(data[[2]]), 2)
-    data
-  }
-
+   
   plot_data <- reactive({
     gapminder %>%
       mutate(  continent = as.character(continent)) %>%
@@ -193,10 +110,10 @@ server <- function(input, output, session) {
                       cfg = plot_config_left,
                       id = "plot_placeholder_left",
                       width = 12)
-  # insert_plot_widgets(data = plot_data,
-  #                     cfg = plot_config_mid,
-  #                     id = "plot_placeholder_mid",
-  #                     width = 12)
+   insert_plot_widgets(data = plot_data,
+                       cfg = plot_config_mid,
+                       id = "plot_placeholder_mid",
+                       width = 12)
   # insert_plot_widgets(data = plot_data3,
   #                     cfg = plot_config_right,
   #                     id = "plot_placeholder_right",
