@@ -1,7 +1,7 @@
 Package: shintoviz
 Type: Package
 Title: Generic Data Viz for Shinto Applications
-Version: 0.2-3
+Version: 0.2-4
 Author: Remko Duursma
 Maintainer: Remko Duursma <remko@shintolabs.nl>
 Description: Standardized plotting methods, shiny plot widgets for 
