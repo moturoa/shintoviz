@@ -21,7 +21,7 @@ plot_config_left <- list(
   list(
     title = "Title here",
     xvar = "continent",
-    yvar = "population",
+
     reverse_order = FALSE,
     palette_function = "ocean.phase",
     colors = NULL,
@@ -30,24 +30,34 @@ plot_config_left <- list(
     label_k = FALSE,
     label_hjust = -0.2,
     bar_width = 0.6,
+    table_prepare = list(
+      yvar = "population",
+      fun = "prepare_grouped_data",
+      groupvar = "continent",
+      groupfun = "sum",
+      sort = TRUE),
+
     interactive = list(
       plot_type = c("Cirkeldiagram" = "plot_pie_chart",
         "Staafdiagram" = "plot_horizontal_bars"
                     )
     )
 
-  ) 
+  )
 )
+
+
+
 
 plot_config_mid <- list(
   list(
-    title = "new", 
+    title = "new",
     xvar = "time",
     sub_type= "lines",
-    yvar = "population", 
+    yvar = "population",
     group=  "continent",
     reverse_order = TRUE,
-    palette_function = "ocean.phase", 
+    palette_function = "ocean.phase",
     colors = NULL,
     base_size = 14,
     label_size = 6,
@@ -56,7 +66,7 @@ plot_config_mid <- list(
     bar_width = 4,
     plot_type = "plot_grouped_value_by_time",
     interactive = list(
-      
+
       sub_type = c("Lijn" = "lines",
                    "Staaf" = "grouped_bars",
                    "Stapeling" = "stacked_bars"
@@ -64,10 +74,10 @@ plot_config_mid <- list(
     )
   )
  )
-  
+
 
 ui <- softui::simple_page(
-   
+
   softui::fluid_row(
     column(4,
       tags$div(id = "plot_placeholder_left")
@@ -83,7 +93,7 @@ ui <- softui::simple_page(
 )
 
 server <- function(input, output, session) {
-   
+
   plot_data <- reactive({
     gapminder %>%
       mutate(  continent = as.character(continent)) %>%
@@ -96,8 +106,7 @@ server <- function(input, output, session) {
     gapminder %>%
       mutate(continent = as.character(continent)) %>%
       filter(year == 2007) %>%
-      group_by(continent) %>%
-      summarize(population = floor(1e-06 * sum(pop)), .groups = "drop")
+      mutate(population = 1e-06 * pop)
   })
 
   plot_data3 <- reactive({
@@ -110,10 +119,12 @@ server <- function(input, output, session) {
                       cfg = plot_config_left,
                       id = "plot_placeholder_left",
                       width = 12)
-   insert_plot_widgets(data = plot_data,
-                       cfg = plot_config_mid,
-                       id = "plot_placeholder_mid",
-                       width = 12)
+
+  # insert_plot_widgets(data = plot_data,
+  #                      cfg = plot_config_mid,
+  #                      id = "plot_placeholder_mid",
+  #                      width = 12)
+  #
   # insert_plot_widgets(data = plot_data3,
   #                     cfg = plot_config_right,
   #                     id = "plot_placeholder_right",
