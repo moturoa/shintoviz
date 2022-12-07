@@ -19,6 +19,8 @@
 plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          ui_container = c("tab_box","tabset_panel"),
                          interactive = NULL,
+                         settingsUI=NULL,
+                         downloadUI=NULL,
                          ...){
   
   ns <- NS(id)
@@ -61,7 +63,25 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                                        exportButtonUI(ns("btn_download"))
                               )
                             )
-          ) 
+          ) ,
+          if(!is.null(settingsUI)){
+            softui::tab_panel(title = softui::bsicon("gear-fill"),
+                              softui::fluid_row(
+                                tags$div(style = "height: 400px;",
+                                  settingsUI   
+                                )
+                              )
+            ) 
+          },
+          if(!is.null(downloadUI)){
+            softui::tab_panel(title = softui::bsicon("cloud-arrow-down-fill"),
+                              softui::fluid_row(
+                                tags$div(style = "height: 400px;",
+                                         downloadUI     
+                                )
+                              )
+            ) 
+          }
           
           
   )
