@@ -13,7 +13,7 @@ library(gapminder) # example data
 
 devtools::load_all()
 
-set_plotwidget_font("Roboto")
+#set_plotwidget_font("Roboto")
 
 
 # yaml::read_yaml
@@ -72,7 +72,7 @@ server <- function(input, output, session) {
   insert_plot_widgets(data = plot_data,
                       cfg = plot_config,
                       id = "plot_placeholder",
-                      width = 4)
+                      width = 4, export = TRUE)
 
 
 }
