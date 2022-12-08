@@ -18,7 +18,13 @@
 #' @export
 plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          ui_container = c("tab_box","tabset_panel"),
-                         interactive = NULL, export = FALSE,
+
+                         interactive = NULL,
+                         export = FALSE,
+
+                         interactive = NULL,
+                         settingsUI=NULL,
+
                          ...){
 
   ns <- NS(id)
@@ -87,6 +93,16 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                                     icon = bsicon("cloud-download-fill")) %>%
                 htmltools::tagAppendAttributes(class = "bg-gradient-success")
 
+            )
+          },
+
+          if(!is.null(settingsUI)){
+            softui::tab_panel(title = softui::bsicon("gear-fill"),
+                              softui::fluid_row(
+                                tags$div(style = "height: 400px;",
+                                  settingsUI
+                                )
+                              )
             )
           }
 

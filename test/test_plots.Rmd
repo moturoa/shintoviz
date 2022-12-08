@@ -209,7 +209,7 @@ plot_grouped_value_by_time(plot_data,
 
 ```{r}
 
-plot_data <- filter(gapminder, year == 2007) %>%
+plot_data <- filter(gapminder) %>%
   prepare_grouped_data("pop",
                        groupvar = "continent",
                        groupfun = "sum",
