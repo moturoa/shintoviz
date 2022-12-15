@@ -22,7 +22,6 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          interactive = NULL,
                          export = FALSE,
 
-                         interactive = NULL,
                          settingsUI=NULL,
 
                          ...){

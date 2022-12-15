@@ -78,7 +78,11 @@ plot_horizontal_bars <- function(data,
   }
 
   # TODO palette reverse? shintomap kan dat wel
-  colors <- generate_colors(nrow(data), palette_function, colors)
+  ncols <- nrow(data)
+  if(is.factor(data$group)){
+    ncols <- nlevels(data$group)
+  }
+  colors <- generate_colors(ncols, palette_function, colors)
 
   # Om genoeg ruimte te maken voor de bar labels.
   ymax <- max(data$Y)
