@@ -492,6 +492,12 @@ plot_pie_chart <- function(data,
                            title = "title",
                            ... ){
 
+
+
+  if(nrow(data) == 0){
+    return(NULL)
+  }
+
   font_family <- get_current_font_family()
 
   n_group <- length(unique(data[[xvar]]))
