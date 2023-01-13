@@ -32,6 +32,9 @@ format_n <- function(n, label_k = FALSE){
 }
 
 # https://stackoverflow.com/questions/75098826/automatically-leave-enough-room-for-a-label-next-to-a-barplot
+
+#' @importFrom ggplot2 ggplot_build .pt
+#' @importFrom grid grobWidth convertWidth textGrob
 fit_horizontal_bar_labels <- function(p) {
   tl <- which(sapply(p$layers, function(x) any(grepl("Text", class(x$geom)))))
   g <- ggplot2::ggplot_build(p)
@@ -56,7 +59,7 @@ fit_horizontal_bar_labels <- function(p) {
   expansion_factor <- (max(new_x) - min(range))/diff(range)
   xval <- expansion_factor^2 * (max(new_x) - max(label_pos)) + max(label_pos)
 
-  p + xlim(NA, xval)
+  p + ggplot2::xlim(NA, xval)
 }
 
 
