@@ -31,29 +31,32 @@ format_n <- function(n, label_k = FALSE){
   out
 }
 
+# https://stackoverflow.com/questions/75098826/automatically-leave-enough-room-for-a-label-next-to-a-barplot
+fit_horizontal_bar_labels <- function(p) {
+  tl <- which(sapply(p$layers, function(x) any(grepl("Text", class(x$geom)))))
+  g <- ggplot2::ggplot_build(p)
+  range <- g$layout$panel_params[[1]]$x.range
+  dat <- g$data[[tl]][order(factor(g$data[[tl]]$label)),]
+  label_pos <- dat$x
+  labels <- dat$label
 
+  str_width <- sapply(labels, function(x) {
+    grid::textGrob(x, gp = gpar(fontsize = p$layers[[tl]]$aes_params$size * ggplot2::.pt)) |>
+      grid::grobWidth() |>
+      grid::convertWidth("cm", TRUE)
+  })
 
-#https://stackoverflow.com/questions/55686910/how-can-i-access-dimensions-of-labels-plotted-by-geom-text-in-ggplot2
-geom_text_measure_size <- function(txt, gp = grid::gpar(), to = "mm") {
-  if (grid::is.grob(txt)) {
-    grobs <- lapply(seq_along(txt$label), function(i) {
-      g <- txt
-      # Subset grob per label
-      g$label <- g$label[[i]]
-      g$gp[]  <- lapply(g$gp, function(x) {x[pmin(i, length(x))]})
-      g$rot   <- g$rot[pmin(i, length(g$rot))]
-      g
-    })
-  } else {
-    grobs <- lapply(txt, function(t) grid::textGrob(t, gp = gp))
-  }
+  panel_width <- (unit(1, 'npc') - sum(ggplot2::ggplotGrob(p)$widths[-5])) |>
+    grid::convertWidth('cm', TRUE)
 
-  heights <- do.call(grid::unit.c, lapply(grobs, grid::grobHeight))
-  widths  <- do.call(grid::unit.c, lapply(grobs, grid::grobWidth))
+  units_per_cm <- diff(range) / panel_width
 
-  cbind(
-    height = grid::convertHeight(heights, to, valueOnly = TRUE),
-    width = grid::convertWidth(widths,   to, valueOnly = TRUE)
-  )
+  new_x <- str_width * units_per_cm + label_pos
+
+  expansion_factor <- (max(new_x) - min(range))/diff(range)
+  xval <- expansion_factor^2 * (max(new_x) - max(label_pos)) + max(label_pos)
+
+  p + xlim(NA, xval)
 }
+
 

@@ -49,7 +49,6 @@ plot_horizontal_bars <- function(data,
                                   palette_function = NULL,
                                   colors = NULL,
                                   base_size = 15,
-                                  #label_bars = TRUE,
                                   label_function = NULL,
                                   label_size = 5,
                                   label_k = FALSE,
@@ -63,6 +62,7 @@ plot_horizontal_bars <- function(data,
   font_family <- get_current_font_family()
 
   data$Y <- data[[yvar]]
+  data$Y[is.na(data$Y)] <- 0
   data$group <- data[[xvar]]
 
   data$label <- make_value_label(values = data$Y, label_function = label_function,
@@ -84,22 +84,13 @@ plot_horizontal_bars <- function(data,
   }
   colors <- generate_colors(ncols, palette_function, colors)
 
-  # Om genoeg ruimte te maken voor de bar labels.
-  ymax <- max(data$Y)
-  ymin <- 0
-  m <- geom_text_measure_size(data$label, to = "npc",
-                              gp = grid::gpar(cex = label_size/2))
-  i_max <- which.max(data$Y)
-  ch_w <- m[i_max,"width"]
-  ch_w <- ch_w - label_hjust*ch_w
-  y_lim <- c(ymin, ymax + (ymax-ymin)*ch_w)
-
-  p <- ggplot2::ggplot(data, aes(x = group, y = Y, fill = group)) +
-    ggplot2::geom_bar(stat = "identity", width = bar_width) +
+  p <- ggplot2::ggplot(data, aes(x = Y, y = group, fill = group)) +
+    ggplot2::geom_col(width = bar_width) +
     ggplot2::scale_fill_manual(values = colors, drop = FALSE) +
-    ggplot2::coord_flip() +
+
     ggplot2::theme_minimal() +
-    ggplot2::scale_x_discrete(drop=FALSE) +
+    ggplot2::scale_y_discrete(drop=FALSE) +  # do not drop empty bars
+
     ggplot2::theme(  text = ggplot2::element_text(family = font_family),
       plot.title = ggplot2::element_text(size=base_size+4),
       panel.border = ggplot2::element_blank(),
@@ -111,10 +102,13 @@ plot_horizontal_bars <- function(data,
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank()) +
     ggplot2::labs(title = title, subtitle = subtitle) +
-    ggplot2::ylim(y_lim) +
     ggplot2::geom_text(data=data, ggplot2::aes(label = label),
               family = font_family,
-              hjust = label_hjust, size = label_size)
+              hjust = label_hjust, size = label_size) +
+    expand_limits(x=0)
+
+
+  p <- fit_horizontal_bar_labels({p})
 
   p
 

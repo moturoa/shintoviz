@@ -43,7 +43,7 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                               if(!is.null(interactive$plot_type)){
 
                                 radioButtons(ns("rad_plot_type"), NULL,
-                                             inline=T,
+                                             inline = TRUE,
                                              choices = interactive$plot_type)
 
                               } else if(!is.null(interactive$sub_type)){
