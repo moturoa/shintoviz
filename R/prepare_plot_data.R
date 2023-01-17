@@ -60,7 +60,10 @@ prepare_grouped_data <- function(data,
                               top_n = NULL,
 
                               na_include = TRUE,
-                              fill_na_group = "Onbekend"
+                              fill_na_group = "Onbekend",
+
+                              array = FALSE,
+                              array_encoding = c("semicolon","json")
                               ){
 
   # Deal with missing group levels
@@ -88,19 +91,43 @@ prepare_grouped_data <- function(data,
   }
 
   if(is.character(groupfun)){
-    groupfun <- base::get(groupfun)
+    groupfun_fun <- base::get(groupfun)
   }
 
   # Summarize a variable
   if(!is.null(yvar)){
+    if(array)warning("'array' argument ignored when yvar is not NULL (array is only meaningful to count observations)")
+
     data <- dplyr::group_by(data, !!rlang::sym(groupvar)) %>%
-      dplyr::summarize(y = groupfun(!!rlang::sym(yvar)), .groups = "drop") %>%
+      dplyr::summarize(y = groupfun_fun(!!rlang::sym(yvar)), .groups = "drop") %>%
       stats::setNames(c(groupvar,yvar))
   } else {
 
-    # Count rows (no yvar needed)
-    data <- dplyr::count(data, !!rlang::sym(groupvar)) %>%
-      stats::setNames(c(groupvar,"n"))
+    if(!is.null(groupfun) && groupfun != "length"){
+      stop("If no yvar provided, we assume you want to count observations. Set groupfun='length' or NULL, not something else.")
+    }
+
+    if(!array){
+      # Count rows (no yvar needed)
+      data <- dplyr::count(data, !!rlang::sym(groupvar)) %>%
+        stats::setNames(c(groupvar,"n"))
+
+    } else {
+
+      array_encoding <- match.arg(array_encoding)
+      if(array_encoding == "semicolon"){
+        values <- do.call(c, strsplit(data[[groupvar]], ";"))
+
+        data <- count(data.frame(values = values), values) %>%
+          stats::setNames(c(groupvar,"n"))
+
+      } else {
+        stop("json array method not yet implemented")
+        #values <- do.call(c, sapply(data[[groupvar]],jsonlite::fromJSON,))
+      }
+
+    }
+
 
     yvar <- "n"
 

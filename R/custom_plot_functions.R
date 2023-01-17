@@ -57,8 +57,10 @@ plot_horizontal_bars <- function(data,
                                   bar_width = 0.6,
                                   title = "",
                                   subtitle = "",
+                                  title_adjust = c("plot","figure"),
                                   ...){
 
+  title_adjust <- match.arg(title_adjust)
   font_family <- get_current_font_family()
 
   data$Y <- data[[yvar]]
@@ -107,6 +109,12 @@ plot_horizontal_bars <- function(data,
               hjust = label_hjust, size = label_size) +
     expand_limits(x=0)
 
+  if(title_adjust == "plot"){
+    p <- p + ggplot2::theme(
+      plot.caption = element_text(hjust = 0),
+      plot.title.position = "plot"
+    )
+  }
 
   p <- fit_horizontal_bar_labels({p})
 
