@@ -116,14 +116,22 @@ prepare_grouped_data <- function(data,
 
       array_encoding <- match.arg(array_encoding)
       if(array_encoding == "semicolon"){
-        values <- do.call(c, strsplit(data[[groupvar]], ";"))
+        values <- strsplit(data[[groupvar]], ";")
       } else {
-        values <- do.call(c, sapply(data[[groupvar]],jsonlite::fromJSON,USE.NAMES = FALSE))
+        values <- sapply(data[[groupvar]],jsonlite::fromJSON,USE.NAMES = FALSE)
+      }
+
+      if(is.list(values)){
+        values <- do.call(c, values)
+      }
+
+      # rare bug: als letterlijk "null" in de DB staat wordt het door jsonlite NULL
+      if(is.null(values)){
+        values <- fill_na_group
       }
 
       data <- count(data.frame(values = values), values) %>%
         stats::setNames(c(groupvar,"n"))
-
 
     }
 

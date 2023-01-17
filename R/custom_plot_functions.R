@@ -83,8 +83,10 @@ plot_horizontal_bars <- function(data,
     levels(data$group) <- levs
   }
 
-  if(nrow(data) == 0){
-    return(NULL)
+  # 0 of 1 rijen geen nuttige plot
+  if(nrow(data) < 2){
+    p <- plot_not_sufficient_data()
+    return(p)
   }
 
   # TODO palette reverse? shintomap kan dat wel
