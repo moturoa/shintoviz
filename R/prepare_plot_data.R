@@ -117,14 +117,13 @@ prepare_grouped_data <- function(data,
       array_encoding <- match.arg(array_encoding)
       if(array_encoding == "semicolon"){
         values <- do.call(c, strsplit(data[[groupvar]], ";"))
-
-        data <- count(data.frame(values = values), values) %>%
-          stats::setNames(c(groupvar,"n"))
-
       } else {
-        stop("json array method not yet implemented")
-        #values <- do.call(c, sapply(data[[groupvar]],jsonlite::fromJSON,))
+        values <- do.call(c, sapply(data[[groupvar]],jsonlite::fromJSON,USE.NAMES = FALSE))
       }
+
+      data <- count(data.frame(values = values), values) %>%
+        stats::setNames(c(groupvar,"n"))
+
 
     }
 
