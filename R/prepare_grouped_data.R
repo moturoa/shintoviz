@@ -91,7 +91,7 @@ prepare_grouped_data <- function(data,
   }
 
   if(is.character(groupfun)){
-    groupfun_fun <- base::get(groupfun)
+    groupfun <- base::get(groupfun)
   }
 
   # Summarize a variable
@@ -99,13 +99,9 @@ prepare_grouped_data <- function(data,
     if(array)warning("'array' argument ignored when yvar is not NULL (array is only meaningful to count observations)")
 
     data <- dplyr::group_by(data, !!rlang::sym(groupvar)) %>%
-      dplyr::summarize(y = groupfun_fun(!!rlang::sym(yvar)), .groups = "drop") %>%
+      dplyr::summarize(y = groupfun(!!rlang::sym(yvar)), .groups = "drop") %>%
       stats::setNames(c(groupvar,yvar))
   } else {
-
-    if(!is.null(groupfun) && groupfun != "length"){
-      stop("If no yvar provided, we assume you want to count observations. Set groupfun='length' or NULL, not something else.")
-    }
 
     if(!array){
       # Count rows (no yvar needed)
