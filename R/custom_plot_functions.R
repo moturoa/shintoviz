@@ -45,6 +45,7 @@ plot_horizontal_bars <- function(data,
                                   xvar = "group",
                                   yvar = "n",
 
+                                  group_format_function = NULL,
                                   reverse_order = FALSE,
                                   palette_function = NULL,
                                   colors = NULL,
@@ -65,6 +66,7 @@ plot_horizontal_bars <- function(data,
 
   data$Y <- data[[yvar]]
   data$Y[is.na(data$Y)] <- 0
+
   data$group <- data[[xvar]]
 
   data$label <- make_value_label(values = data$Y, label_function = label_function,
@@ -73,6 +75,12 @@ plot_horizontal_bars <- function(data,
 
   if(reverse_order){
     data$group <- forcats::fct_rev(as.factor(data$group))
+  }
+
+  if(!is.null(group_format_function)){
+    group_format_function <- base::get(group_format_function)
+    levs <- group_format_function(levels(data$group))
+    levels(data$group) <- levs
   }
 
   if(nrow(data) == 0){
