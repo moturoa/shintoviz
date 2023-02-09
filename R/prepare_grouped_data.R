@@ -13,7 +13,7 @@
 #' @param na_include If TRUE, and the grouping variable has missing values, include them in the table
 #' @param fill_na_group If `na_include=TRUE`, use this label for missing vaues in the group
 #' @importFrom rlang sym
-#' @importFrom forcats fct_explicit_na
+#' @importFrom forcats fct_na_value_to_level
 #' @importFrom tibble tibble
 #' @importFrom dplyr arrange count group_by summarize
 #' @importFrom stats setNames reorder
@@ -73,7 +73,7 @@ prepare_grouped_data <- function(data,
 
       # is already a factor
       if(is.factor(data[[groupvar]])){
-        data[[groupvar]] <- forcats::fct_explicit_na(data[[groupvar]], fill_na_group)
+        data[[groupvar]] <- forcats::fct_na_value_to_level(data[[groupvar]], fill_na_group)
       } else {
         data[[groupvar]][is.na(data[[groupvar]])] <- fill_na_group
       }
