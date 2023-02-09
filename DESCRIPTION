@@ -11,7 +11,7 @@ Suggests: gapminder
 License: CC0
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports: sysfonts, showtext, uuid, forcats, writexl, 
     rlang, tibble, shiny, softui, jsonlite
 Roxygen: list(markdown = TRUE)

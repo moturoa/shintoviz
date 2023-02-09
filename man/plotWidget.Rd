@@ -11,8 +11,8 @@ plotWidgetUI(
   footer_ui = NULL,
   ui_container = c("tab_box", "tabset_panel"),
   interactive = NULL,
+  export = FALSE,
   settingsUI = NULL,
-  downloadUI = NULL,
   ...
 )
 

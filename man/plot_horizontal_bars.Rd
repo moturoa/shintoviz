@@ -8,6 +8,7 @@ plot_horizontal_bars(
   data,
   xvar = "group",
   yvar = "n",
+  group_format_function = NULL,
   reverse_order = FALSE,
   palette_function = NULL,
   colors = NULL,
@@ -20,6 +21,7 @@ plot_horizontal_bars(
   bar_width = 0.6,
   title = "",
   subtitle = "",
+  title_adjust = c("plot", "figure"),
   ...
 )
 }
