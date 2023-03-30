@@ -227,7 +227,7 @@ plot_value_by_time <- function(data,
     p <- data %>%
       ggplot2::ggplot(ggplot2::aes(x = time, y = n)) +
       ggplot2::geom_point(cex = point_size, colour = colors) +
-      ggplot2::geom_line(lwd = line_width, colour = colors) +
+      ggplot2::geom_line(linewidth = line_width, colour = colors) +
       ggplot2::labs(y = ylab, x = xlab, title = title)
 
   } else {
@@ -395,7 +395,7 @@ plot_grouped_value_by_time <- function(data,
       p <- data %>%
         ggplot2::ggplot(aes(x = time, y = n, color = group)) +
         ggplot2::geom_point(cex = point_size) +
-        ggplot2::geom_line(lwd = line_width) +
+        ggplot2::geom_line(linewidth = line_width) +
         ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_colour_manual(values = colors) +
