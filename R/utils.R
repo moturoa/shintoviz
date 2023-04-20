@@ -31,6 +31,25 @@ format_n <- function(n, label_k = FALSE){
   out
 }
 
+
+from_json <- function(x){
+
+  lapply(x,
+         function(x){
+           tryCatch(
+             jsonlite::fromJSON(x),
+             error = function(e)x
+           )
+         }
+  )
+
+}
+
+
+
+
+
+
 # https://stackoverflow.com/questions/75098826/automatically-leave-enough-room-for-a-label-next-to-a-barplot
 
 #' @importFrom ggplot2 ggplot_build .pt

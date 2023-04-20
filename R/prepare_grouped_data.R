@@ -114,7 +114,7 @@ prepare_grouped_data <- function(data,
       if(array_encoding == "semicolon"){
         values <- strsplit(data[[groupvar]], ";")
       } else {
-        values <- sapply(data[[groupvar]],jsonlite::fromJSON,USE.NAMES = FALSE)
+        values <- from_json(data[[groupvar]])
       }
 
       if(is.list(values)){
