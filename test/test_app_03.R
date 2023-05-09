@@ -26,9 +26,9 @@ plot_config_left <- list(
     palette_function = "ocean.phase",
     colors = NULL,
     base_size = 14,
-    label_size = 6,
+    label_size = 4,
     label_k = FALSE,
-    label_hjust = -0.2,
+    label_hjust = 1.65,
     bar_width = 0.6,
     table_prepare = list(
       yvar = "population",
