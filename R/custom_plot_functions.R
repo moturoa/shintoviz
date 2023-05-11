@@ -603,8 +603,8 @@ plot_grouped_horizontal_barplot <- function(data,
 
     i_l <- (n-top_n+1):n
     toplevs <- levels(data$group)[i_l]
-    data <- filter(data, group %in% toplevs)
-    data_total <- filter(data_total, group %in% toplevs)
+    data <- filter(data, group %in% toplevs) %>% droplevels
+    data_total <- filter(data_total, group %in% toplevs) %>% droplevels
 
   }
 
