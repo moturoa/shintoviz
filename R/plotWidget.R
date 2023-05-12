@@ -67,6 +67,10 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                               )
                             )
           ),
+          softui::tab_panel(title = softui::bsicon("info-circle-fill"),
+                            tags$p("Bronnen."),
+                            
+          ),
           if(export){
             softui::tab_panel(
               title = softui::bsicon("cloud-download-fill"),
