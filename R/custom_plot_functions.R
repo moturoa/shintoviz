@@ -557,6 +557,7 @@ plot_grouped_horizontal_barplot <- function(data,
                                          sort = TRUE,
                                          top_n = NA,
                                          reverse_order = FALSE,
+
                                          palette_function = NULL,
                                          reverse_palette = FALSE,
                                          colors = NULL,
@@ -587,6 +588,10 @@ plot_grouped_horizontal_barplot <- function(data,
   if(sort){
     data <- mutate(data, group = reorder(group, n_total, max))
   }
+
+  # Eerste level moet links staan, niet rechts
+  data$fillvar <- forcats::fct_rev(data$fillvar)
+
 
   if(reverse_order){
     data$group <- forcats::fct_rev(as.factor(data$group))
@@ -627,7 +632,7 @@ plot_grouped_horizontal_barplot <- function(data,
     return(p)
   }
 
-  # TODO palette reverse? shintomap kan dat wel
+  # Generate fill colors
   ncols <- nrow(data)
 
   if(is.factor(data$fillvar)){
@@ -635,9 +640,10 @@ plot_grouped_horizontal_barplot <- function(data,
   }
   colors <- generate_colors(ncols, palette_function, colors, reverse_palette = reverse_palette)
 
+  # Make plot
   p <- ggplot2::ggplot(data, aes(x = Y, y = group, fill = fillvar)) +
     ggplot2::geom_col(width = bar_width) +
-    ggplot2::scale_fill_manual(values = colors, drop = FALSE) +
+    ggplot2::scale_fill_manual(values = colors, drop = FALSE, guide = guide_legend(reverse = TRUE)) +
 
     ggplot2::theme_minimal()  +
     ggplot2::scale_y_discrete(drop=FALSE) + # do not drop empty bars
@@ -656,7 +662,8 @@ plot_grouped_horizontal_barplot <- function(data,
                      panel.grid.minor = ggplot2::element_blank()) +
     ggplot2::labs(title = title, subtitle = subtitle) +
 
-    ggplot2::geom_text(data = data_total, ggplot2::aes(y = group, label = label, fill = NULL),
+    ggplot2::geom_text(data = data_total,
+                       ggplot2::aes(y = group, label = label, fill = NULL),
                        family = font_family,
                        hjust = label_hjust, size = label_size)
   expand_limits(x=0)

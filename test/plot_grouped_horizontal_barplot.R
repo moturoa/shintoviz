@@ -13,30 +13,24 @@ data <- expand.grid(
   group = LETTERS[1:10],
   fillvar = letters[1:5]
 ) %>%
-  mutate(value = sample(10000:12000,nrow(.),replace=T))
+  mutate(value = sample(1000:12000,nrow(.),replace=T))
 
 
-plot_grouped_horizontal_bars(data,
+plot_grouped_horizontal_barplot(data,
                              xvar = "group",
                              yvar = "value",
                              label_k = "auto",
                              fillvar = "fillvar",
+                             reverse_palette = FALSE,
                              palette_function = "parula")
 
 
-# deurne
-plotdata <- readRDS("c:/repos/wbm3.0/plotdata.rds")
+data %>%
+  mutate(group = as.numeric(group)) %>%
+  plot_grouped_value_by_time(.,
+                           xvar = "group",
+                           yvar = "value",
+                           group = "fillvar",
+                           plot_type = "stacked_bars",
+                           palette_function = "viridis")
 
-shintoviz::plot_grouped_horizontal_barplot(plotdata,
-                                           title = "Test",
-                                           yvar = "n_woning",
-                                           xvar = "wijk_naam",
-                                           fillvar = "prijsklasse",
-                                           #bar_width = input$num_bar_height,
-                                           label_k = "auto",
-                                           top_n = 4,
-                                           #label_size = as.numeric(input$txt_barlabel_size),
-                                           #base_size = as.numeric(input$txt_label_size),
-                                           #sort = input$rad_sort_data == "Ja",
-                                           #top_n = input$num_show_top_n,
-                                           palette_function = "parula")
