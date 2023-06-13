@@ -13,12 +13,15 @@
 #' @param id Shiny input ID
 #' @param header_ui Further UI to be placed above the plot
 #' @param footer_ui Further UI to be placed below the plot
+#' @param ui_container Either `tab_box` or `tabset_panel` to contain the plot widget
+#' @param height Heihgt of the `plotOutput` and `tableOutput`
 #' @param \dots Further arguments to [softui::tab_box()]
 #' @rdname plotWidget
 #' @export
 plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          ui_container = c("tab_box","tabset_panel"),
 
+                         height = 400,
                          interactive = NULL,
                          export = FALSE,
 
@@ -53,14 +56,15 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                                              choices = interactive$sub_type)
 
                               }                            },
-                            shiny::plotOutput(ns("plot_main"), height = "400px"),
+                            shiny::plotOutput(ns("plot_main"), height = shiny::validateCssUnit(height)),
                             footer_ui
           ),
           softui::tab_panel(title = softui::bsicon("table"),
                             softui::fluid_row(
-                              tags$div(style = "height: 400px;",
+                              tags$div(style = paste("height:", shiny::validateCssUnit(height)),
 
-                                       tags$div(style = "height: 360px; overflow: auto; margin-bottom: 5px",
+                                       tags$div(style = htmltools::css(height = paste0(height-40, "px"),
+                                                                       overflow = "auto", `margin-bottom` =  "5px"),
                                                 tableOutput(ns("tab_data"))
                                        ),
                                        exportButtonUI(ns("btn_download"))
