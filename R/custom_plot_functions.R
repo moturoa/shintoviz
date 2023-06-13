@@ -49,6 +49,7 @@ plot_horizontal_bars <- function(data,
                                   reverse_order = FALSE,
                                   palette_function = NULL,
                                   colors = NULL,
+                                  legend.position = "bottom",
                                   base_size = 15,
                                   label_function = NULL,
                                   label_size = 5,
@@ -181,7 +182,8 @@ plot_value_by_time <- function(data,
                            yvar = "n",
 
                            sub_type = c("bars","lines"),
-
+                           
+                           legend.position = "bottom",
                            palette_function,
                            colors = NULL,
                            base_size = 14,
@@ -351,7 +353,7 @@ plot_grouped_value_by_time <- function(data,
                                    label_bars = FALSE,
                                    label_k = FALSE,
                                    label_perc = FALSE,
-
+                                   legend.position = "bottom",
                                    ylab = "ylab",
                                    xlab = "xlab",
                                    grouplab = "",
@@ -385,7 +387,8 @@ plot_grouped_value_by_time <- function(data,
         ggplot2::geom_bar(stat = "identity") +
         ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_fill_manual(values = colors) +
-        ggplot2::theme(axis.text.x=element_blank()) +
+        ggplot2::theme(legend.position=legend.position,
+                       axis.text.x=element_blank()) +
         ggplot2::labs(y = xlab, x = "", fill = grouplab, title = title)
 
   } else {
@@ -456,7 +459,8 @@ plot_grouped_value_by_time <- function(data,
 
   p <- p +
     ggplot2::theme_minimal(base_size = base_size) +
-    ggplot2::theme(text = element_text(family = font_family))
+    ggplot2::theme(legend.position=legend.position,
+                   text = element_text(family = font_family))
 
   p
 
@@ -496,7 +500,7 @@ plot_pie_chart <- function(data,
                            colors = NULL,
                            base_size = 14,
 
-                           legend.position = "left",
+                           legend.position = "bottom",
 
                            label_function = NULL,
                            label_size = 4,
@@ -535,8 +539,8 @@ plot_pie_chart <- function(data,
     geom_text(aes(x = label_hjust, label = label),
               position = position_stack(vjust=0.5), size = label_size,
               family = font_family) +
-    theme(text = ggplot2::element_text(family = font_family),
-          legend.position = legend.position,
+    theme(legend.position=legend.position,
+          text = ggplot2::element_text(family = font_family), 
           legend.text = element_text(size=base_size+2),
           legend.title = element_blank(),
           plot.title = ggplot2::element_text(size=base_size+4),
@@ -569,6 +573,7 @@ plot_grouped_horizontal_barplot <- function(data,
                                          bar_width = 0.6,
                                          title = "",
                                          subtitle = "",
+                                         legend.position = "bottom",
                                          title_adjust = c("plot","figure"),
                                          ...){
 
@@ -645,7 +650,7 @@ plot_grouped_horizontal_barplot <- function(data,
     ggplot2::theme(  text = ggplot2::element_text(family = font_family),
                      plot.title = ggplot2::element_text(size=base_size+4),
                      panel.border = ggplot2::element_blank(),
-                     legend.position = "top",
+                     legend.position = legend.position,
                      legend.direction = "horizontal",
                      legend.title = element_blank(),
                      axis.title.y = ggplot2::element_blank(),
