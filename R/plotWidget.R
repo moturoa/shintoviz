@@ -31,6 +31,11 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
 
   ns <- NS(id)
 
+
+  if(!is.null(settingsUI)){
+    message("settingsUI argument is now ignored in plotWidgetUI")
+  }
+
   ui_container <- match.arg(ui_container)
 
   ui_fun <- if(ui_container == "tab_box"){
@@ -39,16 +44,18 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
     softui::tabset_panel
   }
 
+  p_height <- shiny::validateCssUnit(height)
+
   ui_fun( style = "margin-top: 10px;", ...,
           softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
                             header_ui,
-                            shiny::plotOutput(ns("plot_main"), height = shiny::validateCssUnit(height)),
+                            shiny::plotOutput(ns("plot_main"), height = p_height),
                             footer_ui
           ),
 
           softui::tab_panel(title = softui::bsicon("table"),
                             softui::fluid_row(
-                              tags$div(style = paste("height:", shiny::validateCssUnit(height)),
+                              tags$div(style = paste("height:", p_height),
 
                                        tags$div(style = htmltools::css(height = paste0(height-40, "px"),
                                                                        overflow = "auto", `margin-bottom` =  "5px"),
@@ -63,7 +70,9 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
 
             softui::tab_panel(title = softui::bsicon("three-dots"),
 
-                              uiOutput(ns("ui_interactive_settings"))
+                tags$div(style = paste("height:", p_height),
+                  uiOutput(ns("ui_interactive_settings"))
+                )
 
             )
 
@@ -182,6 +191,7 @@ plotWidgetModule <- function(input, output, session,
                              global_settings = reactive(NULL),
                              interactive = NULL,
                              extra_ggplot = reactive(NULL),
+                             renderTable_args = list(digits = 1, align = "l"),
                              y_min = NULL
 ){
 
@@ -258,6 +268,12 @@ plotWidgetModule <- function(input, output, session,
       cfg$yvar <- yv
 
       cfg$data <- data
+
+      # maybe more settings from the config
+      p <- cfg$params
+      cfg$params <- NULL
+      cfg <- c(cfg, p)
+
       data <- do.call(fun, cfg)
     }
 
@@ -396,12 +412,12 @@ plotWidgetModule <- function(input, output, session,
 
 
   #---- Table
-
+  tab_arg_lis <- c(list(expr = t))
   output$tab_data <- shiny::renderTable({
 
     table_data()
 
-  } , digits = 1, align = "l")
+  } , digits = renderTable_args$digits, align = renderTable_args$align)
 
 
 

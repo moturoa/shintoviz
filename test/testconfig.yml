@@ -8,10 +8,13 @@ config:
     yvar:  "n_woningen_cumu"
     xlab: "Opleverjaar"
     ylab:  "Aantalwoningen"
+    legend.position: "top"
     group:  "prijsklasse"
     label_bars: true
     table_prepare:
       fun: "table_opleverjaar_prijsklasse_ehv"
+      params:
+        max_opleverjaar: 2028
     colors: ["#00B4D8","#0096C7","#0077B6","#023E8A",
                 "#E85D04", "#D00000", "#9D0208"]
     interactive:
@@ -26,3 +29,15 @@ config:
           "Lijn": "lines"
           "Staaf": "grouped_bars"
           "Stapeling": "stacked_bars"
+  - title: "Prijsklasse"
+    plot_type: "plot_horizontal_bars"
+    xvar:  "prijsklasse3"
+    yvar:  "aantalwoningen"
+    table_prepare:
+      fun: "table_aantalwoningen_prijsklasse"
+    ylab:  "Aantalwoningen"
+
+    label_bars: true
+    colors: ["#00B4D8","#0096C7","#0077B6","#023E8A",
+                "#E85D04", "#D00000", "#9D0208"]
+

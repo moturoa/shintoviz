@@ -3,7 +3,7 @@ library(shiny)
 library(softui)
 
 
-table_opleverjaar_prijsklasse_ehv = function(data){
+table_opleverjaar_prijsklasse_ehv = function(data, max_opleverjaar = NULL){
 
   # TODO dit is een aparte prijsklasse kolom die ook aangemaakt moet worden in read_woningproductie (bv.)
   levs <- c("Sociale huur overig", "Sociale huur corporaties (zelfstandig)", "Huur(middenhuur)",  "Huur(duur)",
@@ -13,6 +13,11 @@ table_opleverjaar_prijsklasse_ehv = function(data){
     mutate(prijsklasse = factor(prijsklasse3, levels = levs),
            prijsklasse = recode(prijsklasse, "Sociale huur corporaties (zelfstandig)" = "Sociale huur corp.\n(zelfstandig)")
     )
+
+  if(!is.null(max_opleverjaar)){
+
+    data <- filter(data, opleverjaar <= !!max_opleverjaar)
+  }
 
   data %>%
     select(opleverjaar, aantalwoningen, prijsklasse) %>%
@@ -26,6 +31,31 @@ table_opleverjaar_prijsklasse_ehv = function(data){
 
 }
 
+
+table_aantalwoningen_prijsklasse = function(data){
+
+    data <- data %>%
+      mutate(prijsklasse3 = gsub("betaalbaar|goedkoop", "sociaal", prijsklasse),
+             prijsklasse3 = case_when(
+               prijsklasse3 == "Huur(sociaal)" & !onzelfstandig & grepl("Corporatie", kenmerken) ~ "Sociale huur corporaties (zelfstandig)",
+               prijsklasse3 == "Huur(sociaal)" ~ "Sociale huur overig",
+               TRUE ~ as.character(prijsklasse3)
+             ))
+
+    levs <- c("Sociale huur overig", "Sociale huur corporaties (zelfstandig)", "Huur(middenhuur)",  "Huur(duur)",
+              "Koop(sociaal)", "Koop(middelduur)", "Koop(duur)")
+
+    data <- filter(data, !prijsklasse %in% c("Onbekend","")) %>%
+      mutate(prijsklasse3 = factor(prijsklasse3, levels = levs),
+             prijsklasse3 = recode(prijsklasse3, "Sociale huur corporaties (zelfstandig)" = "Sociale huur corp.\n(zelfstandig)"))
+
+
+  data %>%
+    filter(!is.na(prijsklasse3)) %>%
+    group_by(prijsklasse3) %>%
+    summarize(aantalwoningen = sum(aantalwoningen, na.rm = TRUE),
+              .groups = "drop")
+}
 
 
 devtools::load_all()

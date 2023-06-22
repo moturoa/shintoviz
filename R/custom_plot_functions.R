@@ -77,6 +77,7 @@ plot_horizontal_bars <- function(data,
     data$group <- forcats::fct_rev(as.factor(data$group))
   }
 
+
   if(!is.null(group_format_function)){
     group_format_function <- base::get(group_format_function)
     levs <- group_format_function(levels(data$group))
@@ -351,7 +352,7 @@ plot_grouped_value_by_time <- function(data,
                                    label_bars = FALSE,
                                    label_k = FALSE,
                                    label_perc = FALSE,
-
+                                   legend.position = "right",
                                    ylab = "ylab",
                                    xlab = "xlab",
                                    grouplab = "",
@@ -456,7 +457,8 @@ plot_grouped_value_by_time <- function(data,
 
   p <- p +
     ggplot2::theme_minimal(base_size = base_size) +
-    ggplot2::theme(text = element_text(family = font_family))
+    ggplot2::theme(text = element_text(family = font_family),
+                   legend.position = legend.position)
 
   p
 

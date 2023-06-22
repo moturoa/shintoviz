@@ -21,6 +21,7 @@ plot_grouped_value_by_time(
   label_bars = FALSE,
   label_k = FALSE,
   label_perc = FALSE,
+  legend.position = "right",
   ylab = "ylab",
   xlab = "xlab",
   grouplab = "",
