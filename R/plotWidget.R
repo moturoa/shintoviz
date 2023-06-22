@@ -42,23 +42,10 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
   ui_fun( style = "margin-top: 10px;", ...,
           softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
                             header_ui,
-                            if(!is.null(interactive)){
-                              if(!is.null(interactive$plot_type)){
-
-                                radioButtons(ns("rad_plot_type"), NULL,
-                                             inline = TRUE,
-                                             choices = interactive$plot_type)
-
-                              } else if(!is.null(interactive$sub_type)){
-
-                                radioButtons(ns("rad_sub_type"), NULL,
-                                             inline=T,
-                                             choices = interactive$sub_type)
-
-                              }                            },
                             shiny::plotOutput(ns("plot_main"), height = shiny::validateCssUnit(height)),
                             footer_ui
           ),
+
           softui::tab_panel(title = softui::bsicon("table"),
                             softui::fluid_row(
                               tags$div(style = paste("height:", shiny::validateCssUnit(height)),
@@ -71,6 +58,17 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                               )
                             )
           ),
+
+          if(!is.null(interactive)){
+
+            softui::tab_panel(title = softui::bsicon("three-dots"),
+
+                              uiOutput(ns("ui_interactive_settings"))
+
+            )
+
+          },
+
           if(export){
             softui::tab_panel(
               title = softui::bsicon("cloud-download-fill"),
@@ -97,17 +95,17 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                 htmltools::tagAppendAttributes(class = "bg-gradient-success")
 
             )
-          },
-
-          if(!is.null(settingsUI)){
-            softui::tab_panel(title = softui::bsicon("gear-fill"),
-                              softui::fluid_row(
-                                tags$div(style = "height: 400px;",
-                                  settingsUI
-                                )
-                              )
-            )
           }
+
+          # if(!is.null(settingsUI)){
+          #   softui::tab_panel(title = softui::bsicon("gear-fill"),
+          #                     softui::fluid_row(
+          #                       tags$div(style = "height: 400px;",
+          #                         settingsUI
+          #                       )
+          #                     )
+          #   )
+          # }
 
 
   )
@@ -125,6 +123,8 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
 #' @param data Reactive dataset used in plotting
 #' @param plot_type Reactive plotting function. Can be one of [internal_custom_plot_types()]
 #' @param settings Reactive list of parameters passed to the plotting function (and table function)
+#' @param global_settings Optional reactive list with settings; these override those in settings().
+#' Used in `insert_plot_widgets` to pass settings that apply to all plots at the same time.
 #' @param extra_ggplot A reactive (can be a list) of expressions to add to the ggplot object
 #' @param y_min Y-axis minimum value (often 0). TODO include more axis options
 #' @rdname plotWidget
@@ -179,24 +179,62 @@ plotWidgetModule <- function(input, output, session,
                              data = reactive(NULL),
                              plot_type = reactive("plot_horizontal_bars"),
                              settings = reactive(list()),
+                             global_settings = reactive(NULL),
+                             interactive = NULL,
                              extra_ggplot = reactive(NULL),
                              y_min = NULL
 ){
 
+  ns <- session$ns
+
+  output$ui_interactive_settings <- renderUI({
+
+    req(interactive)
+
+    int_inputs <- names(interactive)
+
+    lapply(int_inputs, function(nm){
+
+      el <- interactive[[nm]]
+
+      if(!("label" %in% names(el) & "choices" %in% names(el))){
+        lab <- NULL
+        chc <- el
+        inlin <- TRUE
+      } else {
+        lab <- el$label
+        chc <- el$choices
+        inlin <- FALSE
+      }
+
+      radioButtons(ns(paste0("rad_interactive_", nm)),
+                   label = lab,
+                   inline = inlin,
+                   choices = chc)
+
+    })
+
+  })
+
+  interactive_values <- reactive({
+
+    if(is.null(interactive))return(NULL)
+
+    ids <- paste0("rad_interactive_", names(interactive))
+
+    lapply(ids, function(id){
+      input[[id]]
+    }) %>% setNames(names(interactive))
 
 
-  # observe({
-  #   print(session$ns("THISMODULE"))
-  #   print(settings())
-  # })
+  })
+
 
   # Make data for plotting
   plot_data <- shiny::reactive({
 
     req(data())
     sett <- settings()
-
-
 
     if(is.null(sett$filter_function)){
       data <- data()
@@ -249,14 +287,27 @@ plotWidgetModule <- function(input, output, session,
 
 
   plot_object <- reactive({
+
     sett <- settings()
 
     # check settings, fill with default values
     #settings <- validate_plot_settings(settings)
     template <- sett$template
 
+    # Override plot-level settings with "global_settings" passed to plotmodule or insert_plot_widgets
+    globs <- global_settings()
+    if(!is.null(globs)){
 
+      for(val in names(globs)){
+        sett[[val]] <- globs[[val]]
+      }
+
+    }
+
+
+    # Bypass bijna alles in shintoviz en gebruik een 'custom_function' om de boel te plotten
     if(!is.null(sett$custom_function)){
+
       plot_fn <- base::get(sett$custom_function$plot)
 
     } else {
@@ -269,9 +320,16 @@ plotWidgetModule <- function(input, output, session,
       }
 
       # OR: read from interactive setting
-      if(!is.null(settings()$interactive$plot_type)){
-        if(!is.null(input$rad_plot_type)){
-          type <- input$rad_plot_type
+      intvals <- interactive_values()
+      if(!is.null(intvals)){
+        for(val in names(intvals)){
+
+          sett[[val]] <- intvals[[val]]
+
+          # type is also saved separatly so we can check if the function exists (below)
+          if(val == "plot_type"){
+            type <- sett[[val]]
+          }
         }
       }
 
@@ -290,11 +348,9 @@ plotWidgetModule <- function(input, output, session,
     # if yvar set in table_group_prepare, set it in main list
     if(!is.null(sett$table_prepare$yvar)){
       sett$yvar <- sett$table_prepare$yvar
-    }
 
-    if(!is.null(sett$interactive$sub_type)){
-      if(!is.null(input$rad_sub_type)){
-        sett$sub_type <- input$rad_sub_type
+      if("yvar" %in% names(intvals)){
+        message("When using a `table_prepare`, interactive setting of yvar is not possible.")
       }
     }
 
@@ -379,5 +435,6 @@ plotWidgetModule <- function(input, output, session,
 
   )
 
+  shiny::outputOptions(output, "ui_interactive_settings", suspendWhenHidden = FALSE)
 
 }

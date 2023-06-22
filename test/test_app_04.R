@@ -72,49 +72,50 @@ server <- function(input, output, session) {
 
   })
 
-  output$viz <- renderUI({
-   softui::fluid_row(
-      column(4,
-         plotWidgetUI(session$ns("plot1"), height = 500, export = TRUE,
-
-            header_ui = shintoshiny::select_input("sel_continent", NULL,
-                                                  choices = unique(gapminder$continent),
-                                                  selected = unique(gapminder$continent),
-                                                  multiple = TRUE),
-
-            settingsUI = softui::fluid_row(tags$p( "Grafiek instellingen" ),
-                                        selectInput("num_year", "Kies jaar data", choices = unique(gapminder$year)),
-                                        numericInput("num_hjust", "Label hjust", value = -0.19),
-                                        numericInput("num_labelsize", "Label size", value = defaultPointSize()),
-                                        numericInput("num_barwidth", "Bar width", value = 0.62),
-                                        numericInput("num_basesize", "Base size", value = defaultLabelSize())
-              )
-
-         )
-      ),
-      column(4,
-         plotWidgetUI(session$ns("plot2"),
-                      settingsUI = softui::fluid_row(tags$p( "Grafiek instellingen" ),
-                                        numericInput("num_basesize2", "Base size", value = defaultLabelSize()),
-                                        selectInput("sel_plot_type_2", "Type",
-                                                    choices = c("lines","bars")),
-                                        numericInput("num_pointsize2", "In-plot size", value = defaultLabelSize()),
-                                        numericInput("num_pointsize", "Point size", value = defaultPointSize())
-            )
-
-         )
-      ),
-      column(4,
-             plotWidgetUI(session$ns("plot3"),
-                  settingsUI =  softui::fluid_row(tags$p( "Grafiek instellingen" ),
-                                              numericInput("num_basesize_3", "Base size", value = defaultLabelSize()),
-                                              selectInput("sel_plot_type_3", "Type", choices = c("lines","stacked_bars","grouped_bars")),
-                                              numericInput("num_pointsize_3", "Point size", value = defaultPointSize())
-                  )
-
-             )
-      )
-    )
+   # settingsUI is deprecated (for now)
+  # output$viz <- renderUI({
+  #  softui::fluid_row(
+  #     column(4,
+  #        plotWidgetUI(session$ns("plot1"), height = 500, export = TRUE,
+  #
+  #           header_ui = shintoshiny::select_input("sel_continent", NULL,
+  #                                                 choices = unique(gapminder$continent),
+  #                                                 selected = unique(gapminder$continent),
+  #                                                 multiple = TRUE),
+  #
+  #           settingsUI = softui::fluid_row(tags$p( "Grafiek instellingen" ),
+  #                                       selectInput("num_year", "Kies jaar data", choices = unique(gapminder$year)),
+  #                                       numericInput("num_hjust", "Label hjust", value = -0.19),
+  #                                       numericInput("num_labelsize", "Label size", value = defaultPointSize()),
+  #                                       numericInput("num_barwidth", "Bar width", value = 0.62),
+  #                                       numericInput("num_basesize", "Base size", value = defaultLabelSize())
+  #             )
+  #
+  #        )
+  #     ),
+  #     column(4,
+  #        plotWidgetUI(session$ns("plot2"),
+  #                     settingsUI = softui::fluid_row(tags$p( "Grafiek instellingen" ),
+  #                                       numericInput("num_basesize2", "Base size", value = defaultLabelSize()),
+  #                                       selectInput("sel_plot_type_2", "Type",
+  #                                                   choices = c("lines","bars")),
+  #                                       numericInput("num_pointsize2", "In-plot size", value = defaultLabelSize()),
+  #                                       numericInput("num_pointsize", "Point size", value = defaultPointSize())
+  #           )
+  #
+  #        )
+  #     ),
+  #     column(4,
+  #            plotWidgetUI(session$ns("plot3"),
+  #                 settingsUI =  softui::fluid_row(tags$p( "Grafiek instellingen" ),
+  #                                             numericInput("num_basesize_3", "Base size", value = defaultLabelSize()),
+  #                                             selectInput("sel_plot_type_3", "Type", choices = c("lines","stacked_bars","grouped_bars")),
+  #                                             numericInput("num_pointsize_3", "Point size", value = defaultPointSize())
+  #                 )
+  #
+  #            )
+  #     )
+  #   )
   })
 
 

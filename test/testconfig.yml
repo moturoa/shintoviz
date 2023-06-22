@@ -1,0 +1,28 @@
+
+
+config:
+  - title: "Prijsklasse"
+    plot_type: "plot_grouped_value_by_time"
+    sub_type: "lines"
+    xvar: "opleverjaar"
+    yvar:  "n_woningen_cumu"
+    xlab: "Opleverjaar"
+    ylab:  "Aantalwoningen"
+    group:  "prijsklasse"
+    label_bars: true
+    table_prepare:
+      fun: "table_opleverjaar_prijsklasse_ehv"
+    colors: ["#00B4D8","#0096C7","#0077B6","#023E8A",
+                "#E85D04", "#D00000", "#9D0208"]
+    interactive:
+      yvar:
+        label: "Toon data"
+        choices:
+          "Jaarlijks" : "n_woningen"
+          "Cumulatief" : "n_woningen_cumu"
+      sub_type:
+        label: "Plot type"
+        choices:
+          "Lijn": "lines"
+          "Staaf": "grouped_bars"
+          "Stapeling": "stacked_bars"
