@@ -340,6 +340,7 @@ plot_grouped_value_by_time <- function(data,
                                    group = "group",
 
                                    sub_type = c("stacked_bars","grouped_bars","lines"),
+                                   cumulative = FALSE,
 
                                    palette_function,
                                    colors = NULL,
@@ -373,6 +374,14 @@ plot_grouped_value_by_time <- function(data,
   data$group <- data[[group]]
 
   data <- dplyr::filter(data, !is.na(.data$n), !is.na(.data$time))
+
+  if(cumulative){
+    data <- data %>%
+      group_by(group) %>%
+      arrange(time) %>%
+      mutate(n = cumsum(n)) %>%
+      ungroup
+  }
 
   n_time <- length(unique(data$time))
   n_group <- length(unique(data$group))

@@ -10,6 +10,7 @@ plot_grouped_value_by_time(
   yvar = "n",
   group = "group",
   sub_type = c("stacked_bars", "grouped_bars", "lines"),
+  cumulative = FALSE,
   palette_function,
   colors = NULL,
   base_size = 14,
