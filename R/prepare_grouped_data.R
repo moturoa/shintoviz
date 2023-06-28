@@ -61,7 +61,28 @@ prepare_grouped_data <- function(data,
                                  fill_na_group = "Onbekend",
                                  empty_char_to_na = TRUE,
                                  array = FALSE,
+                                 filter = NULL,
                                  array_encoding = c("semicolon","json")){
+
+  if(!yvar %in% names(data)){
+    message(glue::glue("yvar '{yvar}' not found in data"))
+    return(NULL)
+  }
+
+  if(!groupvar %in% names(data)){
+    message(glue::glue("groupvar '{groupvar}' not found in data"))
+    return(NULL)
+  }
+
+  if(!is.null(groupvar2) && !groupvar %in% names(data)){
+    message(glue::glue("groupvar2 '{groupvar2}' not found in data"))
+    return(NULL)
+  }
+
+
+  if(!is.null(filter)){
+    data <- dplyr::filter(data, eval(parse(text=filter)))
+  }
 
   # Deal with missing group levels
   if(empty_char_to_na){

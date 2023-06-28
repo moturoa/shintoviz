@@ -95,6 +95,7 @@ plot_horizontal_bars <- function(data,
   if(is.factor(data$group)){
     ncols <- nlevels(data$group)
   }
+
   colors <- generate_colors(ncols, palette_function, colors)
 
   p <- ggplot2::ggplot(data, aes(x = Y, y = group, fill = group)) +
@@ -366,6 +367,16 @@ plot_grouped_value_by_time <- function(data,
   font_family <- get_current_font_family()
 
   if(nrow(data) == 0){
+    return(NULL)
+  }
+
+  if(!group %in% names(data)){
+    message(glue::glue("group '{group}' not found in data"))
+    return(NULL)
+  }
+
+  if(!xvar %in% names(data)){
+    message(glue::glue("xvar '{xvar}' not found in data"))
     return(NULL)
   }
 
