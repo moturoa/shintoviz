@@ -15,6 +15,7 @@ prepare_grouped_data(
   top_n = NULL,
   na_include = TRUE,
   fill_na_group = "Onbekend",
+  empty_char_to_na = TRUE,
   array = FALSE,
   array_encoding = c("semicolon", "json")
 )

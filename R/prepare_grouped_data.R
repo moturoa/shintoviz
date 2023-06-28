@@ -49,24 +49,24 @@
 #'                        top_n = 10)
 #' }
 prepare_grouped_data <- function(data,
-                              yvar = NULL,
-                              groupvar = "group",
-
-                              groupfun = NULL,
-                              sort = FALSE,
-                              reverse = TRUE,
-
-                              order = NULL,
-                              top_n = NULL,
-
-                              na_include = TRUE,
-                              fill_na_group = "Onbekend",
-
-                              array = FALSE,
-                              array_encoding = c("semicolon","json")
-                              ){
+                                 yvar = NULL,
+                                 groupvar = "group",
+                                 groupfun = NULL,
+                                 sort = FALSE,
+                                 reverse = TRUE,
+                                 order = NULL,
+                                 top_n = NULL,
+                                 na_include = TRUE,
+                                 fill_na_group = "Onbekend",
+                                 empty_char_to_na = TRUE,
+                                 array = FALSE,
+                                 array_encoding = c("semicolon","json")){
 
   # Deal with missing group levels
+  if(empty_char_to_na){
+    data[[groupvar]] <- dplyr::na_if(data[[groupvar]], "")
+  }
+
   if(na_include){
 
     if(any(is.na(data[[groupvar]]))){
