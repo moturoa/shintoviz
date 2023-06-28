@@ -25,7 +25,7 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          interactive = NULL,
                          export = FALSE,
 
-                         settingsUI=NULL,
+                         settingsUI = NULL,
 
                          ...){
 
@@ -253,12 +253,24 @@ plotWidgetModule <- function(input, output, session,
       data <- fun(data())
     }
 
-
     if(!is.null(sett$table_prepare)){
 
       cfg <- sett$table_prepare
       fun <- base::get(cfg$fun)
       cfg$fun <- NULL
+
+      # OR: read from interactive setting
+      intvals <- interactive_values()
+
+      # find settings that are not for table_prepare but for the plot_function
+      for_tp <- sapply(sapply(interactive, "[[", "table_prepare"), isTRUE, USE.NAMES = FALSE)
+      intvals <- intvals[for_tp]
+
+      if(!is.null(intvals)){
+        for(val in names(intvals)){
+          cfg[[val]] <- intvals[[val]]
+        }
+      }
 
       yv <- sett$table_prepare$yvar
 
@@ -337,6 +349,26 @@ plotWidgetModule <- function(input, output, session,
 
       # OR: read from interactive setting
       intvals <- interactive_values()
+
+      # TODO fix :(
+      if(type == "plot_grouped_value_by_time"){
+        if(is.null(sett$group) && !is.null(intvals$groupvar)){
+          sett$group <- intvals$groupvar
+        }
+      }
+
+      if(type == "plot_horizontal_bars"){
+        if(is.null(sett$groupvar) && !is.null(intvals$groupvar)){
+          sett$xvar <- intvals$groupvar
+        }
+      }
+
+
+
+      # find settings that are not for table_prepare but for the plot_function
+      for_tp <- sapply(sapply(interactive, "[[", "table_prepare"),isTRUE,USE.NAMES = FALSE)
+      intvals <- intvals[!for_tp]
+
       if(!is.null(intvals)){
         for(val in names(intvals)){
 
@@ -354,6 +386,9 @@ plotWidgetModule <- function(input, output, session,
       } else {
         stop(paste("plot_type not in ", paste(internal_custom_plot_types, collapse= " ,")))
       }
+
+
+
     }
 
     # no xvar needed when groupvar present in table_prepare argument

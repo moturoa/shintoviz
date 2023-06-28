@@ -5,25 +5,36 @@
   xlab: "Opleverjaar"
   ylab:  "Aantalwoningen"
   xvar: "opleverjaar"
-  group:  "prijsklasse"
+  #group:  "prijsklasse"
   label_bars: false
+  palette_function: "parula"
   table_prepare:
     fun: "prepare_grouped_data"
     yvar: "aantalwoningen"
-    groupvar: "prijsklasse"
     groupvar2: "opleverjaar"
-    groupfun: "sum"
-    order:
-      - "Huur betaalbaar"
-      - "Huur goedkoop"
-      - "Huur middelduur"
-      - "Huur duur"
-      - "Koop goedkoop"
-      - "Koop middelduur"
-      - "Koop duur"
-      - "Onbekend"
-  colors: ["#4895ef", "#3f37c9", "#3a0ca3", "#560bad", "#b5179e", "#343a40", "#adb5bd", '#003049']
+  #   order:
+  #     - "Huur betaalbaar"
+  #     - "Huur goedkoop"
+  #     - "Huur middelduur"
+  #     - "Huur duur"
+  #     - "Koop goedkoop"
+  #     - "Koop middelduur"
+  #     - "Koop duur"
+  #     - "Onbekend"
+  # colors: ["#4895ef", "#3f37c9", "#3a0ca3", "#560bad", "#b5179e", "#343a40", "#adb5bd", '#003049']
   interactive:
+    groupvar:
+      label: "Groep"
+      table_prepare: true
+      choices:
+        "Prijsklasse" : "prijsklasse"
+        "Woningtype" : "woningtype"
+    groupfun:
+      label: "Berekening"
+      table_prepare: true
+      choices:
+          "Aantal woningen" : "sum"
+          "Aantal deelgebieden" : "length"
     cumulative:
       label: "Per jaar / totaal"
       choices:
