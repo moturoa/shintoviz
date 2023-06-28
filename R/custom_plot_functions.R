@@ -415,7 +415,7 @@ plot_grouped_value_by_time <- function(data,
 
       pos <- if(sub_type == "grouped_bars"){
         ggplot2::position_dodge()
-      } else {
+      } else if(sub_type == "stacked_bars"){
         ggplot2::position_stack()
       }
 
@@ -440,7 +440,10 @@ plot_grouped_value_by_time <- function(data,
       # Stacked bars: label only the total (sum)
       label_data <- dplyr::group_by(data, time) %>%
         dplyr::summarize(n = sum(n), .groups = "drop")
+    } else if(sub_type == "grouped_bars"){
+      label_data <- data
     } else {
+
       # Else label everything
       label_data <- data
     }
@@ -453,13 +456,26 @@ plot_grouped_value_by_time <- function(data,
     ymax <- max(label_data$n)
 
     suppressWarnings({
-      p <- p + ggplot2::geom_text(data = label_data,
-                                  ggplot2::aes(label = n, x = time, y = n, fill = NULL, color = NULL),
-                                  size = label_size,
-                                  family = font_family,
-                                  vjust = -1) +
-        ggplot2::ylim(c(NA, ymax + 0.05*ymax))
+
+      if(sub_type == "grouped_bars"){
+        p <- p + ggplot2::geom_text(data = label_data,
+                                    position = ggplot2::position_dodge(width = 1),
+                                    ggplot2::aes(label = n, x = time, y = n, color = NULL),
+                                    size = label_size,
+                                    family = font_family,
+                                    vjust = -1)
+      } else {
+        p <- p + ggplot2::geom_text(data = label_data,
+                                    ggplot2::aes(label = n, x = time, y = n, fill = NULL, color = NULL),
+                                    size = label_size,
+                                    family = font_family,
+                                    vjust = -1)
+      }
+
+
     })
+
+    p <- p + ggplot2::ylim(c(NA, ymax + 0.05*ymax))
 
   }
 

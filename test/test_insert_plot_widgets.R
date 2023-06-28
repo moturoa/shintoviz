@@ -60,9 +60,11 @@ table_aantalwoningen_prijsklasse = function(data){
 
 devtools::load_all()
 
-pdata <- readRDS("c:/repos/wbm3.0/tmp.rds")
+pdata <- readRDS("c:/repos/wbm3.0/wp.rds") %>%
+  filter(opleverjaar > 2023, opleverjaar < 2027)
 
-cfg <- yaml::read_yaml("test/testconfig.yml")$config
+#cfg <- yaml::read_yaml("test/testconfig.yml")$config
+cfg <- yaml::read_yaml("test/testconfig2.yml")
 
 ui <- softui::simple_page(
 

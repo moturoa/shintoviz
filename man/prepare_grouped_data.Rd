@@ -9,6 +9,7 @@ prepare_grouped_data(
   yvar = NULL,
   groupvar = "group",
   groupfun = NULL,
+  groupvar2 = NULL,
   sort = FALSE,
   reverse = TRUE,
   order = NULL,

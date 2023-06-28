@@ -52,6 +52,7 @@ prepare_grouped_data <- function(data,
                                  yvar = NULL,
                                  groupvar = "group",
                                  groupfun = NULL,
+                                 groupvar2 = NULL,
                                  sort = FALSE,
                                  reverse = TRUE,
                                  order = NULL,
@@ -98,17 +99,32 @@ prepare_grouped_data <- function(data,
   if(!is.null(yvar)){
     if(array)warning("'array' argument ignored when yvar is not NULL (array is only meaningful to count observations)")
 
-    data <- dplyr::group_by(data, !!rlang::sym(groupvar)) %>%
-      dplyr::summarize(y = groupfun(!!rlang::sym(yvar)), .groups = "drop") %>%
-      stats::setNames(c(groupvar,yvar))
+    data <- dplyr::group_by(data, !!!rlang::syms(c(groupvar,groupvar2))) %>%
+      dplyr::summarize(y = groupfun(!!rlang::sym(yvar)), .groups = "drop")
+
+    if(is.null(groupvar2)){
+      data <- stats::setNames(data, c(groupvar,yvar))
+    } else {
+      data <- stats::setNames(data, c(groupvar,groupvar2,yvar))
+    }
+
   } else {
 
     if(!array){
       # Count rows (no yvar needed)
-      data <- dplyr::count(data, !!rlang::sym(groupvar)) %>%
-        stats::setNames(c(groupvar,"n"))
+      data <- dplyr::count(data, !!!rlang::syms(c(groupvar,groupvar2)))
+
+      if(is.null(groupvar2)){
+        data <- stats::setNames(data, c(groupvar, "n"))
+      } else {
+        data <- stats::setNames(data, c(groupvar,groupvar2, "n"))
+      }
 
     } else {
+
+      if(!is.null(groupvar2)){
+        message("Argment 'groupvar2' ignored when array = TRUE - not yet possible")
+      }
 
       array_encoding <- match.arg(array_encoding)
       if(array_encoding == "semicolon"){

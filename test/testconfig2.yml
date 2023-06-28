@@ -1,0 +1,43 @@
+
+- title: "Prijsklasse"
+  plot_type: "plot_grouped_value_by_time"
+  sub_type: "lines"
+  xlab: "Opleverjaar"
+  ylab:  "Aantalwoningen"
+  xvar: "opleverjaar"
+  group:  "prijsklasse"
+  label_bars: false
+  table_prepare:
+    fun: "prepare_grouped_data"
+    yvar: "aantalwoningen"
+    groupvar: "prijsklasse"
+    groupvar2: "opleverjaar"
+    groupfun: "sum"
+    order:
+      - "Huur betaalbaar"
+      - "Huur goedkoop"
+      - "Huur middelduur"
+      - "Huur duur"
+      - "Koop goedkoop"
+      - "Koop middelduur"
+      - "Koop duur"
+      - "Onbekend"
+  colors: ["#4895ef", "#3f37c9", "#3a0ca3", "#560bad", "#b5179e", "#343a40", "#adb5bd", '#003049']
+  interactive:
+    cumulative:
+      label: "Per jaar / totaal"
+      choices:
+        "Jaarlijks aantal" : false
+        "Cumulatief totaal" : true
+    sub_type:
+      label: "Plot type"
+      choices:
+        "Staaf": "grouped_bars"
+        "Lijn": "lines"
+        "Stapeling": "stacked_bars"
+    label_bars:
+      label: "Aantallen labels"
+      choices:
+        "Ja" : true
+        "Nee" : false
+
