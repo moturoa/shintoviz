@@ -10,6 +10,7 @@ plotWidgetUI(
   header_ui = NULL,
   footer_ui = NULL,
   ui_container = c("tab_box", "tabset_panel"),
+  height = 400,
   interactive = NULL,
   export = FALSE,
   settingsUI = NULL,
@@ -23,7 +24,10 @@ plotWidgetModule(
   data = reactive(NULL),
   plot_type = reactive("plot_horizontal_bars"),
   settings = reactive(list()),
+  global_settings = reactive(NULL),
+  interactive = NULL,
   extra_ggplot = reactive(NULL),
+  renderTable_args = list(digits = 1, align = "l"),
   y_min = NULL
 )
 }
@@ -33,6 +37,10 @@ plotWidgetModule(
 \item{header_ui}{Further UI to be placed above the plot}
 
 \item{footer_ui}{Further UI to be placed below the plot}
+
+\item{ui_container}{Either \code{tab_box} or \code{tabset_panel} to contain the plot widget}
+
+\item{height}{Heihgt of the \code{plotOutput} and \code{tableOutput}}
 
 \item{\dots}{Further arguments to \code{\link[softui:tabbox]{softui::tab_box()}}}
 
@@ -47,6 +55,9 @@ plotWidgetModule(
 \item{plot_type}{Reactive plotting function. Can be one of \code{\link[=internal_custom_plot_types]{internal_custom_plot_types()}}}
 
 \item{settings}{Reactive list of parameters passed to the plotting function (and table function)}
+
+\item{global_settings}{Optional reactive list with settings; these override those in settings().
+Used in \code{insert_plot_widgets} to pass settings that apply to all plots at the same time.}
 
 \item{extra_ggplot}{A reactive (can be a list) of expressions to add to the ggplot object}
 

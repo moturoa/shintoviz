@@ -77,6 +77,7 @@ plot_horizontal_bars <- function(data,
     data$group <- forcats::fct_rev(as.factor(data$group))
   }
 
+
   if(!is.null(group_format_function)){
     group_format_function <- base::get(group_format_function)
     levs <- group_format_function(levels(data$group))
@@ -94,6 +95,7 @@ plot_horizontal_bars <- function(data,
   if(is.factor(data$group)){
     ncols <- nlevels(data$group)
   }
+
   colors <- generate_colors(ncols, palette_function, colors)
 
   p <- ggplot2::ggplot(data, aes(x = Y, y = group, fill = group)) +
@@ -339,6 +341,7 @@ plot_grouped_value_by_time <- function(data,
                                    group = "group",
 
                                    sub_type = c("stacked_bars","grouped_bars","lines"),
+                                   cumulative = FALSE,
 
                                    palette_function,
                                    colors = NULL,
@@ -351,7 +354,7 @@ plot_grouped_value_by_time <- function(data,
                                    label_bars = FALSE,
                                    label_k = FALSE,
                                    label_perc = FALSE,
-
+                                   legend.position = "right",
                                    ylab = "ylab",
                                    xlab = "xlab",
                                    grouplab = "",
@@ -367,11 +370,34 @@ plot_grouped_value_by_time <- function(data,
     return(NULL)
   }
 
+  if(!group %in% names(data)){
+    message(glue::glue("group '{group}' not found in data"))
+    return(NULL)
+  }
+
+  if(!xvar %in% names(data)){
+    message(glue::glue("xvar '{xvar}' not found in data"))
+    return(NULL)
+  }
+
+  if(!yvar %in% names(data)){
+    message(glue::glue("yvar '{yvar}' not found in data, probably forgot to specify 'yvar' in main config, also with a custom data prep function"))
+    return(NULL)
+  }
+
   data$n <- data[[yvar]]
   data$time <- data[[xvar]]
   data$group <- data[[group]]
 
   data <- dplyr::filter(data, !is.na(.data$n), !is.na(.data$time))
+
+  if(cumulative){
+    data <- data %>%
+      group_by(group) %>%
+      arrange(time) %>%
+      mutate(n = cumsum(n)) %>%
+      ungroup
+  }
 
   n_time <- length(unique(data$time))
   n_group <- length(unique(data$group))
@@ -405,7 +431,7 @@ plot_grouped_value_by_time <- function(data,
 
       pos <- if(sub_type == "grouped_bars"){
         ggplot2::position_dodge()
-      } else {
+      } else if(sub_type == "stacked_bars"){
         ggplot2::position_stack()
       }
 
@@ -430,7 +456,10 @@ plot_grouped_value_by_time <- function(data,
       # Stacked bars: label only the total (sum)
       label_data <- dplyr::group_by(data, time) %>%
         dplyr::summarize(n = sum(n), .groups = "drop")
+    } else if(sub_type == "grouped_bars"){
+      label_data <- data
     } else {
+
       # Else label everything
       label_data <- data
     }
@@ -443,20 +472,34 @@ plot_grouped_value_by_time <- function(data,
     ymax <- max(label_data$n)
 
     suppressWarnings({
-      p <- p + ggplot2::geom_text(data = label_data,
-                                  ggplot2::aes(label = n, x = time, y = n, fill = NULL, color = NULL),
-                                  size = label_size,
-                                  family = font_family,
-                                  vjust = -1) +
-        ggplot2::ylim(c(NA, ymax + 0.05*ymax))
+
+      if(sub_type == "grouped_bars"){
+        p <- p + ggplot2::geom_text(data = label_data,
+                                    position = ggplot2::position_dodge(width = 1),
+                                    ggplot2::aes(label = n, x = time, y = n, color = NULL),
+                                    size = label_size,
+                                    family = font_family,
+                                    vjust = -1)
+      } else {
+        p <- p + ggplot2::geom_text(data = label_data,
+                                    ggplot2::aes(label = n, x = time, y = n, fill = NULL, color = NULL),
+                                    size = label_size,
+                                    family = font_family,
+                                    vjust = -1)
+      }
+
+
     })
+
+    p <- p + ggplot2::ylim(c(NA, ymax + 0.05*ymax))
 
   }
 
 
   p <- p +
     ggplot2::theme_minimal(base_size = base_size) +
-    ggplot2::theme(text = element_text(family = font_family))
+    ggplot2::theme(text = element_text(family = font_family),
+                   legend.position = legend.position)
 
   p
 

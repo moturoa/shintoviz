@@ -49,24 +49,46 @@
 #'                        top_n = 10)
 #' }
 prepare_grouped_data <- function(data,
-                              yvar = NULL,
-                              groupvar = "group",
+                                 yvar = NULL,
+                                 groupvar = "group",
+                                 groupfun = NULL,
+                                 groupvar2 = NULL,
+                                 sort = FALSE,
+                                 reverse = TRUE,
+                                 order = NULL,
+                                 top_n = NULL,
+                                 na_include = TRUE,
+                                 fill_na_group = "Onbekend",
+                                 empty_char_to_na = TRUE,
+                                 array = FALSE,
+                                 filter = NULL,
+                                 array_encoding = c("semicolon","json")){
 
-                              groupfun = NULL,
-                              sort = FALSE,
-                              reverse = TRUE,
+  if(!yvar %in% names(data)){
+    message(glue::glue("yvar '{yvar}' not found in data"))
+    return(NULL)
+  }
 
-                              order = NULL,
-                              top_n = NULL,
+  if(!groupvar %in% names(data)){
+    message(glue::glue("groupvar '{groupvar}' not found in data"))
+    return(NULL)
+  }
 
-                              na_include = TRUE,
-                              fill_na_group = "Onbekend",
+  if(!is.null(groupvar2) && !groupvar %in% names(data)){
+    message(glue::glue("groupvar2 '{groupvar2}' not found in data"))
+    return(NULL)
+  }
 
-                              array = FALSE,
-                              array_encoding = c("semicolon","json")
-                              ){
+
+  if(!is.null(filter)){
+    data <- dplyr::filter(data, eval(parse(text=filter)))
+  }
 
   # Deal with missing group levels
+  if(empty_char_to_na){
+    data[[groupvar]] <- dplyr::na_if(data[[groupvar]], "")
+  }
+
   if(na_include){
 
     if(any(is.na(data[[groupvar]]))){
@@ -98,17 +120,32 @@ prepare_grouped_data <- function(data,
   if(!is.null(yvar)){
     if(array)warning("'array' argument ignored when yvar is not NULL (array is only meaningful to count observations)")
 
-    data <- dplyr::group_by(data, !!rlang::sym(groupvar)) %>%
-      dplyr::summarize(y = groupfun(!!rlang::sym(yvar)), .groups = "drop") %>%
-      stats::setNames(c(groupvar,yvar))
+    data <- dplyr::group_by(data, !!!rlang::syms(c(groupvar,groupvar2))) %>%
+      dplyr::summarize(y = groupfun(!!rlang::sym(yvar)), .groups = "drop")
+
+    if(is.null(groupvar2)){
+      data <- stats::setNames(data, c(groupvar,yvar))
+    } else {
+      data <- stats::setNames(data, c(groupvar,groupvar2,yvar))
+    }
+
   } else {
 
     if(!array){
       # Count rows (no yvar needed)
-      data <- dplyr::count(data, !!rlang::sym(groupvar)) %>%
-        stats::setNames(c(groupvar,"n"))
+      data <- dplyr::count(data, !!!rlang::syms(c(groupvar,groupvar2)))
+
+      if(is.null(groupvar2)){
+        data <- stats::setNames(data, c(groupvar, "n"))
+      } else {
+        data <- stats::setNames(data, c(groupvar,groupvar2, "n"))
+      }
 
     } else {
+
+      if(!is.null(groupvar2)){
+        message("Argment 'groupvar2' ignored when array = TRUE - not yet possible")
+      }
 
       array_encoding <- match.arg(array_encoding)
       if(array_encoding == "semicolon"){

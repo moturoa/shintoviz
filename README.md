@@ -1,4 +1,5 @@
 ![](https://badgen.net/badge/shintolabs/utility/purple)
+![](https://badgen.net/badge/gitflow/enabled/green)
 
 # shintoviz
 

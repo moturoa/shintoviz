@@ -9,13 +9,16 @@ prepare_grouped_data(
   yvar = NULL,
   groupvar = "group",
   groupfun = NULL,
+  groupvar2 = NULL,
   sort = FALSE,
   reverse = TRUE,
   order = NULL,
   top_n = NULL,
   na_include = TRUE,
   fill_na_group = "Onbekend",
+  empty_char_to_na = TRUE,
   array = FALSE,
+  filter = NULL,
   array_encoding = c("semicolon", "json")
 )
 }

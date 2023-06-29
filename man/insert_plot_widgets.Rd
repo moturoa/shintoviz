@@ -9,6 +9,8 @@ insert_plot_widgets(
   cfg,
   id,
   session = shiny::getDefaultReactiveDomain(),
+  global_settings = reactive(NULL),
+  renderTable_args = list(digits = 1, align = "l"),
   ...
 )
 }
@@ -19,7 +21,12 @@ insert_plot_widgets(
 
 \item{id}{Placeholder id where to place plotWidgets (used by insertUI)}
 
-\item{session}{Shiny session object, no need to set (usually)}
+\item{session}{Shiny session object, no need to set.}
+
+\item{global_settings}{Optional reactive list with settings; these override those in cfg,
+and can be used to set settings that apply to all plots in a single insert.}
+
+\item{renderTable_args}{List with components 'digits' and 'align' (not more for now), sent to renderTable}
 
 \item{\dots}{Further arguments passed to \code{plotWidgetUI}}
 }
