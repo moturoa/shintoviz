@@ -10,6 +10,7 @@ plotWidgetUI(
   header_ui = NULL,
   footer_ui = NULL,
   ui_container = c("tab_box", "tabset_panel"),
+  plotOutput_only = FALSE,
   height = 400,
   interactive = NULL,
   export = FALSE,

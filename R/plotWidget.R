@@ -21,6 +21,8 @@
 plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          ui_container = c("tab_box","tabset_panel"),
 
+                         plotOutput_only = FALSE,
+
                          height = 400,
                          interactive = NULL,
                          export = FALSE,
@@ -30,7 +32,6 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
                          ...){
 
   ns <- NS(id)
-
 
   if(!is.null(settingsUI)){
     message("settingsUI argument is now ignored in plotWidgetUI")
@@ -45,6 +46,12 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
   }
 
   p_height <- shiny::validateCssUnit(height)
+
+  if(plotOutput_only){
+    return(
+      shiny::plotOutput(ns("plot_main"), height = p_height)
+    )
+  }
 
   ui_fun( style = "margin-top: 10px;", ...,
           softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
