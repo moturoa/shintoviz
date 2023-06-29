@@ -8,7 +8,8 @@ generate_colors(
   n,
   palette_function = NULL,
   colors = NULL,
-  reverse_palette = FALSE
+  reverse_palette = FALSE,
+  missing_color_fill = "black"
 )
 }
 \arguments{

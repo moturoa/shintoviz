@@ -5,12 +5,19 @@
 #' @param colors Vector of colors (must be length >= n)
 #' @param reverse_palette If TRUE, reverse colors
 #' @export
-generate_colors <- function(n, palette_function = NULL, colors = NULL, reverse_palette = FALSE){
+generate_colors <- function(n, palette_function = NULL, colors = NULL, reverse_palette = FALSE, missing_color_fill = "black"){
 
   if(!is.null(colors)){
 
-    stopifnot(length(colors) >= n)
-    out <- colors[1:n]
+    if(length(colors) < n){
+
+      message(glue::glue("shintoviz warning: not enough colors in generate_colors: {n} needed, {length(colors)} provided"))
+
+      out <- c(colors, rep(missing_color_fill, n - length(colors)))
+
+    } else {
+      out <- colors[1:n]
+    }
 
   } else {
 
