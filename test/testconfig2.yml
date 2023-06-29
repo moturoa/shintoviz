@@ -67,34 +67,89 @@
 #   ylab:  "Aantalwoningen"
 #   label_bars: false
 #   palette_function: "parula"
+# - title: "Prijsklasse"
+#   plot_type: "plot_horizontal_bars"
+#   table_prepare:
+#     fun: "prepare_grouped_data"
+#     yvar: "aantalwoningen"
+#     groupvar: "prijsklasse"
+#     groupfun: "sum"
+#     empty_char_to_na: true
+#     order:
+#       - "onbekend"
+#       - "dure koop"
+#       - "bereikbare koop"
+#       - "sociale koop hoog"
+#       - "sociale koop koopgarant"
+#       - "sociale koop"
+#       - "dure huur"
+#       - "middenhuur"
+#       - "sociale huur"
+#   ylab:  "Aantalwoningen"
+#   label_bars: true
+#   label_perc: true
+#   colors:
+#     - "#94938f"
+#     - "#9D0208"
+#     - "#E6550D"
+#     - "#FD8D3C"
+#     - "#FDAE6B"
+#     - "#3182BD"
+#     - "#6BAED6"
+#     - "#9ECAE1"
+#     - "#C6DBEF"
+# - title: "Plancapaciteit naar projectfase"
+#   plot_type: "plot_horizontal_bars"
+#   table_prepare:
+#     fun: "prepare_grouped_data"
+#     groupvar: "procesfase"
+#     yvar: "aantalwoningen"
+#     groupfun: "sum"
+#     empty_char_to_na: true
+#     order: ["Initiatief","Definitiefase","Ontwerp","Stilgelegd","Uitvoering","Onbekend"]
+#   colors:  ["#780085", "#627BF4", "#49CF7F", "#B4EC57", "#F9965B","#94938f"]
+#   ylab:  "Aantalwoningen"
+#   #reverse_order: true
+#   label_bars: true
+#   interactive:
+#     label_perc:
+#       label: "Percentages"
+#       choices:
+#          "Ja" : true
+#          "Nee" : false
+#     sort:
+#       label: "Volgorde"
+#       table_prepare: true
+#       choices:
+#          "Alfabetisch" : false
+#          "Gesorteerd" : true
 - title: "Prijsklasse"
-  plot_type: "plot_horizontal_bars"
-  table_prepare:
-    fun: "prepare_grouped_data"
-    yvar: "aantalwoningen"
-    groupvar: "prijsklasse"
-    groupfun: "sum"
-    empty_char_to_na: true
-    order:
-      - "onbekend"
-      - "dure koop"
-      - "bereikbare koop"
-      - "sociale koop hoog"
-      - "sociale koop koopgarant"
-      - "sociale koop"
-      - "dure huur"
-      - "middenhuur"
-      - "sociale huur"
+  plot_type: "plot_grouped_value_by_time"
+  sub_type: "lines"
+  xvar: "opleverjaar"
+  xlab: "Opleverjaar"
   ylab:  "Aantalwoningen"
-  label_bars: true
-  label_perc: true
-  colors:
-    - "#94938f"
-    - "#9D0208"
-    - "#E6550D"
-    - "#FD8D3C"
-    - "#FDAE6B"
-    - "#3182BD"
-    - "#6BAED6"
-    - "#9ECAE1"
-    - "#C6DBEF"
+  group:  "prijsklasse"
+  legend.position: "bottom"
+  table_prepare:
+    fun: "capval_pivot_prijsklasse"
+  palette_function: "viridis"
+  #colors: ["#f77f00","#d62828", '#003049','#003049']
+  interactive:
+    cumulative:
+      label: "Per jaar / totaal"
+      choices:
+        "Jaarlijks aantal" : false
+        "Cumulatief totaal" : true
+    sub_type:
+      label: "Plot type"
+      choices:
+        "Stapeling": "stacked_bars"
+        "Lijn": "lines"
+        "Staaf": "grouped_bars"
+    label_bars:
+      label: "Aantallen labels"
+      choices:
+        "Ja" : true
+        "Nee" : false
+

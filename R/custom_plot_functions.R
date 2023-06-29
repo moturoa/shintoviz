@@ -380,6 +380,11 @@ plot_grouped_value_by_time <- function(data,
     return(NULL)
   }
 
+  if(!yvar %in% names(data)){
+    message(glue::glue("yvar '{yvar}' not found in data, probably forgot to specify 'yvar' in main config, also with a custom data prep function"))
+    return(NULL)
+  }
+
   data$n <- data[[yvar]]
   data$time <- data[[xvar]]
   data$group <- data[[group]]
