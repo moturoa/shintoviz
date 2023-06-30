@@ -14,28 +14,29 @@
 #' @param header_ui Further UI to be placed above the plot
 #' @param footer_ui Further UI to be placed below the plot
 #' @param ui_container Either `tab_box` or `tabset_panel` to contain the plot widget
-#' @param height Heihgt of the `plotOutput` and `tableOutput`
+#' @param plotOutput_only Only make a `plotOutput`, not the entire widget with tabs
+#' @param height Height of the `plotOutput` and `tableOutput`
+#' @param interactive List with interactive settings used to control the plot, usually used via
+#' `insert_plot_widgets`. See examples in Juno.
 #' @param \dots Further arguments to [softui::tab_box()]
 #' @rdname plotWidget
 #' @export
-plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
+plotWidgetUI <- function(id,
+                         header_ui = NULL,
+                         footer_ui = NULL,
                          ui_container = c("tab_box","tabset_panel"),
 
                          plotOutput_only = FALSE,
 
                          height = 400,
                          interactive = NULL,
-                         export = FALSE,
+                         #export = FALSE,
 
-                         settingsUI = NULL,
+                         #settingsUI = NULL,
 
                          ...){
 
   ns <- NS(id)
-
-  if(!is.null(settingsUI)){
-    message("settingsUI argument is now ignored in plotWidgetUI")
-  }
 
   ui_container <- match.arg(ui_container)
 
@@ -49,7 +50,15 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
 
   if(plotOutput_only){
     return(
-      shiny::plotOutput(ns("plot_main"), height = p_height)
+      tagList(
+        shiny::plotOutput(ns("plot_main"), height = p_height),
+
+        tags$div(style = "display: none;",
+          uiOutput(ns("ui_interactive_settings"))
+        )
+
+      )
+
     )
   }
 
@@ -83,35 +92,38 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
 
             )
 
-          },
-
-          if(export){
-            softui::tab_panel(
-              title = softui::bsicon("cloud-download-fill"),
-
-              tags$p("Kies een afmeting, en download de plot als PNG."),
-
-              softui::fluid_row(
-                column(6,
-                       numericInput(ns("num_png_width"), "Breedte (px)", value = 800, width = "100%")
-                ),
-                column(6,
-                       numericInput(ns("num_png_height"), "Hoogte (px)", value = 600, width = "100%")
-                )
-                # column(4,
-                #        numericInput(ns("num_png_cex"), "Tekst grootte", value = 1, width = "100%", step = 0.05)
-                # )
-              ),
-              radioButtons(ns("rad_bg"), "Achtergrond", choices = c("Wit" = "white", "Transparant" = "transparent"),
-                           inline = TRUE, selected = "white"),
-
-              tags$br(),
-              shiny::downloadButton(ns("btn_download_plot"), "Download PNG", status = "success",
-                                    icon = bsicon("cloud-download-fill")) %>%
-                htmltools::tagAppendAttributes(class = "bg-gradient-success")
-
-            )
           }
+
+          # This works fine but the resolution will not match what we see on screen,
+          # and if we use a higher dpi then the proportions are off. Better to just copy
+          # the png directly from the plotOutput
+          # if(export){
+          #   softui::tab_panel(
+          #     title = softui::bsicon("cloud-download-fill"),
+          #
+          #     tags$p("Kies een afmeting, en download de plot als PNG."),
+          #
+          #     softui::fluid_row(
+          #       column(6,
+          #              numericInput(ns("num_png_width"), "Breedte (px)", value = 800, width = "100%")
+          #       ),
+          #       column(6,
+          #              numericInput(ns("num_png_height"), "Hoogte (px)", value = 600, width = "100%")
+          #       )
+          #       # column(4,
+          #       #        numericInput(ns("num_png_cex"), "Tekst grootte", value = 1, width = "100%", step = 0.05)
+          #       # )
+          #     ),
+          #     radioButtons(ns("rad_bg"), "Achtergrond", choices = c("Wit" = "white", "Transparant" = "transparent"),
+          #                  inline = TRUE, selected = "white"),
+          #
+          #     tags$br(),
+          #     shiny::downloadButton(ns("btn_download_plot"), "Download PNG", status = "success",
+          #                           icon = bsicon("cloud-download-fill")) %>%
+          #       htmltools::tagAppendAttributes(class = "bg-gradient-success")
+          #
+          #   )
+          # }
 
           # if(!is.null(settingsUI)){
           #   softui::tab_panel(title = softui::bsicon("gear-fill"),
@@ -142,6 +154,8 @@ plotWidgetUI <- function(id, header_ui = NULL, footer_ui = NULL,
 #' @param global_settings Optional reactive list with settings; these override those in settings().
 #' Used in `insert_plot_widgets` to pass settings that apply to all plots at the same time.
 #' @param extra_ggplot A reactive (can be a list) of expressions to add to the ggplot object
+#' @param interactive List with interactive controls
+#' @param renderTable_args List of arguments (only digits and align) to send to renderTable
 #' @param y_min Y-axis minimum value (often 0). TODO include more axis options
 #' @rdname plotWidget
 #' @importFrom utils getFromNamespace
@@ -493,6 +507,7 @@ plotWidgetModule <- function(input, output, session,
 
   )
 
+  # Make sure the interactive settings are available even if not visible
   shiny::outputOptions(output, "ui_interactive_settings", suspendWhenHidden = FALSE)
 
 }

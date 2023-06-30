@@ -129,10 +129,11 @@
   xvar: "opleverjaar"
   xlab: "Opleverjaar"
   ylab:  "Aantalwoningen"
+  yvar: "aantalwoningen"
   group:  "prijsklasse"
   legend.position: "bottom"
   table_prepare:
-    fun: "capval_pivot_prijsklasse"
+    fun: "table_capval_prijsklasse_opleverjaar"
   palette_function: "viridis"
   #colors: ["#f77f00","#d62828", '#003049','#003049']
   interactive:
@@ -150,6 +151,6 @@
     label_bars:
       label: "Aantallen labels"
       choices:
-        "Ja" : true
         "Nee" : false
+        "Ja" : true
 

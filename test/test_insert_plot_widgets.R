@@ -91,7 +91,7 @@ library(tidyr)
 #
 # }
 
-capval_pivot_prijsklasse <- function(data){
+table_capval_prijsklasse_opleverjaar <- function(data){
 
   data %>%
     select(opleverjaar, socialehuur, middeldurehuur, vrijsectorhuur, onbekendhuur,
@@ -126,11 +126,10 @@ capval_pivot_prijsklasse <- function(data){
 
 }
 
-
 devtools::load_all()
 
-pdata <- readRDS("c:/repos/wbm3.0/wp.rds")
-  #filter(opleverjaar > 2023, opleverjaar < 2027)
+pdata <- readRDS("c:/repos/wbm3.0/wp.rds") %>%
+  filter(opleverjaar > 2023)
 
 #cfg <- yaml::read_yaml("test/testconfig.yml")$config
 cfg <- yaml::read_yaml("test/testconfig2.yml")
@@ -139,22 +138,25 @@ ui <- softui::simple_page(
 
   softui::box(width = 4,
 
-    tags$div(id = "placeholder"),
-
-    tags$hr(),
     numericInput("num1", "Base size", value = 14)
 
-  )
+  ),
+  tags$div(id = "placeholder", style = "width: 600px;")
+
 
 )
 
 server <- function(input, output, session) {
 
   shintoviz::insert_plot_widgets(reactive(pdata), cfg, id = "placeholder",
-                                 ui_container = "tabset_panel",
+                                 width = 4,
+                                 plotOutput_only  =TRUE,
                                  global_settings = reactive(list(base_size = input$num1)))
 
 
 }
 
 shinyApp(ui, server)
+
+
+
