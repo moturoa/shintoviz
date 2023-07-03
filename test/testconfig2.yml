@@ -1,147 +1,27 @@
-
-# - title: "Prijsklasse"
-#   plot_type: "plot_grouped_value_by_time"
-#   sub_type: "lines"
-#   xlab: "Opleverjaar"
-#   ylab:  "Aantalwoningen"
-#   xvar: "opleverjaar"
-#   #group:  "prijsklasse"
-#   label_bars: false
-#   palette_function: "parula"
-#   table_prepare:
-#     fun: "prepare_grouped_data"
-#     yvar: "aantalwoningen"
-#     groupvar2: "opleverjaar"
-#   #   order:
-#   #     - "Huur betaalbaar"
-#   #     - "Huur goedkoop"
-#   #     - "Huur middelduur"
-#   #     - "Huur duur"
-#   #     - "Koop goedkoop"
-#   #     - "Koop middelduur"
-#   #     - "Koop duur"
-#   #     - "Onbekend"
-#   # colors: ["#4895ef", "#3f37c9", "#3a0ca3", "#560bad", "#b5179e", "#343a40", "#adb5bd", '#003049']
-#   interactive:
-#     groupvar:
-#       label: "Groep"
-#       table_prepare: true
-#       choices:
-#         "Prijsklasse" : "prijsklasse"
-#         "Woningtype" : "woningtype"
-#     groupfun:
-#       label: "Berekening"
-#       table_prepare: true
-#       choices:
-#           "Aantal woningen" : "sum"
-#           "Aantal deelgebieden" : "length"
-#     cumulative:
-#       label: "Per jaar / totaal"
-#       choices:
-#         "Jaarlijks aantal" : false
-#         "Cumulatief totaal" : true
-#     sub_type:
-#       label: "Plot type"
-#       choices:
-#         "Staaf": "grouped_bars"
-#         "Lijn": "lines"
-#         "Stapeling": "stacked_bars"
-#     label_bars:
-#       label: "Aantallen labels"
-#       choices:
-#         "Ja" : true
-#         "Nee" : false
-# - title: "Sociale huur - ontwikkelaar"
-#   plot_type: "plot_grouped_value_by_time"
-#   sub_type: "stacked_bars"
-#   xvar: "opleverjaar"
-#   group: "ontwikkeltype"
-#   table_prepare:
-#     fun: "prepare_grouped_data"
-#     filter: "prijsklasse == 'sociale huur'"
-#     yvar: "aantalwoningen"
-#     groupvar: "ontwikkeltype"
-#     groupvar2: "opleverjaar"
-#     groupfun: "sum"
-#     empty_char_to_na: true
-#   ylab:  "Aantalwoningen"
-#   label_bars: false
-#   palette_function: "parula"
-# - title: "Prijsklasse"
-#   plot_type: "plot_horizontal_bars"
-#   table_prepare:
-#     fun: "prepare_grouped_data"
-#     yvar: "aantalwoningen"
-#     groupvar: "prijsklasse"
-#     groupfun: "sum"
-#     empty_char_to_na: true
-#     order:
-#       - "onbekend"
-#       - "dure koop"
-#       - "bereikbare koop"
-#       - "sociale koop hoog"
-#       - "sociale koop koopgarant"
-#       - "sociale koop"
-#       - "dure huur"
-#       - "middenhuur"
-#       - "sociale huur"
-#   ylab:  "Aantalwoningen"
-#   label_bars: true
-#   label_perc: true
-#   colors:
-#     - "#94938f"
-#     - "#9D0208"
-#     - "#E6550D"
-#     - "#FD8D3C"
-#     - "#FDAE6B"
-#     - "#3182BD"
-#     - "#6BAED6"
-#     - "#9ECAE1"
-#     - "#C6DBEF"
-# - title: "Plancapaciteit naar projectfase"
-#   plot_type: "plot_horizontal_bars"
-#   table_prepare:
-#     fun: "prepare_grouped_data"
-#     groupvar: "procesfase"
-#     yvar: "aantalwoningen"
-#     groupfun: "sum"
-#     empty_char_to_na: true
-#     order: ["Initiatief","Definitiefase","Ontwerp","Stilgelegd","Uitvoering","Onbekend"]
-#   colors:  ["#780085", "#627BF4", "#49CF7F", "#B4EC57", "#F9965B","#94938f"]
-#   ylab:  "Aantalwoningen"
-#   #reverse_order: true
-#   label_bars: true
-#   interactive:
-#     label_perc:
-#       label: "Percentages"
-#       choices:
-#          "Ja" : true
-#          "Nee" : false
-#     sort:
-#       label: "Volgorde"
-#       table_prepare: true
-#       choices:
-#          "Alfabetisch" : false
-#          "Gesorteerd" : true
-- title: "Prijsklasse"
+- title: "Woningtype"
+  name: "plot_woningtype_opleverjaar"
   plot_type: "plot_grouped_value_by_time"
   sub_type: "lines"
   xvar: "opleverjaar"
+  yvar:  "aantalwoningen"
   xlab: "Opleverjaar"
   ylab:  "Aantalwoningen"
-  yvar: "aantalwoningen"
-  group:  "prijsklasse"
+  group:  "woningtype"
   legend.position: "bottom"
+  label_bars: false
   table_prepare:
-    fun: "table_capval_prijsklasse_opleverjaar"
-  palette_function: "viridis"
-  #colors: ["#f77f00","#d62828", '#003049','#003049']
+    fun: "table_komende_jaren_woningtype"
+    params:
+      next_n_years: 5
+  table_format:
+    fun: "format_table_komende_jaren_woningtype"
+  colors: ["#f77f00","#d62828", '#003049']
   interactive:
-    cumulative:
-      label: "Per jaar / totaal"
+    yvar:
+      label: "Toon data"
       choices:
-        "Jaarlijks aantal" : false
-        "Cumulatief totaal" : true
+        "Jaarlijks" : "aantalwoningen"
+        "Cumulatief" : "aantalwoningen_c"
     sub_type:
       label: "Plot type"
       choices:
@@ -151,6 +31,5 @@
     label_bars:
       label: "Aantallen labels"
       choices:
-        "Nee" : false
         "Ja" : true
-
+        "Nee" : false

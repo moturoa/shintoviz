@@ -13,8 +13,6 @@ plotWidgetUI(
   plotOutput_only = FALSE,
   height = 400,
   interactive = NULL,
-  export = FALSE,
-  settingsUI = NULL,
   ...
 )
 
@@ -41,7 +39,11 @@ plotWidgetModule(
 
 \item{ui_container}{Either \code{tab_box} or \code{tabset_panel} to contain the plot widget}
 
-\item{height}{Heihgt of the \code{plotOutput} and \code{tableOutput}}
+\item{plotOutput_only}{Only make a \code{plotOutput}, not the entire widget with tabs}
+
+\item{height}{Height of the \code{plotOutput} and \code{tableOutput}}
+
+\item{interactive}{List with interactive controls}
 
 \item{\dots}{Further arguments to \code{\link[softui:tabbox]{softui::tab_box()}}}
 
@@ -61,6 +63,8 @@ plotWidgetModule(
 Used in \code{insert_plot_widgets} to pass settings that apply to all plots at the same time.}
 
 \item{extra_ggplot}{A reactive (can be a list) of expressions to add to the ggplot object}
+
+\item{renderTable_args}{List of arguments (only digits and align) to send to renderTable}
 
 \item{y_min}{Y-axis minimum value (often 0). TODO include more axis options}
 }
