@@ -86,7 +86,13 @@ prepare_grouped_data <- function(data,
 
   # Deal with missing group levels
   if(empty_char_to_na){
-    data[[groupvar]] <- dplyr::na_if(data[[groupvar]], "")
+    if(is.character(data[[groupvar]])){
+      data[[groupvar]] <- dplyr::na_if(data[[groupvar]], "")
+    } else {
+      if(any(is.na(data[[groupvar]]))){
+        warning("shintoviz prepare_grouped_data: don't know how to fill missing groups when integer, fix yourself!")
+      }
+    }
   }
 
   if(na_include){

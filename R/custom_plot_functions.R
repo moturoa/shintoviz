@@ -183,8 +183,9 @@ plot_value_by_time <- function(data,
                            yvar = "n",
 
                            sub_type = c("bars","lines"),
+                           cumulative = FALSE,
 
-                           palette_function,
+                           palette_function = NULL,
                            colors = NULL,
                            base_size = 14,
                            label_size = 4,
@@ -205,12 +206,22 @@ plot_value_by_time <- function(data,
   sub_type <- match.arg(sub_type)
   font_family <- get_current_font_family()
 
+  if(is.null(palette_function) & is.null(colors)){
+    stop("shintoviz: provide either palette_function or colors argument")
+  }
+
   if(nrow(data) == 0){
     return(NULL)
   }
 
   data$n <- data[[yvar]]
   data$time <- data[[xvar]]
+
+  if(cumulative){
+    data <- data %>%
+      arrange(time) %>%
+      mutate(n = cumsum(n))
+  }
 
   # TODO dit is voor de situatie dat de boel uit prepare_grouped_data komt,
   # met time als factor. dat kan dus niet..
@@ -343,7 +354,7 @@ plot_grouped_value_by_time <- function(data,
                                    sub_type = c("stacked_bars","grouped_bars","lines"),
                                    cumulative = FALSE,
 
-                                   palette_function,
+                                   palette_function = NULL,
                                    colors = NULL,
                                    base_size = 14,
                                    label_size = 4,
@@ -365,6 +376,10 @@ plot_grouped_value_by_time <- function(data,
 
   sub_type <- match.arg(sub_type)
   font_family <- get_current_font_family()
+
+  if(is.null(palette_function) & is.null(colors)){
+    stop("shintoviz: provide either palette_function or colors argument")
+  }
 
   if(nrow(data) == 0){
     return(NULL)
