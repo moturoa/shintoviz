@@ -402,6 +402,12 @@ plot_grouped_value_by_time <- function(data,
 
   data$n <- data[[yvar]]
   data$time <- data[[xvar]]
+
+  if(is.factor(data$time) || is.character(data$time)){
+    message("shintoviz: 'time' var is not numeric. Converting to numeric but be careful with results!")
+    data$time <- as.numeric(as.character(data$time))
+  }
+
   data$group <- data[[group]]
 
   data <- dplyr::filter(data, !is.na(.data$n), !is.na(.data$time))

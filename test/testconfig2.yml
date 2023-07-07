@@ -1,35 +1,28 @@
-- title: "Woningtype"
-  name: "plot_woningtype_opleverjaar"
+- title: "Bruto / Netto"
   plot_type: "plot_grouped_value_by_time"
-  sub_type: "lines"
   xvar: "opleverjaar"
   yvar:  "aantalwoningen"
   xlab: "Opleverjaar"
-  ylab:  "Aantalwoningen"
-  group:  "woningtype"
-  legend.position: "bottom"
-  label_bars: false
+  ylab:  "Aantal woningen"
+  group:  "groep"
   table_prepare:
-    fun: "table_komende_jaren_woningtype"
-    params:
-      next_n_years: 5
-  table_format:
-    fun: "format_table_komende_jaren_woningtype"
-  colors: ["#f77f00","#d62828", '#003049']
+    fun: "table_bruto_netto_opleverjaar"
+  colors: ["#023E8A","#9D0208"]
+
   interactive:
-    yvar:
-      label: "Toon data"
+    cumulative:
+      label: "Per jaar / totaal"
       choices:
-        "Jaarlijks" : "aantalwoningen"
-        "Cumulatief" : "aantalwoningen_c"
+        "Jaarlijks aantal" : false
+        "Cumulatief totaal" : true
     sub_type:
       label: "Plot type"
       choices:
-        "Stapeling": "stacked_bars"
         "Lijn": "lines"
         "Staaf": "grouped_bars"
+        "Stapeling": "stacked_bars"
     label_bars:
       label: "Aantallen labels"
       choices:
-        "Ja" : true
         "Nee" : false
+        "Ja" : true

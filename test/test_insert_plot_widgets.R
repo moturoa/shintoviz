@@ -3,45 +3,23 @@ library(shiny)
 library(softui)
 
 library(tidyr)
-table_komende_jaren_woningtype <- function(data,
-                                           next_n_years = 100,
-                                           levels = NULL){
 
-  #sthis_year <- lubridate::year(Sys.Date())
+table_bruto_netto_opleverjaar <- function(data){
 
-  this_year <- min(data$opleverjaar, na.rm = TRUE)
-  if(this_year == 0){
-    this_year <- lubridate::year(Sys.Date())
-  }
-  years <- this_year:(this_year + next_n_years)
+  one <- shintoviz::prepare_grouped_data(data, "n_woning_bouw","opleverjaar","sum")
+  two <- shintoviz::prepare_grouped_data(data, "n_woning_netto","opleverjaar","sum")
 
-  out <- data %>%
-    mutate(woningtype = na_if(woningtype, ""),
-           woningtype = as.factor(woningtype),
-           woningtype = forcats::fct_na_value_to_level(woningtype, "Onbekend"))
-
-  if(!is.null(levels)){
-    out$woningtype <- factor(out$woningtype, levels = levels)
-  }
-
-  out %>%
-    dplyr::filter(
-      opleverjaar %in% !!years
-      #woningtype %in% !!woningtype_filter
-    ) %>%
-    dplyr::group_by(opleverjaar, woningtype) %>%
-    dplyr::summarize(aantalwoningen = sum(aantalwoningen, na.rm = TRUE),
-                     .groups = "drop") %>%
-    dplyr::group_by(woningtype) %>%
-    dplyr::arrange(opleverjaar) %>%
-    dplyr::mutate(aantalwoningen_c = cumsum(aantalwoningen))
+  left_join(one, two, by = "opleverjaar") %>%
+    setNames(c("opleverjaar","bruto", "netto")) %>%
+    tidyr::pivot_longer(c(bruto, netto), values_to = "aantalwoningen", names_to = "groep")
 
 }
+
 
 devtools::load_all()
 
 pdata <- readRDS("c:/repos/wbm3.0/wp.rds") %>%
-  filter(opleverjaar > 2023)
+  filter(opleverjaar > 2022)
 
 
 #cfg <- yaml::read_yaml("test/testconfig.yml")$config
@@ -63,8 +41,8 @@ server <- function(input, output, session) {
 
   shintoviz::insert_plot_widgets(reactive(pdata), cfg,
                                  id = "placeholder",
-                                 width = 4,
-                                 plotOutput_only = TRUE,
+                                 #width = 4,
+                                 plotOutput_only = FALSE,
                                  global_settings = reactive(list(base_size = input$num1)))
 
 
