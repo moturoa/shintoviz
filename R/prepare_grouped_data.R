@@ -64,10 +64,7 @@ prepare_grouped_data <- function(data,
                                  filter = NULL,
                                  array_encoding = c("semicolon","json")){
 
-  if(!yvar %in% names(data)){
-    message(glue::glue("yvar '{yvar}' not found in data"))
-    return(NULL)
-  }
+
 
   if(!groupvar %in% names(data)){
     message(glue::glue("groupvar '{groupvar}' not found in data"))
@@ -124,6 +121,12 @@ prepare_grouped_data <- function(data,
 
   # Summarize a variable
   if(!is.null(yvar)){
+
+    if(!yvar %in% names(data)){
+      message(glue::glue("yvar '{yvar}' not found in data"))
+      return(NULL)
+    }
+
     if(array)warning("'array' argument ignored when yvar is not NULL (array is only meaningful to count observations)")
 
     data <- dplyr::group_by(data, !!!rlang::syms(c(groupvar,groupvar2))) %>%
