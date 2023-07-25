@@ -56,6 +56,7 @@ server <- function(input, output, session) {
                       cfg = cfg,
                       id = "placeholder",
                       plotOutput_only = FALSE,
+                      open_in_modal = TRUE,
                       global_settings = reactive(list(
                         base_size = input$num1
                       )))

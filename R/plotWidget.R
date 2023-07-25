@@ -18,6 +18,7 @@
 #' @param height Height of the `plotOutput` and `tableOutput`
 #' @param interactive List with interactive settings used to control the plot, usually used via
 #' `insert_plot_widgets`. See examples in Juno.
+#' @param open_in_modal_button If TRUE, adds a button
 #' @param \dots Further arguments to [softui::tab_box()]
 #' @rdname plotWidget
 #' @export
@@ -30,9 +31,8 @@ plotWidgetUI <- function(id,
 
                          height = 400,
                          interactive = NULL,
-                         #export = FALSE,
 
-                         #settingsUI = NULL,
+                         open_in_modal_button = TRUE,
 
                          ...){
 
@@ -82,6 +82,27 @@ plotWidgetUI <- function(id,
                             )
           ),
 
+          if(open_in_modal_button){
+
+            softui::tab_panel(title = softui::bsicon("display"),
+
+                tags$div(style = paste("height:", p_height),
+
+                   tags$p(bsicon("info-circle-fill", status = "info"),
+                            "Pas de verticale afmeting van de plot aan en klik op de knop."
+                          ),
+
+                   numericInput(ns("num_plot_height"), "Plot hoogte (pixels)", value = 500, min = 0, max = 2000),
+
+                   softui::action_button(ns("btn_open_in_modal"), "Toon grote versie ...",
+                                         icon = bsicon("display"), status = "light")
+                )
+
+            )
+
+
+          },
+
           if(!is.null(interactive)){
 
             softui::tab_panel(title = softui::bsicon("three-dots"),
@@ -94,46 +115,6 @@ plotWidgetUI <- function(id,
 
           }
 
-          # This works fine but the resolution will not match what we see on screen,
-          # and if we use a higher dpi then the proportions are off. Better to just copy
-          # the png directly from the plotOutput
-          # if(export){
-          #   softui::tab_panel(
-          #     title = softui::bsicon("cloud-download-fill"),
-          #
-          #     tags$p("Kies een afmeting, en download de plot als PNG."),
-          #
-          #     softui::fluid_row(
-          #       column(6,
-          #              numericInput(ns("num_png_width"), "Breedte (px)", value = 800, width = "100%")
-          #       ),
-          #       column(6,
-          #              numericInput(ns("num_png_height"), "Hoogte (px)", value = 600, width = "100%")
-          #       )
-          #       # column(4,
-          #       #        numericInput(ns("num_png_cex"), "Tekst grootte", value = 1, width = "100%", step = 0.05)
-          #       # )
-          #     ),
-          #     radioButtons(ns("rad_bg"), "Achtergrond", choices = c("Wit" = "white", "Transparant" = "transparent"),
-          #                  inline = TRUE, selected = "white"),
-          #
-          #     tags$br(),
-          #     shiny::downloadButton(ns("btn_download_plot"), "Download PNG", status = "success",
-          #                           icon = bsicon("cloud-download-fill")) %>%
-          #       htmltools::tagAppendAttributes(class = "bg-gradient-success")
-          #
-          #   )
-          # }
-
-          # if(!is.null(settingsUI)){
-          #   softui::tab_panel(title = softui::bsicon("gear-fill"),
-          #                     softui::fluid_row(
-          #                       tags$div(style = "height: 400px;",
-          #                         settingsUI
-          #                       )
-          #                     )
-          #   )
-          # }
 
 
   )
@@ -156,7 +137,7 @@ plotWidgetUI <- function(id,
 #' @param extra_ggplot A reactive (can be a list) of expressions to add to the ggplot object
 #' @param interactive List with interactive controls
 #' @param renderTable_args List of arguments (only digits and align) to send to renderTable
-#' @param y_min Y-axis minimum value (often 0). TODO include more axis options
+#' @param y_min Obsolete
 #' @rdname plotWidget
 #' @importFrom utils getFromNamespace
 #' @importFrom shiny plotOutput reactive renderPlot renderTable tableOutput callModule
@@ -213,10 +194,40 @@ plotWidgetModule <- function(input, output, session,
                              interactive = NULL,
                              extra_ggplot = reactive(NULL),
                              renderTable_args = list(digits = 1, align = "l"),
-                             y_min = NULL
-){
+                             y_min = NULL){
 
   ns <- session$ns
+
+  if(!is.null(y_min)){
+    warning("Shintoviz: argument y_min in plotWidgetModule is ignored")
+  }
+
+  # "Inzoomen" - self module in a modal
+  observeEvent(input$btn_open_in_modal, {
+
+    req(input$num_plot_height)
+
+    showModal(
+      softui::modal(title = "", icon = bsicon("pie-chart-fill"),
+                    size = "xl", close_button = FALSE, confirm_txt = "Sluiten",
+                    plotWidgetUI(ns("self_in_modal"),
+                                 interactive = interactive,
+                                 height = input$num_plot_height,
+                                 open_in_modal = FALSE))
+    )
+
+    callModule(plotWidgetModule, "self_in_modal",
+               data = data,
+               plot_type = plot_type,
+               settings = settings,
+               global_settings = global_settings,
+               interactive = interactive,
+               extra_ggplot = extra_ggplot,
+               renderTable_args, y_min = y_min)
+
+  })
+
+
 
   output$ui_interactive_settings <- renderUI({
 
@@ -371,7 +382,7 @@ plotWidgetModule <- function(input, output, session,
       # OR: read from interactive setting
       intvals <- interactive_values()
 
-      # TODO fix :(
+      # Fix some easy to forget settings.
       if(type == "plot_grouped_value_by_time"){
         if(is.null(sett$group) && !is.null(intvals$groupvar)){
           sett$group <- intvals$groupvar
@@ -433,11 +444,11 @@ plotWidgetModule <- function(input, output, session,
     p <- do.call(plot_fn, sett)
 
 
-    # Extra adjustments
-    # TODO why is this here?
-    if(!is.null(y_min)){
-      p <- p + ggplot2::expand_limits(y = y_min)
-    }
+    # # Extra adjustments
+    # # TODO why is this here?
+    # if(!is.null(y_min)){
+    #   p <- p + ggplot2::expand_limits(y = y_min)
+    # }
 
     if(!is.null(extra_ggplot())){
 
@@ -476,36 +487,9 @@ plotWidgetModule <- function(input, output, session,
   } , digits = renderTable_args$digits, align = renderTable_args$align)
 
 
-
   # make exportable
   shiny::callModule(exportButton, "btn_download", data = table_data)
 
-
-  #----- Export
-  output$btn_download_plot <- shiny::downloadHandler(
-
-    filename = function(){
-      "plot_export_shinto.png"
-    },
-
-    content = function(file){
-
-      h <- input$num_png_height
-      w <- input$num_png_width
-      bg <- input$rad_bg
-
-      req(h)
-      req(w)
-
-      p <- plot_object()
-
-      ggplot2::ggsave(p, filename = file, dpi = 72,
-                      width = w, height = h,
-                      units = "px", bg = bg)
-
-    }
-
-  )
 
   # Make sure the interactive settings are available even if not visible
   shiny::outputOptions(output, "ui_interactive_settings", suspendWhenHidden = FALSE)
