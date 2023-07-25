@@ -8,6 +8,9 @@ output:
 
 # Test prepare plot data
 
+Code to test the `prepare_grouped_data` function and related. This function is used to prepare (long) data into (wide/short) data for plotting.
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 

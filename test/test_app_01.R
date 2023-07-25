@@ -1,4 +1,12 @@
 
+#- Test app 1
+
+# !!! Important !!!
+# Run the app with Ctrl-A, Ctrl-Enter (select all, execute), not the 'Run App' button in Rstudio
+# Reason: 'my_plot_fun1' has to be in the global environment
+
+
+#- Dependencies
 library(softui)
 library(shiny)
 
@@ -10,12 +18,14 @@ library(dplyr)
 
 library(gapminder)
 
+#- Load shintoviz
 devtools::load_all()
 #library(shintoviz)
 
 
-set_plotwidget_font("Maven Pro")
+#- Run example
 
+set_plotwidget_font("Maven Pro")
 
 my_plot_fun1 <- function(data, year){
   gapminder %>%
@@ -29,8 +39,6 @@ my_table_format_fun1 <- function(data){
   data$`%` <- round(100 * data[[2]] / sum(data[[2]]), 2)
   data
 }
-
-
 
 ui <- softui::simple_page(
 

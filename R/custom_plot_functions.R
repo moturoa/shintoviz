@@ -386,7 +386,7 @@ plot_grouped_value_by_time <- function(data,
   }
 
   if(!group %in% names(data)){
-    message(glue::glue("group '{group}' not found in data"))
+    message(glue::glue("shintoviz error (empty plot) : group '{group}' not found in data"))
     return(NULL)
   }
 

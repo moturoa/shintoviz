@@ -1,5 +1,12 @@
 
+#- Test app 2
 
+# !!! Important !!!
+# Run the app with Ctrl-A, Ctrl-Enter (select all, execute), not the 'Run App' button in Rstudio
+# Reason: 'my_plot_fun1' has to be in the global environment
+
+
+#- Dependencies
 library(softui)
 library(shiny)
 
@@ -11,12 +18,13 @@ library(dplyr)
 
 library(gapminder) # example data
 
+#- Load shintoviz
 devtools::load_all()
 
 #set_plotwidget_font("Roboto")
 
 
-# yaml::read_yaml
+#- Run example
 
 plot_config <- list(
   list(
@@ -72,7 +80,7 @@ server <- function(input, output, session) {
   insert_plot_widgets(data = plot_data,
                       cfg = plot_config,
                       id = "plot_placeholder",
-                      width = 4, export = TRUE)
+                      width = 4)
 
 
 }

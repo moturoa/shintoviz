@@ -1,0 +1,38 @@
+- title: Population by year
+  xvar: year
+  group: continent
+  sub_type: lines
+  table_prepare:
+    fun: prepare_grouped_data
+    yvar: population
+    groupvar: continent
+    groupvar2: year
+    groupfun: sum
+  palette_function: ocean.phase
+  plot_type: plot_grouped_value_by_time
+  interactive:
+    sub_type:
+      label: Weergave
+      choices:
+        "Lijnen" : lines
+        "Staaf groep": grouped_bars
+        "stapeling" : stacked_bars
+- title: Mean population
+  xvar: continent
+  plot_type: plot_horizontal_bars
+  palette_function: ocean.phase
+  base_size: 14.0
+  label_size: 4.0
+  label_k: no
+  table_prepare:
+    yvar: population
+    fun: prepare_grouped_data
+    groupvar: continent
+    groupfun: mean
+    sort: yes
+  interactive:
+    plot_type:
+      label: Weergave
+      choices:
+        "Staafdiagram":  plot_horizontal_bars
+        "Pie chart" : plot_pie_chart

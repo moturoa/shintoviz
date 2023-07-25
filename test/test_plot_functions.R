@@ -1,5 +1,8 @@
 
 
+# Some simple tests with raw plotting functions
+# See 'test_plots.Rmd' for more
+
 
 library(gapminder)
 library(dplyr)

@@ -1,5 +1,15 @@
 
+#- Test app 3
 
+# !!! Important !!!
+# Run the app with Ctrl-A, Ctrl-Enter (select all, execute), not the 'Run App' button in Rstudio
+# Reason: 'my_plot_fun1' has to be in the global environment
+
+
+# - Read plot config from a list (not a YAML) and use insert_plot_widgets (twice)
+# - Settings for 'interactive' plot settings
+
+#- Dependencies
 library(softui)
 library(shiny)
 
@@ -8,14 +18,15 @@ library(ggplot2)
 library(scales)
 library(glue)
 library(dplyr)
-
 library(gapminder) # example data
 
+#- Load shintoviz
 devtools::load_all()
 
-set_plotwidget_font("Open Sans")
 
-# yaml::read_yaml
+#- Run example
+
+set_plotwidget_font("Open Sans")
 
 plot_config_left <- list(
   list(
@@ -28,8 +39,6 @@ plot_config_left <- list(
     base_size = 14,
     label_size = 4,
     label_k = FALSE,
-    label_hjust = 1.65,
-    bar_width = 0.6,
     table_prepare = list(
       yvar = "population",
       fun = "prepare_grouped_data",
@@ -38,9 +47,10 @@ plot_config_left <- list(
       sort = TRUE),
 
     interactive = list(
-      plot_type = c("Cirkeldiagram" = "plot_pie_chart",
-        "Staafdiagram" = "plot_horizontal_bars"
-                    )
+      plot_type = list(
+        label = "Weergave",
+        choices = c("Cirkeldiagram" = "plot_pie_chart","Staafdiagram" = "plot_horizontal_bars")
+      )
     )
 
   )
@@ -58,18 +68,19 @@ plot_config_mid <- list(
     group=  "continent",
     reverse_order = TRUE,
     palette_function = "ocean.phase",
-    colors = NULL,
     base_size = 14,
     label_size = 6,
     label_k = FALSE,
-    label_hjust = -0.2,
     bar_width = 4,
     plot_type = "plot_grouped_value_by_time",
     interactive = list(
 
-      sub_type = c("Lijn" = "lines",
+      sub_type = list(
+        label = "Weergave",
+        choices = c("Lijn" = "lines",
                    "Staaf" = "grouped_bars",
                    "Stapeling" = "stacked_bars"
+        )
       )
     )
   )
@@ -120,15 +131,11 @@ server <- function(input, output, session) {
                       id = "plot_placeholder_left",
                       width = 12)
 
-  # insert_plot_widgets(data = plot_data,
-  #                      cfg = plot_config_mid,
-  #                      id = "plot_placeholder_mid",
-  #                      width = 12)
-  #
-  # insert_plot_widgets(data = plot_data3,
-  #                     cfg = plot_config_right,
-  #                     id = "plot_placeholder_right",
-  #                     width = 12)
+  insert_plot_widgets(data = plot_data,
+                       cfg = plot_config_mid,
+                       id = "plot_placeholder_mid",
+                       width = 12)
+
 
 
 
