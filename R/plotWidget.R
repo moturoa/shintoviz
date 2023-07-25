@@ -228,7 +228,7 @@ plotWidgetModule <- function(input, output, session,
 
     showModal(
       softui::modal(title = "", icon = bsicon("pie-chart-fill"),
-                    size = "fullscreen", close_button = FALSE, confirm_txt = "Sluiten",
+                    size = "xl", close_button = FALSE, confirm_txt = "Sluiten",
                     plotWidgetUI(ns("self_in_modal"),
                                  interactive = interactive,
                                  height = input$num_plot_height,
