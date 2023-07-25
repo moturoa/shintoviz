@@ -30,6 +30,7 @@ plotWidgetUI <- function(id,
                          plotOutput_only = FALSE,
 
                          height = 400,
+                         width = "100%",
                          interactive = NULL,
 
                          open_in_modal_button = TRUE,
@@ -51,7 +52,7 @@ plotWidgetUI <- function(id,
   if(plotOutput_only){
     return(
       tagList(
-        shiny::plotOutput(ns("plot_main"), height = p_height),
+        shiny::plotOutput(ns("plot_main"), height = p_height, width = width),
 
         tags$div(style = "display: none;",
           uiOutput(ns("ui_interactive_settings"))
@@ -65,7 +66,7 @@ plotWidgetUI <- function(id,
   ui_fun( style = "margin-top: 10px;", ...,
           softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
                             header_ui,
-                            shiny::plotOutput(ns("plot_main"), height = p_height),
+                            shiny::plotOutput(ns("plot_main"), height = p_height, width = width),
                             footer_ui
           ),
 
@@ -89,10 +90,20 @@ plotWidgetUI <- function(id,
                 tags$div(style = paste("height:", p_height),
 
                    tags$p(bsicon("info-circle-fill", status = "info"),
-                            "Pas de verticale afmeting van de plot aan en klik op de knop."
+                            "Pas de verticale afmeting en tekst grootte van de plot aan en klik op de knop."
                           ),
 
-                   numericInput(ns("num_plot_height"), "Plot hoogte (pixels)", value = 500, min = 0, max = 2000),
+                   # softui::fluid_row(
+                   #   column(6,
+                            numericInput(ns("num_plot_height"), "Plot hoogte (pixels)", value = 500, min = 0, max = 2000),
+                     #),
+                     # column(6,
+                     #        numericInput(ns("num_plot_width"), "& breedte", value = 1000, min = 0, max = 2000)
+                     # )
+                   #),
+
+                   numericInput(ns("num_base_size"), "Tekst afmeting",
+                          value = 14),
 
                    softui::action_button(ns("btn_open_in_modal"), "Toon grote versie ...",
                                          icon = bsicon("display"), status = "light")
@@ -203,16 +214,25 @@ plotWidgetModule <- function(input, output, session,
   }
 
   # "Inzoomen" - self module in a modal
+  global_settings_for_modal <- reactive({
+    req(input$num_base_size)
+    glob <- global_settings()
+    glob$base_size <- input$num_base_size
+    glob
+  })
+
   observeEvent(input$btn_open_in_modal, {
 
     req(input$num_plot_height)
+    #req(input$num_plot_width)
 
     showModal(
       softui::modal(title = "", icon = bsicon("pie-chart-fill"),
-                    size = "xl", close_button = FALSE, confirm_txt = "Sluiten",
+                    size = "fullscreen", close_button = FALSE, confirm_txt = "Sluiten",
                     plotWidgetUI(ns("self_in_modal"),
                                  interactive = interactive,
                                  height = input$num_plot_height,
+                                 #width = input$num_plot_width,
                                  open_in_modal = FALSE))
     )
 
@@ -220,10 +240,10 @@ plotWidgetModule <- function(input, output, session,
                data = data,
                plot_type = plot_type,
                settings = settings,
-               global_settings = global_settings,
+               global_settings = global_settings_for_modal,
                interactive = interactive,
                extra_ggplot = extra_ggplot,
-               renderTable_args, y_min = y_min)
+               renderTable_args)
 
   })
 

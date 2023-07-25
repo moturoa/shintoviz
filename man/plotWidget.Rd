@@ -13,6 +13,7 @@ plotWidgetUI(
   plotOutput_only = FALSE,
   height = 400,
   interactive = NULL,
+  open_in_modal_button = TRUE,
   ...
 )
 
@@ -45,6 +46,8 @@ plotWidgetModule(
 
 \item{interactive}{List with interactive controls}
 
+\item{open_in_modal_button}{If TRUE, adds a button}
+
 \item{\dots}{Further arguments to \code{\link[softui:tabbox]{softui::tab_box()}}}
 
 \item{input}{Shiny input (do not set)}
@@ -66,7 +69,7 @@ Used in \code{insert_plot_widgets} to pass settings that apply to all plots at t
 
 \item{renderTable_args}{List of arguments (only digits and align) to send to renderTable}
 
-\item{y_min}{Y-axis minimum value (often 0). TODO include more axis options}
+\item{y_min}{Obsolete}
 }
 \description{
 Shiny UI function for plotWidget
