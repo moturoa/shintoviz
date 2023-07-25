@@ -52,7 +52,7 @@ plotWidgetUI <- function(id,
   if(plotOutput_only){
     return(
       tagList(
-        shiny::plotOutput(ns("plot_main"), height = p_height, width = width),
+        shiny::plotOutput(ns("plot_main"), height = p_height), #, width = width),
 
         tags$div(style = "display: none;",
           uiOutput(ns("ui_interactive_settings"))
@@ -66,7 +66,7 @@ plotWidgetUI <- function(id,
   ui_fun( style = "margin-top: 10px;", ...,
           softui::tab_panel(title = softui::bsicon("bar-chart-fill"),
                             header_ui,
-                            shiny::plotOutput(ns("plot_main"), height = p_height, width = width),
+                            shiny::plotOutput(ns("plot_main"), height = p_height), #, width = width),
                             footer_ui
           ),
 
