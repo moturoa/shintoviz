@@ -433,7 +433,12 @@ plot_grouped_value_by_time <- function(data,
         ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_fill_manual(values = colors) +
         ggplot2::theme(axis.text.x=element_blank()) +
-        ggplot2::labs(y = xlab, x = "", fill = grouplab, title = title)
+        ggplot2::labs(y = ylab, x = "", fill = grouplab, title = title) +
+        ggplot2::theme_minimal(base_size = base_size) +
+        ggplot2::theme(text = element_text(family = font_family),
+                       legend.position = legend.position)
+
+    return(p)
 
   } else {
 
