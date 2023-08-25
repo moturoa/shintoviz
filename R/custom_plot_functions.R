@@ -640,6 +640,7 @@ plot_grouped_horizontal_barplot <- function(data,
                                          title = "",
                                          subtitle = "",
                                          title_adjust = c("plot","figure"),
+                                         legend_text_size = 12,
                                          ...){
 
   title_adjust <- match.arg(title_adjust)
@@ -722,7 +723,8 @@ plot_grouped_horizontal_barplot <- function(data,
                      panel.border = ggplot2::element_blank(),
                      legend.position = "top",
                      legend.direction = "horizontal",
-                     legend.title = element_blank(),
+                     legend.title = ggplot2::element_blank(),
+                     legend.text = ggplot2::element_text(size = legend_text_size),
                      axis.title.y = ggplot2::element_blank(),
                      axis.title.x = ggplot2::element_blank(),
                      axis.text.x = ggplot2::element_blank(),
