@@ -256,14 +256,26 @@ plot_pie_chart(plot_data,
 
 
 
-# Histogram by group
+# Bubble : factor vs factor
 
 ```{r}
 
-  plotdata <- mtcars
-  plotdata$section <-  ifelse(plotdata$cyl < 8, "one","two")
-  
-  
+plot_data <- gapminder %>%
+  filter(year == 2002, 
+         country %in% c("Afghanistan","Pakistan","India","Belgium","Netherlands","Germany","United States","Canada")) %>%
+  select(country, continent, gdpPercap, lifeExp)
+
+plot_bubble(plot_data,
+            xvar = "continent",
+            yvar = "gdpPercap",
+            groupvar = "country",
+            title = "Test bubbel",
+            palette_function = "coolwarm",
+            n_breaks = 10,
+            max_size =10,
+            reverse_order_group = TRUE,
+            ylab = "GDP/cap")
 ```
+
 
 

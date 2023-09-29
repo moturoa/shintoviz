@@ -5,7 +5,7 @@
 \alias{internal_custom_plot_types}
 \title{Available custom plot functions in shintoviz}
 \format{
-An object of class \code{character} of length 4.
+An object of class \code{character} of length 5.
 }
 \usage{
 internal_custom_plot_types

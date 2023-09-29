@@ -26,7 +26,7 @@ plot_grouped_horizontal_barplot(
   title = "",
   subtitle = "",
   title_adjust = c("plot", "figure"),
-  legend_text_size = 10,
+  legend_text_size = 12,
   ...
 )
 }

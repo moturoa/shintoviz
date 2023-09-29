@@ -756,28 +756,121 @@ plot_grouped_horizontal_barplot <- function(data,
 
 
 
-plot_distribution_by_group <- function(data,
-                                       xvar = "",
-                                       group = "",
-                                       base_size = 15,
-                                       ylab = "",
-                                       xlab = "",
-                                       n_bins = 20){
+# plot_distribution_by_group <- function(data,
+#                                        xvar = "",
+#                                        group = "",
+#                                        base_size = 15,
+#                                        ylab = "",
+#                                        xlab = "",
+#                                        n_bins = 20){
+#
+#
+#
+#   data$X <- data[[xvar]]
+#   data$group <- data[[group]]
+#
+#   ggplot(data, aes(x = X, fill = group)) +
+#     geom_histogram(bins = n_bins) +
+#     theme_minimal(base_size = base_size) +
+#     facet_wrap(~group, nrow = 2, ncol = 1) +
+#     ylab(ylab) + xlab(xlab)
+#
+#
+# }
 
 
+
+#' Bubble plot : factor vs. factor
+#' @param data Dataframe
+#' @param xvar (factor) Variable along the X-axis
+#' @param yvar Numeric variable for size /colour of bubbled
+#' @param groupvar (factor) variable along the Y-axis
+#' @param xlab X-axis label
+#' @param ylab Y-axis label
+#' @param title Plot title
+#' @param subtitle Plot subtitle
+#' @param title_adjust Adjust the title to the plot or figure region (i.e. more to the left)
+#' @param palette_function Name of 'pals' palette to fill the bubbles
+#' @param colors Optional vector of colours
+#' @param base_size Base text size
+#' @param reverse_order_group Whether to reverse the ordering of the Y-axis groups
+#' @param reverse_order_x Whether to reverse the ordering of the X-axis groups
+#' @param ... Further arguments ignored
+#' @export
+plot_bubble <- function(data,
+                        xvar = "group1",
+                        yvar = "n",
+                        groupvar = "group2",
+                        xlab = xvar,
+                        ylab = yvar,
+                        title = "",
+                        subtitle = "",
+                        title_adjust = c("plot","figure"),
+                        palette_function = NULL,
+                        colors = NULL,
+
+                        base_size = 15,
+                        reverse_order_group = FALSE,
+                        reverse_order_x = FALSE,
+
+                        ...){
+
+  title_adjust <- match.arg(title_adjust)
+  font_family <- get_current_font_family()
+
+  if(nrow(data) < 2){
+    p <- plot_not_sufficient_data()
+    return(p)
+  }
 
   data$X <- data[[xvar]]
-  data$group <- data[[group]]
+  data$G <- data[[groupvar]]
+  data$Y <- data[[yvar]]
 
-  ggplot(data, aes(x = X, fill = group)) +
-    geom_histogram(bins = n_bins) +
-    theme_minimal(base_size = base_size) +
-    facet_wrap(~group, nrow = 2, ncol = 1) +
-    ylab(ylab) + xlab(xlab)
+  if(reverse_order_group){
+    data$G <- forcats::fct_rev(as.factor(data$G))
+  }
+
+  if(reverse_order_x){
+    data$X <- forcats::fct_rev(as.factor(data$X))
+  }
+
+  ncols <- length(unique(data$X))
+  if(is.factor(data$X)){
+    ncols <- nlevels(data$X)
+  }
+
+  colors <- generate_colors(ncols, palette_function, colors)
+
+  bins <- pretty(range(data$Y))
+  lims <- bins[c(1,length(bins))]
+
+  p <- ggplot(data, aes(x = X, y = G, size = Y, color = Y)) +
+    geom_point() +
+    theme_minimal() +
+    ggplot2::theme(  text = ggplot2::element_text(family = font_family),
+                    plot.title = ggplot2::element_text(size=base_size+4),
+                    axis.text.y = ggplot2::element_text(size = base_size),
+                    axis.text.x = ggplot2::element_text(size = base_size),
+                    panel.border = ggplot2::element_blank(),
+                    panel.grid.major = ggplot2::element_blank(),
+                    panel.grid.minor = ggplot2::element_blank()) +
+    ggplot2::labs(title = title, subtitle = subtitle) +
+    ggplot2::scale_colour_gradientn(guide = "legend", colours = colors) +
+    ggplot2::scale_size() +
+    xlab("") + ylab("") +
+    labs(size = ylab, colour = ylab)
 
 
+
+  if(title_adjust == "plot"){
+    p <- p + ggplot2::theme(
+      plot.caption = element_text(hjust = 0),
+      plot.title.position = "plot"
+    )
+  }
+
+  p
 }
-
-
 
 
