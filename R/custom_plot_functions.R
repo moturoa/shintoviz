@@ -423,6 +423,10 @@ plot_grouped_value_by_time <- function(data,
   n_time <- length(unique(data$time))
   n_group <- length(unique(data$group))
 
+  if(is.factor(data$group)){
+    n_group <- nlevels(data$group)
+  }
+
   colors <- generate_colors(n_group, palette_function, colors)
 
   if(n_time == 1){
@@ -450,7 +454,7 @@ plot_grouped_value_by_time <- function(data,
         ggplot2::geom_line(linewidth = line_width) +
         ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
-        ggplot2::scale_colour_manual(values = colors) +
+        ggplot2::scale_colour_manual(values = colors, drop = FALSE) +
         ggplot2::labs(y = ylab, x = xlab, fill = "", colour = grouplab, title = title, subtitle = subtitle)
 
     } else {
@@ -466,8 +470,8 @@ plot_grouped_value_by_time <- function(data,
         ggplot2::geom_bar(stat="identity", position = pos, width = bar_width) +
         ggplot2::scale_x_continuous(breaks = my_breaks_pretty()) +
         ggplot2::scale_y_continuous(breaks = my_breaks_pretty()) +
-        ggplot2::scale_colour_manual(values = colors) +
-        ggplot2::scale_fill_manual(values = colors) +
+        ggplot2::scale_colour_manual(values = colors, drop = FALSE) +
+        ggplot2::scale_fill_manual(values = colors, drop = FALSE) +
         ggplot2::labs(y = ylab, x = xlab, fill = grouplab, title = title, subtitle = subtitle) +
         ggplot2::guides(color = "none")
 
