@@ -46,7 +46,7 @@ plot_horizontal_bars <- function(data,
                                   yvar = "n",
 
                                   group_format_function = NULL,
-                                  reverse_order = FALSE,
+                                  reverse_order = TRUE,
                                   palette_function = NULL,
                                   colors = NULL,
                                   base_size = 15,
