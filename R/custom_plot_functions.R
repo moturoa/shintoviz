@@ -75,6 +75,7 @@ plot_horizontal_bars <- function(data,
 
   if(reverse_order){
     data$group <- forcats::fct_rev(as.factor(data$group))
+    if(!is.null(colors))colors <- rev(colors)
   }
 
 
