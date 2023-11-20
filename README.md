@@ -1,6 +1,4 @@
 ![](https://badgen.net/badge/shintolabs/utility/purple)
-![](https://badgen.net/badge/gitflow/enabled/green)
-
 # shintoviz
 
 R package for generic plotting methods with ggplot2, and shiny modules.
